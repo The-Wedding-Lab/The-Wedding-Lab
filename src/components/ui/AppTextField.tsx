@@ -1,68 +1,37 @@
-import { InputAdornment, SxProps, TextField } from "@mui/material";
+import { TextField, TextFieldProps, styled } from "@mui/material";
 
-interface InputProps {
-  label?: string;
-  placeholder?: string;
-  value?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  disabled?: boolean;
+export type AppTextFieldProps = TextFieldProps & {
   success?: boolean;
-  error?: boolean;
-  helperText?: string;
-  fullWidth?: boolean;
-  startIcon?: React.ReactNode;
-  endIcon?: React.ReactNode;
-  sx?: SxProps;
-}
+};
 
-export default function AppTextField({
-  label,
-  placeholder,
-  value,
-  onChange,
-  disabled,
-  success,
-  error,
-  helperText,
-  fullWidth,
-  startIcon,
-  endIcon,
-  sx,
-}: InputProps) {
-  return (
-    <TextField
-      label={label}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      error={error}
-      helperText={helperText}
-      fullWidth={fullWidth}
-      sx={{
-        ...sx,
-        ...(success && {
-          "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#1adb00",
-          },
-        }),
-      }}
-      slotProps={{
-        input: {
-          sx: {
-            borderRadius: "12px",
-            ...(disabled && {
-              backgroundColor: "#f0f0f0",
-            }),
-          },
-          startAdornment: startIcon && (
-            <InputAdornment position="start">{startIcon}</InputAdornment>
-          ),
-          endAdornment: endIcon && (
-            <InputAdornment position="end">{endIcon}</InputAdornment>
-          ),
-        },
-      }}
-    />
-  );
+const StyledTextField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== "success",
+})<AppTextFieldProps>(({ theme, success }) => ({
+  ...(success && {
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: theme.palette.success.main,
+      },
+      "&:hover fieldset": {
+        borderColor: theme.palette.success.dark,
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: theme.palette.success.dark,
+      },
+    },
+    "& label.Mui-focused": {
+      color: theme.palette.success.dark,
+    },
+  }),
+  "& .MuiInputBase-input.Mui-disabled": {
+    backgroundColor: "#f0f0f0",
+    borderRadius: "12px",
+  },
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "12px",
+  },
+}));
+
+export default function AppTextField(props: AppTextFieldProps) {
+  return <StyledTextField {...props} />;
 }
