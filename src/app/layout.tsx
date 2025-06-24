@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import ThemeProvider from "../providers/ThemeProvider";
+import globalStyles from "./globalStyles";
+import GlobalStyles from "./globalStyles";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -10,6 +13,16 @@ const geistSans = localFont({
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
+  weight: "100 900",
+});
+const pretendard = localFont({
+  src: "./fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  weight: "100 900",
+});
+const cookierun = localFont({
+  src: "./fonts/CookieRun-Regular.woff",
+  variable: "--font-cookierun",
   weight: "100 900",
 });
 
@@ -26,9 +39,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${pretendard.variable} ${cookierun.variable} antialiased`}
       >
-        {children}
+        <GlobalStyles />
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
