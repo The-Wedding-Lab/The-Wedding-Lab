@@ -24,6 +24,33 @@ declare module "@mui/material/Button" {
   }
 }
 
+// 슬라이더 color 확장
+declare module "@mui/material/Slider" {
+  interface SliderPropsColorOverrides {
+    highlight: true;
+    natural: true;
+    dark: true;
+  }
+}
+
+// LinearProgress color 확장
+declare module "@mui/material/LinearProgress" {
+  interface LinearProgressPropsColorOverrides {
+    highlight: true;
+    natural: true;
+    dark: true;
+  }
+}
+
+// 칩(Chip) color 확장
+declare module "@mui/material/Chip" {
+  interface ChipPropsColorOverrides {
+    highlight: true;
+    natural: true;
+    dark: true;
+  }
+}
+
 const theme = createTheme({
   palette: {
     primary: {
