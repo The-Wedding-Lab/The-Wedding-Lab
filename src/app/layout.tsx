@@ -4,6 +4,7 @@ import "./globals.css";
 import ThemeProvider from "../providers/ThemeProvider";
 import globalStyles from "./globalStyles";
 import GlobalStyles from "./globalStyles";
+import { Container } from "@mui/material";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -42,7 +43,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${pretendard.variable} ${cookierun.variable} antialiased`}
       >
         <GlobalStyles />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <Container maxWidth="xs">{children}</Container>
+        </ThemeProvider>
       </body>
     </html>
   );

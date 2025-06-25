@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+// 유저 모델
+model users {
+  id          String   @id @default(uuid()) //유저 키값
+  email       String   @unique // 로그인 ID로 사용
+  password    String?  // 이메일 가입 시 사용 (소셜 로그인은 null)
+  name        String   // 사용자 이름
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+
+  @@map("users") // 실제 DB 테이블 이름
+}
+
+
+model  wedding {
+  id          String   @id @default(uuid())
+  userId              String  @map("user_id")
+
+  // groom 데이터
+  groomName           String   @map("groom_name") // 신랑 이름
+  groomContact        String?  @map("groom_contact") // 신랑 연락처
+  groomBankAccount    String?  @map("groom_bank_account") // 신랑 계좌번호
+
+
+  // bride 데이터
+  brideName           String   @map("bride_name") // 신부 이름
+  brideContact        String?  @map("bride_contact") // 신부 연락처
+  brideBankAccount    String?  @map("bride_bank_account") // 신부 계좌번호
+
+
+  // groom 혼주 정보
+  groomFatherName     String?  @map("groom_father_name") // 신랑 아버지 이름
+  groomMotherName     String?  @map("groom_mother_name") // 신랑 어머니 이름
+  groomFatherContact  String?  @map("groom_father_contact") // 신랑 아버지 연락처
+  groomMotherContact  String?  @map("groom_mother_contact") // 신랑 어머니 연락처
+  groomFatherBankAccount    String?  @map("groom_father_bank_account") // 신랑 아버지 계좌번호
+  groomMotherBankAccount    String?  @map("groom_mother_bank_account") // 신랑 어머니 계좌번호
+  groomFatherYN            Boolean? @map("groom_father_yn") // 신랑 아버지 참여 여부
+  groomMotherYN            Boolean? @map("groom_mother_yn") // 신랑 어머니 참여 여부
+
+
+// bride 혼주 정보
+  brideFatherName     String?  @map("bride_father_name") // 신부 아버지 이름
+  brideMotherName     String?  @map("bride_mother_name") // 신부 어머니 이름
+  brideFatherContact  String?  @map("bride_father_contact") // 신부 아버지 연락처
+  brideMotherContact  String?  @map("bride_mother_contact") // 신부 어머니 연락처
+  brideFatherBankAccount    String?  @map("bride_father_bank_account") // 신부 아버지 계좌번호
+  brideMotherBankAccount    String?  @map("bride_mother_bank_account") // 신부 어머니 계좌번호
+  brideFatherYN            Boolean? @map("bride_father_yn") // 신부 아버지 참여 여부
+  brideMotherYN            Boolean? @map("bride_mother_yn") // 신부 어머니 참여 여부
+
+
+
+  // 웨딩 정보
+  weddingDate         DateTime @map("wedding_date") // 웨딩 날짜
+  venueName           String   @map("venue_name") // 웨딩 장소 이름
+  venueAddress        String   @map("venue_address") // 웨딩 장소 주소
+  venueLocationX      String?  @map("venue_location_x") // 웨딩 X좌표
+  venueLocationY      String?  @map("venue_location_y") // 웨딩 Y좌표
+
+
+
+  // 청첩장 고유 정보
+  invitationUrl       String   @unique @map("invitation_url") // 청첩장 URL 주소
+  weddingData        String?  @db.LongText @map("wedding_data") // 청첩장 데이터 (JSON)
+
+  createdAt   DateTime @default(now()) @map("created_at") // 생성 날짜
+  updatedAt   DateTime @updatedAt @map("updated_at") // 수정 날짜
+
+  @@map("wedding")
+}
