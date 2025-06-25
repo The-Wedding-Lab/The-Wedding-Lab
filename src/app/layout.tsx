@@ -44,11 +44,11 @@ export default function RootLayout({
         <ThemeProvider>
           <Box
             sx={{
-              maxWidth: "xs",
               minWidth: "375px",
               width: "100%",
               minHeight: "100vh",
               mx: "auto",
+              overflow: "hidden",
             }}
           >
             {children}
