@@ -9,6 +9,9 @@ const globalStyles = css`
     box-sizing: border-box;
     font-family: var(--font-pretendard) !important;
   }
+  body {
+    overflow: hidden; /* 웹뷰 환경에서 전체 스크롤 방지 */
+  }
 `;
 
 const GlobalStyles = () => <Global styles={globalStyles} />;

@@ -47,8 +47,8 @@ export default function RootLayout({
               minWidth: "375px",
               width: "100%",
               minHeight: "100vh",
-              mx: "auto",
               overflow: "hidden",
+              mx: "auto",
             }}
           >
             {children}
