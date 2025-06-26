@@ -1,11 +1,14 @@
 import { create } from "zustand";
+import { Dayjs } from "dayjs";
 
 // 스토어에서 관리할 상태의 타입 정의
 interface WeddingInfo {
   groomName?: string;
   brideName?: string;
-  weddingDateTime?: string | null; // 예식 일시
+  weddingDateTime?: Dayjs | null; // 예식 일시
   location?: string; // 예식 장소
+  groomParentAttendance?: string;
+  brideParentAttendance?: string;
 }
 
 interface SetupData {
@@ -35,6 +38,8 @@ const initialState = {
       brideName: "",
       weddingDateTime: null,
       location: "",
+      groomParentAttendance: "",
+      brideParentAttendance: "",
     },
   },
   step: -1,
@@ -74,7 +79,7 @@ export const useWeddingDataStore = create<WeddingDataState>((set, get) => ({
 
     // 이전 단계로 이동
     prevStep: () => {
-      const { step, setupData } = get();
+      const { step } = get();
 
       if (step === 0) {
         get().actions.reset(); // 1단계(index 0)에서 이전으로 가면 초기화

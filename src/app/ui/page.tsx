@@ -3,15 +3,12 @@
 import AppAccordion from "@/components/ui/AppAccordion";
 import AppButton from "@/components/ui/AppButton";
 import AppChipCheckBox from "@/components/ui/AppChipCheckBox";
-import AppClipCheckBox from "@/components/ui/AppChipCheckBox";
 import AppProgressBar from "@/components/ui/AppProgressBar";
 import AppTextField from "@/components/ui/AppTextField";
 import {
-  CheckBox,
   Close,
   DragIndicator,
   ExpandMore,
-  Menu,
   Send,
 } from "@mui/icons-material";
 import {
@@ -80,7 +77,7 @@ const ProgressBarBox = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const page = () => {
+const Page = () => {
   const [testSelected, setTestSelected] = useState(true);
   const [chipState, setChipState] = useState({
     primary: true,
@@ -384,4 +381,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
