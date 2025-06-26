@@ -15,6 +15,16 @@ export default function AppProgressBar({
       "& .MuiSlider-thumb": {
         display: "none",
       },
+      "& .MuiSlider-track": {
+        backgroundColor: "#0065F8",
+        ...(rest.value === 0 && {
+          color: "transparent",
+          backgroundColor: "transparent",
+        }),
+      },
+      "& .MuiSlider-rail": {
+        backgroundColor: "#D4D6DD",
+      },
     },
 
     ...(Array.isArray(sx) ? sx : [sx]),
