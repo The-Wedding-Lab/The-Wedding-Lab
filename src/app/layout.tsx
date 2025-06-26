@@ -49,6 +49,8 @@ export default function RootLayout({
               minHeight: "100vh",
               overflow: "hidden",
               mx: "auto",
+              userSelect: "none",
+              pb: "50px", // 하단 Navbar 만큼 여백
             }}
           >
             {children}
