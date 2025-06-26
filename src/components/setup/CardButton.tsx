@@ -1,6 +1,5 @@
 import { Box, Button, Card, Typography } from "@mui/material";
 import React from "react";
-import AppButton from "../ui/AppButton";
 
 const CardButton = ({
   title,
@@ -23,8 +22,8 @@ const CardButton = ({
         border: "1px solid transparent",
         borderRadius: "16px",
         overflow: "hidden",
-        height: "100%",
-        width: "80%",
+        height: "40vh",
+        width: "60vw",
         mx: "auto",
       }}
       onClick={onClick}
@@ -32,7 +31,7 @@ const CardButton = ({
       <Box
         sx={{
           width: "100%",
-          height: "200px",
+          height: "40%",
           backgroundColor: "#ddeaff",
           backgroundImage: `url(${imageUrl})`,
           backgroundSize: "cover",
@@ -44,8 +43,8 @@ const CardButton = ({
             sx={{
               position: "relative",
               float: "right",
-              top: 20,
-              right: 20,
+              top: 10,
+              right: 10,
               fontSize: "10px",
               fontWeight: "bold",
               backgroundColor: "#006FFD",

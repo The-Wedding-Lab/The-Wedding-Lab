@@ -44,8 +44,9 @@ export default function RootLayout({
         <ThemeProvider>
           <Box
             sx={{
-              minWidth: "375px",
               width: "100%",
+              minWidth: "375px",
+              maxWidth: "430px",
               minHeight: "100vh",
               overflow: "hidden",
               mx: "auto",

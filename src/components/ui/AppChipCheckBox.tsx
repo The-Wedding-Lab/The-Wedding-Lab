@@ -1,4 +1,3 @@
-import { Check } from "@mui/icons-material";
 import { Chip, ChipProps } from "@mui/material";
 
 export interface AppChipCheckBoxProps

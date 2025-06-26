@@ -2,22 +2,20 @@
 
 import CardButton from "@/components/setup/CardButton";
 import AppButton from "@/components/ui/AppButton";
-import AppProgressBar from "@/components/ui/AppProgressBar";
 import { Box, Typography } from "@mui/material";
 import React from "react";
-
-// 각 단계별 컴포넌트 임포트
 import Step1_WeddingInfo from "@/components/setup/steps/Step1_WeddingInfo";
 import Step2_AIPrompt from "@/components/setup/steps/Step2_AIPrompt";
 import Step3_EditTemplate from "@/components/setup/steps/Step3_EditTemplate";
 import Step4_Preview from "@/components/setup/steps/Step4_Preview";
 import Step5_Domain from "@/components/setup/steps/Step5_Domain";
 import { useWeddingDataStore } from "@/store/weddingDataStore";
+import AppProgressBar from "@/components/ui/AppProgressBar";
 
 const SetupPage = () => {
   const { step, setupData } = useWeddingDataStore();
   const { setTypeAndStart, nextStep, prevStep, setSetupData } =
-    useWeddingDataStore((state: any) => state.actions);
+    useWeddingDataStore((state) => state.actions);
 
   const TOTAL_STEPS = setupData.type === "ai" ? 5 : 4;
   const progressValue = step >= 0 ? ((step + 1) / TOTAL_STEPS) * 100 : 0;
