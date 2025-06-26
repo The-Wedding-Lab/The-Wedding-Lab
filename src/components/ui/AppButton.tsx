@@ -12,6 +12,7 @@ const StyledButton = styled(Button)<AppButtonProps>(
     borderRadius: "12px",
     minHeight: "48px",
     padding: "0 32px",
+    fontWeight: "bold",
     "&:hover": {
       backgroundColor:
         variant === "contained"

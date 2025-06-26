@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
 import ThemeProvider from "../providers/ThemeProvider";
-import globalStyles from "./globalStyles";
 import GlobalStyles from "./globalStyles";
-import { Container } from "@mui/material";
+import { Box } from "@mui/material";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -44,7 +42,19 @@ export default function RootLayout({
       >
         <GlobalStyles />
         <ThemeProvider>
-          <Container maxWidth="xs">{children}</Container>
+          <Box
+            sx={{
+              minWidth: "375px",
+              width: "100%",
+              minHeight: "100vh",
+              overflow: "hidden",
+              mx: "auto",
+              userSelect: "none",
+              pb: "50px", // 하단 Navbar 만큼 여백
+            }}
+          >
+            {children}
+          </Box>
         </ThemeProvider>
       </body>
     </html>
