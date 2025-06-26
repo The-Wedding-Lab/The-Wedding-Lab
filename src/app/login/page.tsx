@@ -1,12 +1,31 @@
 "use client";
-
+import { useState } from "react";
 import Image from "next/image";
 import exampleImg from "../../../public/imageExample.jpg";
 import AppButton from "@/components/ui/AppButton";
 import AppTextField from "@/components/ui/AppTextField";
 import styled from "@emotion/styled";
 
-import visibilityIcon from "../../../public/visibility.png";
+// import visibilityIcon from "../../../public/visibility.png";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+
+const RepresentativeImage = styled.div`
+  /* width: 100%;
+  height: 312px;
+  background-image: url("/imageExample.jpg");
+  background-position: center center;
+  background-repeat: no-repeat; */
+  height: 312px;
+  text-align: center;
+  img {
+    max-width: 500px;
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    margin: 0 auto;
+  }
+`;
 
 const Title = styled.h2`
   font-size: 28px;
@@ -27,10 +46,15 @@ const Password = styled.div`
   position: relative;
   button {
     position: absolute;
+    width: 20px;
+    height: 20px;
     top: 50%;
     right: 14px;
-    margin-top: -8px;
+    margin-top: 2px;
     background-color: transparent;
+    border: 0;
+    svg {
+    }
   }
 `;
 
@@ -39,6 +63,8 @@ const FindPasswordButton = styled.button`
   color: #0065f8;
   font-weight: bold;
   margin-top: 16px;
+  background-color: transparent;
+  border: 0;
 `;
 
 const AuthActions = styled.div`
@@ -58,6 +84,7 @@ const OAuthLogin = styled.div`
   ul {
     display: flex;
     justify-content: center;
+    list-style: none;
     li {
       width: 40px;
       height: 40px;
@@ -67,16 +94,22 @@ const OAuthLogin = styled.div`
       &:last-child {
         margin-right: 0;
       }
+      button {
+        background-color: transparent;
+        border: 0;
+      }
     }
   }
 `;
 
 export default function Login() {
+  const [isVisibilityPw, setIsVisibilityPw] = useState(false);
+
   return (
     <main>
-      <div>
-        <Image src={exampleImg} alt="이미지 예시" width={500} height={500} />
-      </div>
+      <RepresentativeImage>
+        <Image src={exampleImg} alt="이미지 예시" width={100} height={100} />
+      </RepresentativeImage>
       <Section>
         <Title>Login</Title>
         <form action="#">
@@ -91,13 +124,15 @@ export default function Login() {
               비밀번호
             </label>
             <AppTextField placeholder="Password" fullWidth />
-            <button type="button">
-              <Image
-                src={visibilityIcon}
-                alt="비밀번호 가리기"
-                width={16}
-                height={16}
-              />
+            <button
+              type="button"
+              onClick={() => setIsVisibilityPw((prev) => !prev)}
+            >
+              {isVisibilityPw ? (
+                <VisibilityIcon color="disabled" fontSize="small" />
+              ) : (
+                <VisibilityOffIcon color="disabled" fontSize="small" />
+              )}
             </button>
           </Password>
         </form>
