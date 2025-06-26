@@ -15,6 +15,11 @@ const StyledAccordion = styled(Accordion)<AppAccordionProps>(
       backgroundColor: "#EAF2FF",
       borderColor: "#c3daff",
     }),
+    "&::before": {
+      display: "none",
+    },
+    paddingTop: "3px",
+    paddingBottom: "3px",
   })
 );
 

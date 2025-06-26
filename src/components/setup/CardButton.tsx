@@ -23,8 +23,8 @@ const CardButton = ({
         border: "1px solid transparent",
         borderRadius: "16px",
         overflow: "hidden",
-        height: "40vh",
-        width: "60vw",
+        height: "100%",
+        width: "80%",
         mx: "auto",
       }}
       onClick={onClick}
@@ -32,7 +32,7 @@ const CardButton = ({
       <Box
         sx={{
           width: "100%",
-          height: "40%",
+          height: "200px",
           backgroundColor: "#ddeaff",
           backgroundImage: `url(${imageUrl})`,
           backgroundSize: "cover",
@@ -44,8 +44,8 @@ const CardButton = ({
             sx={{
               position: "relative",
               float: "right",
-              top: 10,
-              right: 10,
+              top: 20,
+              right: 20,
               fontSize: "10px",
               fontWeight: "bold",
               backgroundColor: "#006FFD",
