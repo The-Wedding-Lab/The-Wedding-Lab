@@ -7,8 +7,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Box, Typography } from "@mui/material";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import AppButton from "@/components/ui/AppButton";
+import { useRouter } from "next/navigation";
 
 export const OnboardingPage = () => {
+  const router = useRouter();
   return (
     <>
       <Box
@@ -100,7 +102,14 @@ export const OnboardingPage = () => {
           </Typography>
         </Box>
         <Box className="ButtonContainer" my={4}>
-          <AppButton variant="contained" color="highlight" fullWidth>
+          <AppButton
+            variant="contained"
+            color="highlight"
+            fullWidth
+            onClick={() => {
+              router.push("/setup");
+            }}
+          >
             다음
           </AppButton>
         </Box>
