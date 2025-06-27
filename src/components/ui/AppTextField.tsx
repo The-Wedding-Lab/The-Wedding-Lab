@@ -9,6 +9,7 @@ import {
 export type AppTextFieldProps = TextFieldProps & {
   success?: boolean;
   labelText?: string;
+  labelTextStyle?: React.CSSProperties;
 };
 
 const StyledTextField = styled(TextField, {
@@ -40,7 +41,7 @@ const StyledTextField = styled(TextField, {
 }));
 
 export default function AppTextField(props: AppTextFieldProps) {
-  const { labelText, ...rest } = props;
+  const { labelText, labelTextStyle, ...rest } = props;
 
   return (
     <Box>
@@ -51,6 +52,7 @@ export default function AppTextField(props: AppTextFieldProps) {
             fontSize: "15px",
             fontWeight: 500,
             color: "#333",
+            ...labelTextStyle,
           }}
         >
           {labelText}

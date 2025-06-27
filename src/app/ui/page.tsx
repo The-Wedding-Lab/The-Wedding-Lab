@@ -199,6 +199,11 @@ const Page = () => {
             value="startAdornment,endAdornment"
           />
           <AppTextField labelText="labelText" value="labelText" />
+          <AppTextField
+            labelText="labelText"
+            labelTextStyle={{ color: "red" }}
+            value="labelTextStyle"
+          />
         </ContentBox>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
           <AppTextField fullWidth label="fullWidth" />
