@@ -22,8 +22,8 @@ const CardButton = ({
         border: "1px solid transparent",
         borderRadius: "16px",
         overflow: "hidden",
-        height: "40vh",
-        width: "60vw",
+        height: "330px",
+        width: "70%",
         mx: "auto",
       }}
       onClick={onClick}
