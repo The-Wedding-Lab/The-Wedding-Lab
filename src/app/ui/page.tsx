@@ -5,12 +5,7 @@ import AppButton from "@/components/ui/AppButton";
 import AppChipCheckBox from "@/components/ui/AppChipCheckBox";
 import AppProgressBar from "@/components/ui/AppProgressBar";
 import AppTextField from "@/components/ui/AppTextField";
-import {
-  Close,
-  DragIndicator,
-  ExpandMore,
-  Send,
-} from "@mui/icons-material";
+import { Close, DragIndicator, ExpandMore, Send } from "@mui/icons-material";
 import {
   AccordionDetails,
   AccordionSummary,
@@ -203,6 +198,7 @@ const Page = () => {
             }}
             value="startAdornment,endAdornment"
           />
+          <AppTextField labelText="labelText" value="labelText" />
         </ContentBox>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
           <AppTextField fullWidth label="fullWidth" />

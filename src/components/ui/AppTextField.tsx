@@ -1,7 +1,14 @@
-import { TextField, TextFieldProps, styled } from "@mui/material";
+import {
+  Box,
+  TextField,
+  TextFieldProps,
+  Typography,
+  styled,
+} from "@mui/material";
 
 export type AppTextFieldProps = TextFieldProps & {
   success?: boolean;
+  labelText?: string;
 };
 
 const StyledTextField = styled(TextField, {
@@ -33,5 +40,23 @@ const StyledTextField = styled(TextField, {
 }));
 
 export default function AppTextField(props: AppTextFieldProps) {
-  return <StyledTextField {...props} />;
+  const { labelText, ...rest } = props;
+
+  return (
+    <Box>
+      {labelText && (
+        <Typography
+          sx={{
+            marginBottom: "6px",
+            fontSize: "15px",
+            fontWeight: 500,
+            color: "#333",
+          }}
+        >
+          {labelText}
+        </Typography>
+      )}
+      <StyledTextField {...rest} />
+    </Box>
+  );
 }
