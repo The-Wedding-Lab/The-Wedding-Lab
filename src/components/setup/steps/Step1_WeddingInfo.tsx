@@ -6,7 +6,10 @@ import {
   AccordionSummary,
   Box,
   Divider,
+  FormGroup,
   FormControl,
+  FormControlLabel,
+  Switch,
   InputLabel,
   MenuItem,
   Select,
@@ -14,7 +17,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { ExpandMore, KeyboardArrowDown } from "@mui/icons-material";
+import {
+  ExpandMore,
+  FilterVintage,
+  KeyboardArrowDown,
+} from "@mui/icons-material";
 import { MobileDateTimePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import AppTextField from "@/components/ui/AppTextField";
@@ -47,14 +54,14 @@ const Step1_WeddingInfo = ({ data, setData }: StepProps) => {
         <AppAccordion>
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#666666">신랑 정보</Typography>
+              <Typography color="#333333">신랑 정보</Typography>
             </Box>
           </AccordionSummary>
           <AccordionDetails>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <AppTextField label="신랑 성함" fullWidth />
-              <AppTextField label="신랑 연락처" fullWidth />
-              <AppTextField label="신랑 계좌번호" fullWidth />
+              <AppTextField labelText="성함" fullWidth />
+              <AppTextField labelText="연락처" fullWidth />
+              <AppTextField labelText="계좌번호" fullWidth />
             </Box>
           </AccordionDetails>
         </AppAccordion>
@@ -62,14 +69,14 @@ const Step1_WeddingInfo = ({ data, setData }: StepProps) => {
         <AppAccordion>
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#666666">신부 정보</Typography>
+              <Typography color="#333333">신부 정보</Typography>
             </Box>
           </AccordionSummary>
           <AccordionDetails>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <AppTextField label="신부 성함" fullWidth />
-              <AppTextField label="신부 연락처" fullWidth />
-              <AppTextField label="신부 계좌번호" fullWidth />
+              <AppTextField labelText="성함" fullWidth />
+              <AppTextField labelText="연락처" fullWidth />
+              <AppTextField labelText="계좌번호" fullWidth />
             </Box>
           </AccordionDetails>
         </AppAccordion>
@@ -98,11 +105,11 @@ const Step1_WeddingInfo = ({ data, setData }: StepProps) => {
           }}
           slots={{
             textField: (params) => (
-              <TextField
+              <AppTextField
                 {...params}
-                label="예식 일시"
+                placeholder="Click"
+                labelText="예식 일시"
                 fullWidth
-                placeholder=""
                 onClick={() => setIsPickerOpen(true)}
                 slotProps={{
                   input: {
@@ -125,7 +132,8 @@ const Step1_WeddingInfo = ({ data, setData }: StepProps) => {
         />
         {/* 예식 장소 daum Map */}
         <AppTextField
-          label="예식 장소"
+          labelText="예식 장소"
+          placeholder="Click"
           fullWidth
           value={data.weddingInfo?.location || ""}
           onClick={() => setAddrDialogOpen(true)}
@@ -139,64 +147,62 @@ const Step1_WeddingInfo = ({ data, setData }: StepProps) => {
         <AppAccordion>
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#666666">신랑혼주정보</Typography>
+              <Typography color="#333333">신랑혼주정보</Typography>
             </Box>
           </AccordionSummary>
           <AccordionDetails>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <AppTextField label="아버님 성함" fullWidth />
-              <AppTextField label="아버님 연락처" fullWidth />
-              <AppTextField label="아버님 계좌번호" fullWidth />
-              <FormControl>
-                <InputLabel>참석여부</InputLabel>
+              <AppTextField labelText="아버님 성함" fullWidth />
+              <AppTextField labelText="아버님 연락처" fullWidth />
+              <AppTextField labelText="아버님 계좌번호" fullWidth />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <FormGroup>
+                  <FormControlLabel control={<Switch />} label="고인표시" />
+                </FormGroup>
                 <Select
+                  size="small"
+                  defaultValue="icon"
                   sx={{
+                    width: "65px",
                     borderRadius: "12px",
                   }}
-                  fullWidth
-                  value={data.weddingInfo?.groomParentAttendance || ""}
-                  label="참석여부"
-                  onChange={(e) =>
-                    setData({
-                      weddingInfo: {
-                        ...data.weddingInfo,
-                        groomParentAttendance: e.target.value,
-                      },
-                    })
-                  }
-                  defaultValue="참석"
                 >
-                  <MenuItem value="참석">참석</MenuItem>
-                  <MenuItem value="불참">불참</MenuItem>
+                  <MenuItem value="icon">꽃</MenuItem>
+                  <MenuItem value="故">故</MenuItem>
                 </Select>
-              </FormControl>
+              </Box>
               <Divider />
-              <AppTextField label="어머님 성함" fullWidth />
-              <AppTextField label="어머님 전화번호" fullWidth />
-              <AppTextField label="어머님 계좌번호" fullWidth />
-              <FormControl>
-                <InputLabel>참석여부</InputLabel>
+              <AppTextField labelText="어머님 성함" fullWidth />
+              <AppTextField labelText="어머님 전화번호" fullWidth />
+              <AppTextField labelText="어머님 계좌번호" fullWidth />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <FormGroup>
+                  <FormControlLabel control={<Switch />} label="고인표시" />
+                </FormGroup>
                 <Select
+                  size="small"
+                  defaultValue="icon"
                   sx={{
+                    width: "65px",
                     borderRadius: "12px",
                   }}
-                  fullWidth
-                  value={data.weddingInfo?.groomParentAttendance || ""}
-                  label="참석여부"
-                  onChange={(e) =>
-                    setData({
-                      weddingInfo: {
-                        ...data.weddingInfo,
-                        groomParentAttendance: e.target.value,
-                      },
-                    })
-                  }
-                  defaultValue="참석"
                 >
-                  <MenuItem value="참석">참석</MenuItem>
-                  <MenuItem value="불참">불참</MenuItem>
+                  <MenuItem value="icon">꽃</MenuItem>
+                  <MenuItem value="故">故</MenuItem>
                 </Select>
-              </FormControl>
+              </Box>
             </Box>
           </AccordionDetails>
         </AppAccordion>
@@ -204,64 +210,62 @@ const Step1_WeddingInfo = ({ data, setData }: StepProps) => {
         <AppAccordion>
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#666666">신부혼주정보</Typography>
+              <Typography color="#333333">신부혼주정보</Typography>
             </Box>
           </AccordionSummary>
           <AccordionDetails>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <AppTextField label="아버님 성함" fullWidth />
-              <AppTextField label="아버님 연락처" fullWidth />
-              <AppTextField label="아버님 계좌번호" fullWidth />
-              <FormControl>
-                <InputLabel>참석여부</InputLabel>
+              <AppTextField labelText="아버님 성함" fullWidth />
+              <AppTextField labelText="아버님 연락처" fullWidth />
+              <AppTextField labelText="아버님 계좌번호" fullWidth />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <FormGroup>
+                  <FormControlLabel control={<Switch />} label="고인표시" />
+                </FormGroup>
                 <Select
+                  size="small"
+                  defaultValue="icon"
                   sx={{
+                    width: "65px",
                     borderRadius: "12px",
                   }}
-                  fullWidth
-                  value={data.weddingInfo?.groomParentAttendance || ""}
-                  label="참석여부"
-                  onChange={(e) =>
-                    setData({
-                      weddingInfo: {
-                        ...data.weddingInfo,
-                        groomParentAttendance: e.target.value,
-                      },
-                    })
-                  }
-                  defaultValue="참석"
                 >
-                  <MenuItem value="참석">참석</MenuItem>
-                  <MenuItem value="불참">불참</MenuItem>
+                  <MenuItem value="icon">꽃</MenuItem>
+                  <MenuItem value="故">故</MenuItem>
                 </Select>
-              </FormControl>
+              </Box>
               <Divider />
-              <AppTextField label="어머님 성함" fullWidth />
-              <AppTextField label="어머님 전화번호" fullWidth />
-              <AppTextField label="어머님 계좌번호" fullWidth />
-              <FormControl>
-                <InputLabel>참석여부</InputLabel>
+              <AppTextField labelText="어머님 성함" fullWidth />
+              <AppTextField labelText="어머님 전화번호" fullWidth />
+              <AppTextField labelText="어머님 계좌번호" fullWidth />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <FormGroup>
+                  <FormControlLabel control={<Switch />} label="고인표시" />
+                </FormGroup>
                 <Select
+                  size="small"
+                  defaultValue="icon"
                   sx={{
+                    width: "65px",
                     borderRadius: "12px",
                   }}
-                  fullWidth
-                  value={data.weddingInfo?.groomParentAttendance || ""}
-                  label="참석여부"
-                  onChange={(e) =>
-                    setData({
-                      weddingInfo: {
-                        ...data.weddingInfo,
-                        groomParentAttendance: e.target.value,
-                      },
-                    })
-                  }
-                  defaultValue="참석"
                 >
-                  <MenuItem value="참석">참석</MenuItem>
-                  <MenuItem value="불참">불참</MenuItem>
+                  <MenuItem value="icon">꽃</MenuItem>
+                  <MenuItem value="故">故</MenuItem>
                 </Select>
-              </FormControl>
+              </Box>
             </Box>
           </AccordionDetails>
         </AppAccordion>

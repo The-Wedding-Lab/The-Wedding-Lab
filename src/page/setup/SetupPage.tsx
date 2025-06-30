@@ -74,7 +74,7 @@ const SetupPage = () => {
           my={2}
           display="flex"
           flexDirection="column"
-          gap={2}
+          gap={4}
         >
           <CardButton
             title="생성형 AI로 만들기"
