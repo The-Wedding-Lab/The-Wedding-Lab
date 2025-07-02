@@ -14,6 +14,7 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Switch,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -334,6 +335,41 @@ const UiPage = () => {
                 </AppButton>
               </Box>
             </AccordionDetails>
+          </AppAccordion>
+        </ProgressBarBox>
+        <ProgressBarBox>
+          <AppAccordion sx={{ width: "100%" }} selected={testSelected}>
+            <AccordionSummary
+              expandIcon={<ExpandMore />}
+              sx={{
+                "& .MuiAccordionSummary-content": {
+                  m: 0,
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: "16px" }}
+                >
+                  <DragIndicator />
+                  <Typography>스위치</Typography>
+                </Box>
+                <Switch
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setTestSelected(!testSelected);
+                  }}
+                />
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>내용</AccordionDetails>
           </AppAccordion>
         </ProgressBarBox>
       </CardWrapper>
