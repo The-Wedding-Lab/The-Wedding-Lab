@@ -138,7 +138,14 @@ export default function Login() {
         </form>
         <FindPasswordButton type="button">비밀번호 찾기</FindPasswordButton>
         <AuthActions>
-          <AppButton color="highlight" variant="contained" fullWidth>
+          <AppButton
+            color="highlight"
+            variant="contained"
+            fullWidth
+            onClick={() => {
+              window.ReactNativeWebView?.postMessage("loginSuccess"); // 리액트네이티브 로그인 테스트용
+            }}
+          >
             로그인
           </AppButton>
           <AppButton color="highlight" variant="text" fullWidth>
