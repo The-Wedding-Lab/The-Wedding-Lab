@@ -138,6 +138,26 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         naverMap: true, // 네이버맵 표시 여부
         tmap: true, // T맵 표시 여부
         googleMap: true, // 구글맵 표시 여부
+        naviInfo: {
+          enabled: false, // 기본값 false
+          text: "", // 글
+        },
+        busInfo: {
+          enabled: false, // 기본값 false
+          text: "", // 글
+        },
+        subwayInfo: {
+          enabled: false, // 기본값 false
+          text: "", // 글
+        },
+        parkingInfo: {
+          enabled: false, // 기본값 false
+          text: "", // 글
+        },
+        etcInfo: {
+          enabled: false, // 기본값 false
+          text: "", // 글
+        },
       },
       // 계좌 정보
       accountInfo: {
