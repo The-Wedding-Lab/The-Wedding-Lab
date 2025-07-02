@@ -1,19 +1,11 @@
 import { create } from "zustand";
 import { Dayjs } from "dayjs";
 
-// 스토어에서 관리할 상태의 타입 정의
-interface WeddingInfo {
-  groomName?: string;
-  brideName?: string;
-  weddingDateTime?: Dayjs | null; // 예식 일시
-  location?: string; // 예식 장소
-  groomParentAttendance?: string;
-  brideParentAttendance?: string;
-}
-
 interface SetupData {
   type: "ai" | "template" | "";
-  weddingInfo: WeddingInfo;
+  step: number;
+  weddingInfo: any;
+  [key: string]: any;
 }
 
 interface WeddingDataState {
@@ -30,19 +22,139 @@ interface WeddingDataState {
 }
 
 // 초기 상태값
-const initialState = {
-  setupData: {
-    type: "" as const,
-    weddingInfo: {
-      groomName: "",
-      brideName: "",
-      weddingDateTime: null,
-      location: "",
-      groomParentAttendance: "",
-      brideParentAttendance: "",
-    },
-  },
+const initialState: Omit<WeddingDataState, "actions"> = {
+  // Setup Step
   step: -1,
+  setupData: {
+    // 모청 정보
+    weddingInfo: {
+      domain: "", // 도메인
+      type: "", // AI 혹은 템플릿
+      date: "", // 예식일
+      time: "", // 예식 시간
+      location: {
+        // 예식 장소
+        searchAddress: "", // 주소
+        venueName: "", // 장소명
+        hall: "", // 홀
+      },
+
+      // 신랑 데이터 (신랑 + 혼주)
+      groom: {
+        name: "", // 이름 (성+이름 혹은 이름만 가능)
+        tel: "", // 전화번호
+        account: "", // 계좌번호
+        // 혼주
+        father: {
+          name: "", // 아버지 이름
+          tel: "", // 전화번호
+          account: "", // 계좌번호
+          deceased: false, // 고인 여부
+          deceasedIcon: "", // 고인 아이콘 타입
+        },
+        mother: {
+          name: "", // 어머니 이름
+          tel: "", // 전화번호
+          account: "", // 계좌번호
+          deceased: false, // 고인 여부
+          deceasedIcon: "", // 고인 아이콘 타입
+        },
+      },
+
+      // 신부 데이터 (신부 + 혼주)
+      bride: {
+        name: "", // 이름 (성+이름 혹은 이름만 가능)
+        tel: "", // 전화번호
+        account: "", // 계좌번호
+        // 혼주
+        father: {
+          name: "", // 아버지 이름
+          tel: "", // 전화번호
+          account: "", // 계좌번호
+          deceased: false, // 고인 여부
+          deceasedIcon: "", // 고인 아이콘 타입
+        },
+        mother: {
+          name: "", // 어머니 이름
+          tel: "", // 전화번호
+          account: "", // 계좌번호
+          deceased: false, // 고인 여부
+          deceasedIcon: "", // 고인 아이콘 타입
+        },
+      },
+
+      //커버 디자인
+      coverDesign: {
+        enabled: true, // 기본값 true
+        image: "", // 이미지
+        text: "", // 이미지 아래 텍스트
+      },
+      //폰트
+      font: "",
+
+      // 모시는 글
+      introMessage: {
+        enabled: true,
+        text: "", // 글
+        image: {
+          // 이미지
+          position: "top", // "top" or "bottom"
+          url: "",
+        },
+      },
+
+      familyInfo: {
+        enabled: true, // 기본값 true
+        telEnabled: true, // 전화번호 표시 여부
+        accountEnabled: true, // 계좌번호 표시 여부
+      },
+      calendar: {
+        enabled: true, // 기본값 true
+        view: {
+          calendar: true, // 캘린더 표시 여부
+          countdown: true, // 카운트다운 표시 여부
+          dDay: true, // D-Day 표시 여부
+        },
+      },
+      gallery: {
+        enabled: true, // 기본값 true
+        images: [], // 이미지 배열
+        displayType: "swipe", // 표시 타입 (swipe, paging, grid)
+        zoomOnClick: true, // 클릭 시 확대 여부
+      },
+      mapDirections: {
+        enabled: true, // 기본값 true
+        kakaoMap: true, // 카카오맵 표시 여부
+        naverMap: true, // 네이버맵 표시 여부
+        tmap: true, // T맵 표시 여부
+        googleMap: true, // 구글맵 표시 여부
+      },
+      accountInfo: {
+        enabled: false, // 기본값 false
+        kakaopayLink: "", // 카카오페이 링크
+      },
+      endingMessage: {
+        enabled: false, // 기본값 false
+        text: "", // 글
+        image: {
+          // 이미지
+          position: "top", // "top" or "bottom"
+          url: "",
+        },
+      },
+      // openGraph 영역 (카카오톡 공유 )
+      og: {
+        title: "",
+        description: "",
+        image: "", // 800x400 이상, 5MB 이내
+        imageWidth: 800,
+        imageHeight: 400,
+        url: "",
+        siteName: "",
+        locale: "ko-KR",
+      },
+    },
+  } as SetupData,
 };
 
 export const useWeddingDataStore = create<WeddingDataState>((set, get) => ({
