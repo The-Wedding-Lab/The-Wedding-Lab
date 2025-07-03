@@ -18,7 +18,7 @@ import React, { useState } from "react";
 import AppButton from "@/components/ui/AppButton";
 import AppTextField from "@/components/ui/AppTextField";
 import AppChipCheckBox from "@/components/ui/AppChipCheckBox";
-import { useWeddingDataStore } from "@/store/weddingDataStore";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import {
   DndContext,
   closestCenter,
@@ -153,19 +153,18 @@ const FamilyInfoAccordion = ({
   isDragOverlay?: boolean;
 }) => {
   const { setupData, actions } = useWeddingDataStore();
-  const familyInfo = setupData.weddingInfo?.familyInfo || {
-    enabled: false,
-    telEnabled: true,
-    accountEnabled: true,
-  };
+  const familyInfo = setupData.weddingInfo?.pages?.familyInfo;
 
   const updateFamilyInfo = (updates: any) => {
     actions.setSetupData({
       weddingInfo: {
         ...setupData.weddingInfo,
-        familyInfo: {
-          ...familyInfo,
-          ...updates,
+        pages: {
+          ...setupData.weddingInfo.pages,
+          familyInfo: {
+            ...familyInfo,
+            ...updates,
+          },
         },
       },
     });
@@ -175,7 +174,7 @@ const FamilyInfoAccordion = ({
     <SelectableAccordion
       id={id}
       title="양가 가족 안내"
-      selected={familyInfo.enabled}
+      selected={familyInfo?.enabled}
       onSelect={() => updateFamilyInfo({ enabled: !familyInfo.enabled })}
       isDragOverlay={isDragOverlay}
     >
@@ -184,7 +183,7 @@ const FamilyInfoAccordion = ({
           {...FormControlLabelProps}
           control={
             <Switch
-              checked={familyInfo.telEnabled}
+              checked={familyInfo?.telEnabled}
               onChange={(e) =>
                 updateFamilyInfo({ telEnabled: e.target.checked })
               }
@@ -198,7 +197,7 @@ const FamilyInfoAccordion = ({
           {...FormControlLabelProps}
           control={
             <Switch
-              checked={familyInfo.accountEnabled}
+              checked={familyInfo?.accountEnabled}
               onChange={(e) =>
                 updateFamilyInfo({ accountEnabled: e.target.checked })
               }
@@ -222,21 +221,18 @@ const MapAccordion = ({
   isDragOverlay?: boolean;
 }) => {
   const { setupData, actions } = useWeddingDataStore();
-  const mapDirections = setupData.weddingInfo?.mapDirections || {
-    enabled: false,
-    kakaoMap: true,
-    naverMap: true,
-    tmap: true,
-    googleMap: true,
-  };
+  const mapDirections = setupData.weddingInfo?.pages?.mapDirections;
 
   const updateMapDirections = (updates: any) => {
     actions.setSetupData({
       weddingInfo: {
         ...setupData.weddingInfo,
-        mapDirections: {
-          ...mapDirections,
-          ...updates,
+        pages: {
+          ...setupData.weddingInfo.pages,
+          mapDirections: {
+            ...mapDirections,
+            ...updates,
+          },
         },
       },
     });
@@ -419,19 +415,18 @@ const GalleryAccordion = ({
   isDragOverlay?: boolean;
 }) => {
   const { setupData, actions } = useWeddingDataStore();
-  const gallery = setupData.weddingInfo?.gallery || {
-    enabled: false,
-    displayType: "swipe",
-    zoomOnClick: true,
-  };
+  const gallery = setupData.weddingInfo?.pages?.gallery;
 
   const updateGallery = (updates: any) => {
     actions.setSetupData({
       weddingInfo: {
         ...setupData.weddingInfo,
-        gallery: {
-          ...gallery,
-          ...updates,
+        pages: {
+          ...setupData.weddingInfo.pages,
+          gallery: {
+            ...gallery,
+            ...updates,
+          },
         },
       },
     });

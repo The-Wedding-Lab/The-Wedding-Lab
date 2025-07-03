@@ -9,7 +9,7 @@ import Step2_AIPrompt from "@/components/setup/steps/Step2_AIPrompt";
 import Step3_EditTemplate from "@/components/setup/steps/Step3_EditTemplate";
 import Step4_Preview from "@/components/setup/steps/Step4_Preview";
 import Step5_Domain from "@/components/setup/steps/Step5_Domain";
-import { useWeddingDataStore } from "@/store/weddingDataStore";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import AppProgressBar from "@/components/ui/AppProgressBar";
 
 const SetupPage = () => {
