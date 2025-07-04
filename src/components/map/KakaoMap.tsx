@@ -8,7 +8,7 @@ declare global {
 }
 
 // 카카오 자바스크립트 키 (본인 키로 교체)
-const KAKAO_MAP_API_KEY = "9017f102cb8d3203b30c201150ad9";
+const KAKAO_MAP_API_KEY = "458613b2d0c9402b3f8177c596794c90";
 
 export default function KakaoMap() {
   // 지도를 렌더링할 div 참조
