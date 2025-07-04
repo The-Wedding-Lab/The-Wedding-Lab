@@ -32,6 +32,9 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
     if (pages) {
       const allEnabledPages = Object.entries(pages)
         .filter(([key, value]: [string, any]) => value?.enabled === true)
+        .sort(
+          ([, a], [, b]) => ((a as any)?.order || 0) - ((b as any)?.order || 0)
+        ) // order 순서대로 정렬
         .reduce((acc, [key, value]) => {
           acc[key] = value;
           return acc;

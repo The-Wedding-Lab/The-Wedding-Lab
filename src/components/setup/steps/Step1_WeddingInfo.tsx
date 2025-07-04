@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import {
+  DragHandle,
   ExpandMore,
   FilterVintage,
   KeyboardArrowDown,
@@ -28,6 +29,7 @@ import AppTextField from "@/components/ui/AppTextField";
 import DaumPostcode from "react-daum-postcode";
 import AppAccordion from "@/components/ui/AppAccordion";
 import AppButton from "@/components/ui/AppButton";
+import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
 
 interface StepProps {
   data: any;
@@ -272,65 +274,14 @@ const Step1_WeddingInfo = ({ data, setData }: StepProps) => {
       </Box>
 
       {/* 주소 검색 SwipeableDrawer */}
-      <SwipeableDrawer
+      <AppSwipeableDrawer
         anchor="bottom"
         open={addrDialogOpen}
         onOpen={() => setAddrDialogOpen(true)}
         onClose={() => setAddrDialogOpen(false)}
-        sx={{
-          zIndex: 999,
-          "& .MuiDrawer-paper": {
-            width: "100%",
-            maxHeight: "90vh",
-            borderTopLeftRadius: "16px",
-            borderTopRightRadius: "16px",
-            pb: "30px",
-          },
-        }}
+        title="주소 검색"
       >
         <Box sx={{ width: "100%", maxHeight: "90vh", overflow: "auto" }}>
-          <Box
-            className="drawer-header"
-            sx={{
-              position: "sticky",
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 2000,
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                p: 2,
-                bgcolor: "background.paper",
-                zIndex: 1,
-                position: "relative",
-              }}
-            >
-              <KeyboardArrowDown
-                onClick={() => setAddrDialogOpen(false)}
-                sx={{
-                  cursor: "pointer",
-                  color: "#666",
-                  position: "absolute",
-                  left: 16,
-                  zIndex: 2,
-                }}
-              />
-              <Typography
-                fontSize={18}
-                fontWeight={600}
-                sx={{
-                  width: "100%",
-                  textAlign: "center",
-                }}
-              >
-                주소 검색
-              </Typography>
-            </Box>
-          </Box>
           <Box sx={{ p: 2 }}>
             <DaumPostcode
               style={{ width: "100%", height: "420px" }}
@@ -347,7 +298,7 @@ const Step1_WeddingInfo = ({ data, setData }: StepProps) => {
             />
           </Box>
         </Box>
-      </SwipeableDrawer>
+      </AppSwipeableDrawer>
     </>
   );
 };

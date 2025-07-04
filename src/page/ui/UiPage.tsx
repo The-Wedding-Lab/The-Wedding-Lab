@@ -5,6 +5,7 @@ import AppButton from "@/components/ui/AppButton";
 import AppChipCheckBox from "@/components/ui/AppChipCheckBox";
 import AppProgressBar from "@/components/ui/AppProgressBar";
 import AppTextField from "@/components/ui/AppTextField";
+import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
 import { Close, DragIndicator, ExpandMore, Send } from "@mui/icons-material";
 import {
   AccordionDetails,
@@ -82,6 +83,8 @@ const UiPage = () => {
     natural: true,
     dark: true,
   });
+  const [drawerOpen1, setDrawerOpen1] = useState(false);
+  const [drawerOpen2, setDrawerOpen2] = useState(false);
 
   const handleChipChange = (key: keyof typeof chipState) => {
     setChipState((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -413,6 +416,28 @@ const UiPage = () => {
             disabled
           />
         </ContentBox>
+      </CardWrapper>
+      <CardWrapper title="AppSwipeableDrawer">
+        <ContentBox>
+          <AppButton
+            color="highlight"
+            variant="contained"
+            onClick={() => setDrawerOpen1(true)}
+            fullWidth
+          >
+            Open
+          </AppButton>
+        </ContentBox>
+        <AppSwipeableDrawer
+          open={drawerOpen1}
+          onOpen={() => setDrawerOpen1(true)}
+          onClose={() => setDrawerOpen1(false)}
+          title="title"
+        >
+          <Typography sx={{ textAlign: "center" }}>
+            아직 anchor = bottom만 사용
+          </Typography>
+        </AppSwipeableDrawer>
       </CardWrapper>
     </>
   );
