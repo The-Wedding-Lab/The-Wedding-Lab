@@ -14,9 +14,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/projects/The-Wedding-Lab
-            git stash
-            git pull origin develop
-            chmod +x ./deploy-dev.sh
-            ./deploy-dev.sh
+                  script: |
+          cd /home/projects/The-Wedding-Lab
+          git fetch origin
+          git reset --hard origin/develop
+          chmod +x ./deploy-dev.sh
+          ./deploy-dev.sh
