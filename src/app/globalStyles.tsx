@@ -9,6 +9,9 @@ const globalStyles = css`
     box-sizing: border-box;
     font-family: var(--font-pretendard) !important;
   }
+  ul {
+    list-style: none;
+  }
 `;
 
 const GlobalStyles = () => <Global styles={globalStyles} />;
