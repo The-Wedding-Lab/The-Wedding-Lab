@@ -47,7 +47,9 @@ model  wedding {
   groomFatherBankAccount    String?  @map("groom_father_bank_account") // 신랑 아버지 계좌번호
   groomMotherBankAccount    String?  @map("groom_mother_bank_account") // 신랑 어머니 계좌번호
   groomFatherYN            Boolean? @map("groom_father_yn") // 신랑 아버지 참여 여부
+  groomFatherIcon          String?  @map("groom_father_icon") // 신랑 아버지 아이콘
   groomMotherYN            Boolean? @map("groom_mother_yn") // 신랑 어머니 참여 여부
+  groomMotherIcon          String?  @map("groom_mother_icon") // 신랑 어머니 아이콘
 
 
 // bride 혼주 정보
@@ -58,7 +60,9 @@ model  wedding {
   brideFatherBankAccount    String?  @map("bride_father_bank_account") // 신부 아버지 계좌번호
   brideMotherBankAccount    String?  @map("bride_mother_bank_account") // 신부 어머니 계좌번호
   brideFatherYN            Boolean? @map("bride_father_yn") // 신부 아버지 참여 여부
+  brideFatherIcon          String?  @map("bride_father_icon") // 신부 아버지 아이콘
   brideMotherYN            Boolean? @map("bride_mother_yn") // 신부 어머니 참여 여부
+  brideMotherIcon          String?  @map("bride_mother_icon") // 신부 어머니 아이콘 
 
 
 

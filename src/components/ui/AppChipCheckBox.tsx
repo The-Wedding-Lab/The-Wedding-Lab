@@ -1,4 +1,3 @@
-import { Check } from "@mui/icons-material";
 import { Chip, ChipProps } from "@mui/material";
 
 export interface AppChipCheckBoxProps
@@ -9,12 +8,14 @@ export interface AppChipCheckBoxProps
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   color?: "primary" | "secondary" | "highlight" | "natural" | "dark";
+  radioMode?: boolean;
 }
 
 export default function AppChipCheckBox({
   checked,
   onCheckedChange,
   color = "primary",
+  radioMode = false,
   sx,
   ...rest
 }: AppChipCheckBoxProps) {
@@ -23,7 +24,12 @@ export default function AppChipCheckBox({
       {...rest}
       color={color}
       variant={checked ? "filled" : "outlined"}
-      onClick={() => onCheckedChange(!checked)}
+      onClick={() => {
+        if (radioMode && checked) {
+          return;
+        }
+        onCheckedChange(!checked);
+      }}
       sx={[
         {
           ...(!checked && {

@@ -12,19 +12,19 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 const Title = styled.h2`
-  font-size: 22px;
+  font-size: 28px;
   font-weight: bold;
   margin-bottom: 24px;
 `;
 
-const Section = styled.section`
-  background-color: #fff;
-  padding: 40px 24px;
-  max-width: 400px;
-  margin: 40px auto;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-`;
+// const Section = styled.section`
+//   background-color: #fff;
+//   padding: 40px 24px;
+//   max-width: 400px;
+//   margin: 40px auto;
+//   border-radius: 16px;
+//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+// `;
 
 const Field = styled.div`
   margin-bottom: 20px;
@@ -72,11 +72,11 @@ export default function SignupPage() {
 
   return (
     <main>
-      <Section>
+      <section>
         <Title>회원가입</Title>
         <form onSubmit={handleSubmit}>
           <Field>
-            <Label htmlFor="signup-name">Name</Label>
+            <Label htmlFor="signup-name">이름</Label>
             <AppTextField
               id="signup-name"
               placeholder="이름"
@@ -87,7 +87,7 @@ export default function SignupPage() {
             />
           </Field>
           <Field>
-            <Label htmlFor="signup-email">Email Address</Label>
+            <Label htmlFor="signup-email">이메일 주소</Label>
             <AppTextField
               id="signup-email"
               placeholder="name@email.com"
@@ -99,7 +99,7 @@ export default function SignupPage() {
             />
           </Field>
           <Field>
-            <Label htmlFor="signup-password">Password</Label>
+            <Label htmlFor="signup-password">비밀번호</Label>
             <AppTextField
               id="signup-password"
               placeholder="비밀번호"
@@ -178,7 +178,7 @@ export default function SignupPage() {
             로그인
           </a>
         </BottomText>
-      </Section>
+      </section>
     </main>
   );
 }

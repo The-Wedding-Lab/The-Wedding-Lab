@@ -13,8 +13,13 @@ const StyledAccordion = styled(Accordion)<AppAccordionProps>(
     boxShadow: "none",
     ...(selected && {
       backgroundColor: "#EAF2FF",
-      borderColor: "#c3daff",
+      borderColor: "#90baff",
     }),
+    "&::before": {
+      display: "none",
+    },
+    paddingTop: "3px",
+    paddingBottom: "3px",
   })
 );
 
