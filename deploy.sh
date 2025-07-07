@@ -8,7 +8,7 @@ git config pull.rebase false
 
 # Node.js 버전 설정
 echo "🔧 Setting Node.js version..."
-nvm use 22
+nvm use node 22
 
 # Node.js 버전 확인
 echo "📋 Node.js Version:"
