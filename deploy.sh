@@ -3,9 +3,13 @@
 echo "🚀 Starting Production Deployment..."
 
 # 직접 경로 설정 (서버에서 확인된 경로)
-NODE_CMD="/root/.nvm/versions/node/v22.17.0/bin/node"
-NPM_CMD="/root/.nvm/versions/node/v22.17.0/bin/npm"
-PM2_CMD="/root/.nvm/versions/node/v22.17.0/bin/pm2"
+NODE_PATH="/root/.nvm/versions/node/v22.17.0/bin"
+NODE_CMD="$NODE_PATH/node"
+NPM_CMD="$NODE_PATH/npm"
+PM2_CMD="$NODE_PATH/pm2"
+
+# PATH에 Node.js 경로 추가
+export PATH="$NODE_PATH:$PATH"
 
 # Git 설정
 echo "🔧 Configuring Git..."
