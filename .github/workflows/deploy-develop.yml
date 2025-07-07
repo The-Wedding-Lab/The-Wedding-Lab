@@ -7,6 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: SSH and deploy
         uses: appleboy/ssh-action@master
@@ -14,12 +15,12 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  script_stop: true
-        script: |
-          bash -l -c "
-          cd /home/projects/The-Wedding-Lab
-          git fetch origin
-          git reset --hard origin/develop
-          chmod +x ./deploy-dev.sh
-          ./deploy-dev.sh
-          "
+          script_stop: true
+          script: |
+            bash -l -c "
+            cd /home/projects/The-Wedding-Lab
+            git fetch origin
+            git reset --hard origin/develop
+            chmod +x ./deploy-dev.sh
+            ./deploy-dev.sh
+            "
