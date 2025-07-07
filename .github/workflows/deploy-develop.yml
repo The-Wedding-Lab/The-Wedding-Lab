@@ -15,4 +15,11 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: source ~/.bashrc || true; source ~/.profile || true; cd /home/projects/The-Wedding-Lab; git fetch origin; git reset --hard origin/develop; chmod +x ./deploy-dev.sh; bash ./deploy-dev.sh
+          script: |
+            source ~/.bashrc || true
+            source ~/.profile || true
+            cd /home/projects/The-Wedding-Lab
+            git fetch origin
+            git reset --hard origin/develop
+            chmod +x ./deploy-dev.sh
+            bash ./deploy-dev.sh
