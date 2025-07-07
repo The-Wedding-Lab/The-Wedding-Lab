@@ -37,3 +37,12 @@ next-env.d.ts
 
 /src/generated/prisma
 .env
+
+# PM2
+.pm2
+logs
+*.log
+pids
+*.pid
+*.seed
+*.pid.lock
