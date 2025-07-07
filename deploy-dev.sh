@@ -6,11 +6,7 @@ echo "🚀 Starting Development Deployment..."
 echo "🔧 Configuring Git..."
 git config pull.rebase false
 
-# Node.js 버전 설정
-echo "🔧 Setting Node.js version..."
-nvm use node 22
-
-# Node.js 버전 확인
+# Node.js 버전 확인 (시스템 설치된 버전)
 echo "📋 Node.js Version:"
 node --version
 
@@ -43,5 +39,5 @@ pm2 save
 echo "✅ Deployment Status:"
 pm2 status
 
-echo "🎉 Development deployment completed successfully!"
+echo "🎉 Production deployment completed successfully!"
 echo "🌐 Application is running on: http://localhost:3004" 

@@ -1,16 +1,12 @@
 #!/bin/bash
 
-echo "🚀 Starting Production Deployment..."
+echo "🚀 Starting Development Deployment..."
 
 # Git 설정
 echo "🔧 Configuring Git..."
 git config pull.rebase false
 
-# Node.js 버전 설정
-echo "🔧 Setting Node.js version..."
-nvm use node 22
-
-# Node.js 버전 확인
+# Node.js 버전 확인 (시스템 설치된 버전)
 echo "📋 Node.js Version:"
 node --version
 
