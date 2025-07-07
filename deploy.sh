@@ -6,6 +6,10 @@ echo "🚀 Starting Production Deployment..."
 echo "🔧 Configuring Git..."
 git config pull.rebase false
 
+# Node.js 버전 설정
+echo "🔧 Setting Node.js version..."
+nvm use 22
+
 # Node.js 버전 확인
 echo "📋 Node.js Version:"
 node --version
