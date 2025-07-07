@@ -38,7 +38,7 @@ $PM2_CMD delete the-wedding-lab || true
 
 # PM2로 애플리케이션 시작
 echo "▶️ Starting application with PM2..."
-$PM2_CMD start ecosystem.config.js
+$PM2_CMD start node_modules/next/dist/bin/next --name "the-wedding-lab" --interpreter="/root/.nvm/versions/node/v22.17.0/bin/node" -- start -p 3003
 
 # PM2 설정 저장
 echo "💾 Saving PM2 configuration..."
