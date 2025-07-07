@@ -36,6 +36,10 @@ echo "🛑 Stopping existing PM2 process..."
 $PM2_CMD stop the-wedding-lab-dev || true
 $PM2_CMD delete the-wedding-lab-dev || true
 
+# 로그 디렉토리 생성
+echo "📁 Creating logs directory..."
+mkdir -p logs
+
 # PM2로 애플리케이션 시작
 echo "▶️ Starting application with PM2..."
 $PM2_CMD start ecosystem.config.dev.js
