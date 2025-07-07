@@ -2,6 +2,16 @@
 
 echo "🚀 Starting Development Deployment..."
 
+# 환경 설정 강제 로드
+echo "🔧 Loading environment..."
+source ~/.bashrc 2>/dev/null || true
+source ~/.profile 2>/dev/null || true
+
+# NVM 환경 로드
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
 # Git 설정
 echo "🔧 Configuring Git..."
 git config pull.rebase false
