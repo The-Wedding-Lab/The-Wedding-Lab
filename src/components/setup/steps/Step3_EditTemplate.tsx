@@ -43,6 +43,8 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
+import UploadForm from "@/components/uploadForm/UploadForm";
+import ImageGallery from "@/components/uploadForm/ImageGallery";
 
 interface SelectableAccordionProps {
   title: string;
@@ -437,6 +439,14 @@ const GalleryAccordion = ({
     });
   };
 
+  //이미지 업로드 상태 관리
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+
+  const handleUpload = async (files: File[]) => {
+    console.log("업로드 시작 추후에 API 연동:", files);
+    setUploadedImages(files);
+  };
+
   return (
     <SelectableAccordion
       id={id}
@@ -445,20 +455,26 @@ const GalleryAccordion = ({
       onSelect={() => updateGallery({ enabled: !gallery.enabled })}
       isDragOverlay={isDragOverlay}
     >
-      <Box
-        sx={{
-          background: "#f0f0f0",
-          width: "100%",
-          height: "150px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: "12px",
-          cursor: "pointer",
-        }}
-      >
-        파일 업로드 영역
-      </Box>
+      <UploadForm
+        title="갤러리 이미지 업로드"
+        description="최대 10개까지 업로드 가능합니다."
+        onUpload={handleUpload}
+        accept="image/*"
+        multiple={true}
+        maxFiles={10}
+      />
+      {uploadedImages.length > 0 && (
+        <ImageGallery
+          images={uploadedImages}
+          onImageRemove={(index: number) => {
+            const newImages = uploadedImages.filter((_, i) => i !== index);
+            setUploadedImages(newImages);
+          }}
+          mode="grid"
+          imageHeight={100}
+        />
+      )}
+
       {!isDragOverlay && (
         <>
           <Box
@@ -538,6 +554,14 @@ const CoverDesignAccordion = ({
     });
   };
 
+  //이미지 업로드 상태 관리
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+
+  const handleUpload = async (files: File[]) => {
+    console.log("업로드 시작 추후에 API 연동:", files);
+    setUploadedImages(files);
+  };
+
   return (
     <SelectableAccordion
       id={id}
@@ -546,24 +570,30 @@ const CoverDesignAccordion = ({
       onSelect={() => updateCoverDesign({ enabled: !coverDesign?.enabled })}
       isDragOverlay={isDragOverlay}
     >
-      <Box
-        sx={{
-          background: "#f0f0f0",
-          width: "100%",
-          height: "150px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: "12px",
-          cursor: "pointer",
-        }}
-      >
-        커버 이미지 업로드 영역
-      </Box>
+      <UploadForm
+        title="커버 이미지 업로드"
+        description="커버 이미지를 업로드하세요"
+        onUpload={handleUpload}
+        accept="image/*"
+        multiple={false}
+        maxFiles={1}
+      />
+      {uploadedImages.length > 0 && (
+        <ImageGallery
+          images={uploadedImages}
+          onImageRemove={(index: number) => {
+            const newImages = uploadedImages.filter((_, i) => i !== index);
+            setUploadedImages(newImages);
+          }}
+          mode="single"
+          imageHeight={200}
+        />
+      )}
       {!isDragOverlay && (
         <AppTextField
+          sx={{ mt: 2 }}
           fullWidth
-          placeholder="이미지 아래 텍스트를 입력하세요"
+          placeholder="텍스트를 입력하세요"
           value={coverDesign?.text || ""}
           onChange={(e) => updateCoverDesign({ text: e.target.value })}
         />
@@ -600,6 +630,14 @@ const IntroMessageAccordion = ({
     });
   };
 
+  //이미지 업로드 상태 관리
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+
+  const handleUpload = async (files: File[]) => {
+    console.log("업로드 시작 추후에 API 연동:", files);
+    setUploadedImages(files);
+  };
+
   return (
     <SelectableAccordion
       id={id}
@@ -608,7 +646,27 @@ const IntroMessageAccordion = ({
       onSelect={() => updateIntroMessage({ enabled: !introMessage?.enabled })}
       isDragOverlay={isDragOverlay}
     >
+      <UploadForm
+        title="모시는 글 이미지 업로드"
+        description="모시는 글 이미지를 업로드하세요"
+        onUpload={handleUpload}
+        accept="image/*"
+        multiple={false}
+        maxFiles={1}
+      />
+      {uploadedImages.length > 0 && (
+        <ImageGallery
+          images={uploadedImages}
+          onImageRemove={(index: number) => {
+            const newImages = uploadedImages.filter((_, i) => i !== index);
+            setUploadedImages(newImages);
+          }}
+          mode="single"
+          imageHeight={200}
+        />
+      )}
       <AppTextField
+        sx={{ mt: 2 }}
         multiline
         rows={4}
         fullWidth
@@ -616,6 +674,7 @@ const IntroMessageAccordion = ({
         value={introMessage?.text || ""}
         onChange={(e) => updateIntroMessage({ text: e.target.value })}
       />
+
       {!isDragOverlay && (
         <>
           <Box
@@ -647,21 +706,6 @@ const IntroMessageAccordion = ({
               }
               radioMode={true}
             />
-          </Box>
-          <Box
-            sx={{
-              background: "#f0f0f0",
-              width: "100%",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "12px",
-              cursor: "pointer",
-              mt: 2,
-            }}
-          >
-            이미지 업로드 영역
           </Box>
         </>
       )}
@@ -860,6 +904,14 @@ const EndingMessageAccordion = ({
     });
   };
 
+  //이미지 업로드 상태 관리
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+
+  const handleUpload = async (files: File[]) => {
+    console.log("업로드 시작 추후에 API 연동:", files);
+    setUploadedImages(files);
+  };
+
   return (
     <SelectableAccordion
       id={id}
@@ -868,7 +920,27 @@ const EndingMessageAccordion = ({
       onSelect={() => updateEndingMessage({ enabled: !endingMessage?.enabled })}
       isDragOverlay={isDragOverlay}
     >
+      <UploadForm
+        title="마지막 글 이미지 업로드"
+        description="마지막 글 이미지를 업로드하세요"
+        onUpload={handleUpload}
+        accept="image/*"
+        multiple={false}
+        maxFiles={1}
+      />
+      {uploadedImages.length > 0 && (
+        <ImageGallery
+          images={uploadedImages}
+          onImageRemove={(index: number) => {
+            const newImages = uploadedImages.filter((_, i) => i !== index);
+            setUploadedImages(newImages);
+          }}
+          mode="single"
+          imageHeight={200}
+        />
+      )}
       <AppTextField
+        sx={{ mt: 2 }}
         multiline
         rows={4}
         fullWidth
@@ -907,21 +979,6 @@ const EndingMessageAccordion = ({
               }
               radioMode={true}
             />
-          </Box>
-          <Box
-            sx={{
-              background: "#f0f0f0",
-              width: "100%",
-              height: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "12px",
-              cursor: "pointer",
-              mt: 2,
-            }}
-          >
-            이미지 업로드 영역
           </Box>
         </>
       )}

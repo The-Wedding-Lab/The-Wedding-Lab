@@ -11,6 +11,7 @@ import Step4_Preview from "@/components/setup/steps/Step4_Preview";
 import Step5_Domain from "@/components/setup/steps/Step5_Domain";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import AppProgressBar from "@/components/ui/AppProgressBar";
+import { animateScroll as scroll } from "react-scroll";
 
 const SetupPage = () => {
   const { step, setupData } = useWeddingDataStore();
@@ -20,13 +21,21 @@ const SetupPage = () => {
   const TOTAL_STEPS = setupData.type === "ai" ? 5 : 4;
   const progressValue = step >= 0 ? ((step + 1) / TOTAL_STEPS) * 100 : 0;
 
+  const scrollToTop = () => {
+    scroll.scrollToTop({
+      duration: 0,
+      delay: 0,
+      smooth: "linear",
+    });
+  };
+
   // 현재 step에 맞는 컴포넌트를 렌더링하는 함수
   const renderStepContent = () => {
     // AI 플로우
     if (setupData.type === "ai") {
       switch (step) {
         case 0:
-          return <Step1_WeddingInfo data={setupData} setData={setSetupData} />;
+          return <Step1_WeddingInfo />;
         case 1:
           return <Step2_AIPrompt data={setupData} setData={setSetupData} />;
         case 2:
@@ -43,7 +52,7 @@ const SetupPage = () => {
     else if (setupData.type === "template") {
       switch (step) {
         case 0:
-          return <Step1_WeddingInfo data={setupData} setData={setSetupData} />;
+          return <Step1_WeddingInfo />;
         case 1:
           return <Step3_EditTemplate data={setupData} setData={setSetupData} />;
         case 2:
@@ -110,7 +119,7 @@ const SetupPage = () => {
         <AppProgressBar value={progressValue} />
       </Box>
 
-      <Box sx={{ flex: 1 }}>{renderStepContent()}</Box>
+      <Box sx={{ flex: 1, minHeight: "70vh" }}>{renderStepContent()}</Box>
 
       <Box
         className="NavigationContainer"
@@ -123,7 +132,10 @@ const SetupPage = () => {
           variant="outlined"
           color="natural"
           fullWidth
-          onClick={prevStep}
+          onClick={() => {
+            scrollToTop();
+            prevStep();
+          }}
         >
           {step === 0 ? "처음으로" : "이전"}
         </AppButton>
@@ -131,10 +143,12 @@ const SetupPage = () => {
           variant="contained"
           color="highlight"
           fullWidth
+          disabled={step === 0 && !setupData.step1Valid}
           onClick={() => {
             if (step === TOTAL_STEPS - 1) {
               console.log("생성하기");
             } else {
+              scrollToTop();
               nextStep();
             }
           }}

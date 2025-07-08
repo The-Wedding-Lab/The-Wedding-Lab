@@ -18,6 +18,23 @@ interface WeddingDataState {
     nextStep: () => void;
     prevStep: () => void;
     reset: () => void;
+    // 기본 설정 액션들
+    setWeddingType: (type: "ai" | "template") => void;
+    setWeddingDomain: (domain: string) => void;
+    // 웨딩 정보 관련 세분화된 액션들
+    setWeddingDateTime: (dateTime: string) => void;
+    setWeddingLocation: (
+      location: Partial<SetupData["weddingInfo"]["location"]>
+    ) => void;
+    // 신랑/신부 정보 관련 액션들
+    setGroomInfo: (groom: Partial<SetupData["weddingInfo"]["groom"]>) => void;
+    setBrideInfo: (bride: Partial<SetupData["weddingInfo"]["bride"]>) => void;
+    // 페이지 설정 관련 액션들
+    setPageConfig: (pageKey: string, config: any) => void;
+    // 오픈그래프 설정 액션
+    setOpenGraphInfo: (og: Partial<SetupData["weddingInfo"]["og"]>) => void;
+    // 폰트 설정 액션
+    setWeddingFont: (font: string) => void;
   };
 }
 
@@ -30,13 +47,14 @@ const initialState: Omit<WeddingDataState, "actions"> = {
     weddingInfo: {
       domain: "", // 도메인
       type: "", // AI 혹은 템플릿
-      date: "", // 예식일
-      time: "", // 예식 시간
+      weddingDateTime: "", // 예식일시
       location: {
         // 예식 장소
         searchAddress: "", // 주소
         venueName: "", // 장소명
         hall: "", // 홀
+        lat: 0, // 위도
+        lng: 0, // 경도
       },
 
       // 신랑 데이터 (신랑 + 혼주)
@@ -50,14 +68,14 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           tel: "", // 전화번호
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "", // 고인 아이콘 타입
+          deceasedIcon: "icon", // 고인 아이콘 타입
         },
         mother: {
           name: "", // 어머니 이름
           tel: "", // 전화번호
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "", // 고인 아이콘 타입
+          deceasedIcon: "icon", // 고인 아이콘 타입
         },
       },
 
@@ -72,14 +90,14 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           tel: "", // 전화번호
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "", // 고인 아이콘 타입
+          deceasedIcon: "icon", // 고인 아이콘 타입
         },
         mother: {
           name: "", // 어머니 이름
           tel: "", // 전화번호
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "", // 고인 아이콘 타입
+          deceasedIcon: "icon", // 고인 아이콘 타입
         },
       },
       //폰트
@@ -238,5 +256,117 @@ export const useWeddingDataStore = create<WeddingDataState>((set, get) => ({
 
     // 전체 상태 초기화
     reset: () => set({ ...initialState }),
+
+    // 기본 설정 액션들
+    setWeddingType: (type) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            type,
+          },
+        },
+      })),
+    setWeddingDomain: (domain) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            domain,
+          },
+        },
+      })),
+    // 웨딩 정보 관련 세분화된 액션들
+    setWeddingDateTime: (dateTime) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            weddingDateTime: dateTime,
+          },
+        },
+      })),
+    setWeddingLocation: (location) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            location: {
+              ...state.setupData.weddingInfo.location,
+              ...location,
+            },
+          },
+        },
+      })),
+    // 신랑/신부 정보 관련 액션들
+    setGroomInfo: (groom) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            groom: {
+              ...state.setupData.weddingInfo.groom,
+              ...groom,
+            },
+          },
+        },
+      })),
+    setBrideInfo: (bride) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            bride: {
+              ...state.setupData.weddingInfo.bride,
+              ...bride,
+            },
+          },
+        },
+      })),
+    // 페이지 설정 관련 액션들
+    setPageConfig: (pageKey, config) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          pages: {
+            ...state.setupData.pages,
+            [pageKey]: {
+              ...state.setupData.pages[pageKey],
+              ...config,
+            },
+          },
+        },
+      })),
+    // 오픈그래프 설정 액션
+    setOpenGraphInfo: (og) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            og: {
+              ...state.setupData.weddingInfo.og,
+              ...og,
+            },
+          },
+        },
+      })),
+    // 폰트 설정 액션
+    setWeddingFont: (font) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            font,
+          },
+        },
+      })),
   },
 }));
