@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import { DragIndicator } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppButton from "@/components/ui/AppButton";
 import AppTextField from "@/components/ui/AppTextField";
 import AppChipCheckBox from "@/components/ui/AppChipCheckBox";
@@ -72,12 +72,13 @@ const SelectableAccordion = ({
     transform,
     transition,
     isDragging,
+    isOver,
   } = useSortable({ id, disabled: isDragOverlay });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.3 : 1,
+    transition: isDragging ? "none" : transition, // 드래그 중에는 transition 비활성화
+    opacity: isDragging ? 0.5 : 1,
     cursor: isDragging ? "grabbing" : "default",
   };
 
@@ -87,6 +88,11 @@ const SelectableAccordion = ({
         sx={{
           width: "100%",
           backgroundColor: isDragOverlay ? "background.paper" : "transparent",
+          ...(isDragging && {
+            border: "2px dashed #006ffd",
+            borderRadius: "12px",
+            transition: "border-color 0.2s ease",
+          }),
         }}
         selected={selected}
       >
@@ -1004,36 +1010,57 @@ interface StepProps {
 
 const Step3_EditTemplate = ({ data, setData }: StepProps) => {
   const { setupData, actions } = useWeddingDataStore();
-  const [items, setItems] = useState([
-    "coverDesign",
-    "introMessage",
-    "familyInfo",
-    "calendar",
-    "gallery",
-    "mapDirections",
-    "accountInfo",
-    "endingMessage",
-  ]); // 아코디언 순서 관리
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  // store의 order 값을 기반으로 초기 순서 설정
+  // 드래그 상태를 추적하는 ref
+  const isDraggingRef = React.useRef(false);
+
+  // Step4_Preview와 동일한 방식으로 스토어에서 직접 순서 계산
+  const [sortedItems, setSortedItems] = useState<string[]>([]);
+
+  // store의 order 값을 기반으로 순서 설정 (드래그 중이 아닐 때만)
   React.useEffect(() => {
+    if (isDraggingRef.current) {
+      console.log("🚫 드래그 중이므로 useEffect 스킵");
+      return;
+    }
+
+    console.log("🔄 useEffect 트리거 - 스토어 order 변경 감지");
     const pages = setupData.weddingInfo?.pages;
     if (pages) {
-      const sortedItems = [
-        { id: "coverDesign", order: pages.coverDesign?.order || 0 },
-        { id: "introMessage", order: pages.introMessage?.order || 1 },
-        { id: "familyInfo", order: pages.familyInfo?.order || 2 },
-        { id: "calendar", order: pages.calendar?.order || 3 },
-        { id: "gallery", order: pages.gallery?.order || 4 },
-        { id: "mapDirections", order: pages.mapDirections?.order || 5 },
-        { id: "accountInfo", order: pages.accountInfo?.order || 6 },
-        { id: "endingMessage", order: pages.endingMessage?.order || 7 },
-      ]
-        .sort((a, b) => a.order - b.order)
-        .map((item) => item.id);
+      const allPages = [
+        ["coverDesign", pages.coverDesign],
+        ["introMessage", pages.introMessage],
+        ["familyInfo", pages.familyInfo],
+        ["calendar", pages.calendar],
+        ["gallery", pages.gallery],
+        ["mapDirections", pages.mapDirections],
+        ["accountInfo", pages.accountInfo],
+        ["endingMessage", pages.endingMessage],
+      ];
 
-      setItems(sortedItems);
+      const sortedPageNames = allPages
+        .sort(
+          ([, a], [, b]) => ((a as any)?.order || 0) - ((b as any)?.order || 0)
+        )
+        .map(([key]) => key as string);
+
+      console.log("스토어에서 새로운 순서 설정:", {
+        currentItems: sortedItems,
+        newSortedItems: sortedPageNames,
+        orders: {
+          coverDesign: pages.coverDesign?.order,
+          introMessage: pages.introMessage?.order,
+          familyInfo: pages.familyInfo?.order,
+          calendar: pages.calendar?.order,
+          gallery: pages.gallery?.order,
+          mapDirections: pages.mapDirections?.order,
+          accountInfo: pages.accountInfo?.order,
+          endingMessage: pages.endingMessage?.order,
+        },
+      });
+
+      setSortedItems(sortedPageNames);
     }
   }, [
     setupData.weddingInfo?.pages?.coverDesign?.order,
@@ -1057,27 +1084,66 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
     })
   );
 
+  // 드래그 중일 때 스크롤 방지
+  useEffect(() => {
+    if (activeId) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [activeId]);
+
   function handleDragStart(event: DragStartEvent) {
+    console.log("드래그 시작:", {
+      activeId: event.active.id,
+      currentItems: sortedItems,
+    });
+    isDraggingRef.current = true;
     setActiveId(event.active.id as string);
   }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
-    if (active.id !== over?.id) {
-      const newItems = setItems((items) => {
+    console.log("드래그 종료:", {
+      activeId: active.id,
+      overId: over?.id,
+      currentItems: sortedItems,
+      willUpdate: active.id !== over?.id && over,
+    });
+
+    if (active.id !== over?.id && over) {
+      console.log("아이템 순서 변경 시작");
+
+      setSortedItems((items) => {
         const oldIndex = items.indexOf(active.id as string);
-        const newIndex = items.indexOf(over?.id as string);
+        const newIndex = items.indexOf(over.id as string);
 
-        return arrayMove(items, oldIndex, newIndex);
-      });
+        console.log("인덱스 정보:", {
+          activeId: active.id,
+          overId: over.id,
+          oldIndex,
+          newIndex,
+          currentItems: items,
+        });
 
-      // store의 order 값도 업데이트
-      setItems((newItems) => {
+        if (oldIndex === -1 || newIndex === -1) {
+          console.log("잘못된 인덱스, 변경 취소");
+          return items;
+        }
+
+        const newItems = arrayMove(items, oldIndex, newIndex);
+        console.log("새로운 순서:", newItems);
+
+        // store의 order 값도 즉시 업데이트
         const updatedPages = { ...setupData.weddingInfo?.pages };
 
         newItems.forEach((itemId, index) => {
-          const pageKey = itemId;
+          const pageKey = itemId as keyof typeof updatedPages;
           if (updatedPages[pageKey]) {
             updatedPages[pageKey] = {
               ...updatedPages[pageKey],
@@ -1086,16 +1152,32 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
           }
         });
 
-        actions.setSetupData({
-          weddingInfo: {
-            ...setupData.weddingInfo,
-            pages: updatedPages,
-          },
-        });
+        console.log("스토어 업데이트 준비:", updatedPages);
+
+        // 비동기 업데이트로 state 초기화 방지
+        setTimeout(() => {
+          console.log("스토어 업데이트 실행");
+          actions.setSetupData({
+            weddingInfo: {
+              ...setupData.weddingInfo,
+              pages: updatedPages,
+            },
+          });
+        }, 0);
 
         return newItems;
       });
+    } else {
+      console.log("순서 변경 없음");
     }
+
+    console.log("드래그 완료, activeId 초기화");
+
+    // 드래그 완료 후 잠시 후에 ref를 false로 설정 (스토어 업데이트 완료 후)
+    setTimeout(() => {
+      isDraggingRef.current = false;
+      console.log("드래그 상태 해제, useEffect 재활성화");
+    }, 100);
 
     setActiveId(null);
   }
@@ -1136,9 +1218,12 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <SortableContext items={items} strategy={verticalListSortingStrategy}>
+          <SortableContext
+            items={sortedItems}
+            strategy={verticalListSortingStrategy}
+          >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {items.map((id) => renderAccordion(id))}
+              {sortedItems.map((id) => renderAccordion(id))}
             </Box>
           </SortableContext>
           <DragOverlay>

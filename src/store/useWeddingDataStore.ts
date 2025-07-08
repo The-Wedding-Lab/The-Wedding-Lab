@@ -115,7 +115,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         // 모시는 글
         introMessage: {
           enabled: true,
-          order: 0, // 순서
+          order: 1, // 순서
           text: "", // 글
           image: {
             // 이미지
@@ -126,14 +126,14 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         // 양가 가족 안내
         familyInfo: {
           enabled: true, // 기본값 true
-          order: 0, // 순서
+          order: 2, // 순서
           telEnabled: true, // 전화번호 표시 여부
           accountEnabled: true, // 계좌번호 표시 여부
         },
         // 캘린더
         calendar: {
           enabled: true, // 기본값 true
-          order: 0, // 순서
+          order: 3, // 순서
           view: {
             calendar: true, // 캘린더 표시 여부
             countdown: true, // 카운트다운 표시 여부
@@ -143,7 +143,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         // 갤러리
         gallery: {
           enabled: true, // 기본값 true
-          order: 0, // 순서
+          order: 4, // 순서
           images: [], // 이미지 배열
           displayType: "swipe", // 표시 타입 (swipe, paging, grid)
           zoomOnClick: true, // 클릭 시 확대 여부
@@ -151,7 +151,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         // 오시는 길
         mapDirections: {
           enabled: true, // 기본값 true
-          order: 0, // 순서
+          order: 5, // 순서
           kakaoMap: true, // 카카오맵 표시 여부
           naverMap: true, // 네이버맵 표시 여부
           tmap: true, // T맵 표시 여부
@@ -180,13 +180,13 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         // 계좌 정보
         accountInfo: {
           enabled: false, // 기본값 false
-          order: 0, // 순서
+          order: 6, // 순서
           kakaopayLink: "", // 카카오페이 링크
         },
         // 마지막 글
         endingMessage: {
           enabled: false, // 기본값 false
-          order: 0, // 순서
+          order: 7, // 순서
           text: "", // 글
           image: {
             // 이미지
