@@ -1,25 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import exampleImg from "../../../public/imageExample.jpg";
 import AppButton from "@/components/ui/AppButton";
 import AppTextField from "@/components/ui/AppTextField";
 import styled from "@emotion/styled";
 
-// import visibilityIcon from "../../../public/visibility.png";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { Button, Divider, IconButton, InputAdornment } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useSnackbarStore } from "@/store/useSnackbarStore";
+import { useLogin } from "@/hooks/useAuth";
 
 const RepresentativeImage = styled.div`
-  /* width: 100%;
-  height: 312px;
-  background-image: url("/imageExample.jpg");
-  background-position: center center;
-  background-repeat: no-repeat; */
-  height: 312px;
+  height: 200px;
   text-align: center;
   img {
-    max-width: 500px;
     width: 100%;
     height: 100%;
     display: inline-block;
@@ -30,32 +27,16 @@ const RepresentativeImage = styled.div`
 const Title = styled.h2`
   font-size: 28px;
   font-weight: bold;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 `;
 
 const Section = styled.section`
   background-color: #fff;
-  padding: 40px 24px;
+  padding: 18px;
 `;
 
 const Email = styled.div`
   margin-bottom: 16px;
-`;
-
-const Password = styled.div`
-  position: relative;
-  button {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 50%;
-    right: 14px;
-    margin-top: 2px;
-    background-color: transparent;
-    border: 0;
-    svg {
-    }
-  }
 `;
 
 const FindPasswordButton = styled.button`
@@ -72,8 +53,6 @@ const AuthActions = styled.div`
 `;
 
 const OAuthLogin = styled.div`
-  padding-top: 24px;
-  border-top: 1px solid #d4d6dd;
   p {
     font-size: 12px;
     color: #71727a;
@@ -90,7 +69,6 @@ const OAuthLogin = styled.div`
       height: 40px;
       margin-right: 12px;
       text-align: center;
-      /* background-color: azure; */
       &:last-child {
         margin-right: 0;
       }
@@ -104,54 +82,127 @@ const OAuthLogin = styled.div`
 
 export default function Login() {
   const [isVisibilityPw, setIsVisibilityPw] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const { showStackSnackbar } = useSnackbarStore();
+
+  // useLogin 훅을 컴포넌트 레벨에서 호출
+  const loginMutation = useLogin();
+
+  const handlePasswordSubmit = (e?: React.KeyboardEvent | React.FormEvent) => {
+    if (!email.trim() || !password.trim()) {
+      showStackSnackbar("이메일과 비밀번호를 입력해주세요.", {
+        variant: "error",
+      });
+      return;
+    }
+
+    // mutation 실행
+    loginMutation.mutate(
+      {
+        user_email: email,
+        user_pw: password,
+      },
+      {
+        onSuccess: (data) => {
+          console.log("로그인 성공", data);
+
+          // 로그인 성공 시 메인 페이지로 이동 (React Native는 자체 네비게이션 처리)
+          if (!window.ReactNativeWebView) {
+            router.push("/");
+          }
+        },
+      }
+    );
+  };
 
   return (
-    <main>
+    <main
+      style={{
+        minHeight: "100vh",
+        scrollBehavior: "smooth",
+        position: "relative",
+        overflowAnchor: "none",
+      }}
+    >
       <RepresentativeImage>
-        <Image src={exampleImg} alt="이미지 예시" width={100} height={100} />
+        <Image src={exampleImg} alt="이미지 예시" width={500} height={200} />
       </RepresentativeImage>
       <Section>
-        <Title>Login</Title>
-        <form action="#">
-          <Email>
-            <label htmlFor="email" className="sr-only">
-              이메일 주소
-            </label>
-            <AppTextField placeholder="Email Address" fullWidth />
-          </Email>
-          <Password>
-            <label htmlFor="password" className="sr-only">
-              비밀번호
-            </label>
-            <AppTextField placeholder="Password" fullWidth />
-            <button
-              type="button"
-              onClick={() => setIsVisibilityPw((prev) => !prev)}
-            >
-              {isVisibilityPw ? (
-                <VisibilityIcon color="disabled" fontSize="small" />
-              ) : (
-                <VisibilityOffIcon color="disabled" fontSize="small" />
-              )}
-            </button>
-          </Password>
-        </form>
-        <FindPasswordButton type="button">비밀번호 찾기</FindPasswordButton>
+        <Title>로그인</Title>
+        <Email>
+          <AppTextField
+            name="email"
+            placeholder="이메일"
+            fullWidth
+            labelText="이메일"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            required
+            inputMode="email"
+            enterKeyHint="next"
+          />
+        </Email>
+
+        <AppTextField
+          name="password"
+          placeholder="비밀번호"
+          fullWidth
+          labelText="비밀번호"
+          type={isVisibilityPw ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handlePasswordSubmit(e)}
+          required
+          enterKeyHint="done"
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="비밀번호 보기/숨기기"
+                    onClick={() => setIsVisibilityPw((v) => !v)}
+                  >
+                    {isVisibilityPw ? (
+                      <VisibilityIcon color="disabled" fontSize="small" />
+                    ) : (
+                      <VisibilityOffIcon color="disabled" fontSize="small" />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+
         <AuthActions>
           <AppButton
             color="highlight"
             variant="contained"
             fullWidth
-            onClick={() => {
-              window.ReactNativeWebView?.postMessage("loginSuccess"); // 리액트네이티브 로그인 테스트용
-            }}
+            onClick={() => handlePasswordSubmit()}
+            disabled={
+              !email.trim() || !password.trim() || loginMutation.isPending
+            }
           >
-            로그인
+            {loginMutation.isPending ? "로그인 중..." : "로그인"}
           </AppButton>
-          <AppButton color="highlight" variant="text" fullWidth>
+          <AppButton
+            color="highlight"
+            variant="text"
+            fullWidth
+            onClick={() => router.push("/signup")}
+          >
             회원가입
           </AppButton>
         </AuthActions>
+        <Divider
+          sx={{
+            mb: 2,
+          }}
+        />
         <OAuthLogin>
           <p>SNS 간편 로그인</p>
           <ul>

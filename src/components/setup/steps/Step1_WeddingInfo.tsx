@@ -31,7 +31,7 @@ import AppAccordion from "@/components/ui/AppAccordion";
 import AppButton from "@/components/ui/AppButton";
 import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
-import { formatPhoneNumber } from "@/hook/utils";
+import { formatPhoneNumber } from "@/hooks/utils";
 
 // 카카오맵 타입 선언
 declare global {

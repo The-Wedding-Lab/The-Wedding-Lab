@@ -5,6 +5,7 @@ import {
   Typography,
   styled,
 } from "@mui/material";
+import { forwardRef } from "react";
 
 export type AppTextFieldProps = TextFieldProps & {
   success?: boolean;
@@ -40,25 +41,31 @@ const StyledTextField = styled(TextField, {
   },
 }));
 
-export default function AppTextField(props: AppTextFieldProps) {
-  const { labelText, labelTextStyle, ...rest } = props;
+const AppTextField = forwardRef<HTMLInputElement, AppTextFieldProps>(
+  (props, ref) => {
+    const { labelText, labelTextStyle, ...rest } = props;
 
-  return (
-    <Box>
-      {labelText && (
-        <Typography
-          sx={{
-            marginBottom: "6px",
-            fontSize: "15px",
-            fontWeight: 500,
-            color: "#333",
-            ...labelTextStyle,
-          }}
-        >
-          {labelText}
-        </Typography>
-      )}
-      <StyledTextField {...rest} />
-    </Box>
-  );
-}
+    return (
+      <Box>
+        {labelText && (
+          <Typography
+            sx={{
+              marginBottom: "6px",
+              fontSize: "15px",
+              fontWeight: 500,
+              color: "#333",
+              ...labelTextStyle,
+            }}
+          >
+            {labelText}
+          </Typography>
+        )}
+        <StyledTextField inputRef={ref} {...rest} />
+      </Box>
+    );
+  }
+);
+
+AppTextField.displayName = "AppTextField";
+
+export default AppTextField;
