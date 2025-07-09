@@ -7,6 +7,7 @@ NODE_PATH="/root/.nvm/versions/node/v22.17.0/bin"
 NODE_CMD="$NODE_PATH/node"
 NPM_CMD="$NODE_PATH/npm"
 PM2_CMD="$NODE_PATH/pm2"
+NPX_CMD="$NODE_PATH/npx"
 
 # PATH에 Node.js 경로 추가
 export PATH="$NODE_PATH:$PATH"
@@ -22,6 +23,10 @@ $NODE_CMD --version
 # NPM 버전 확인
 echo "📋 NPM Version:"
 $NPM_CMD --version
+
+# prisma generate
+echo "🔧 Generating Prisma client..."
+$NPX_CMD prisma generate
 
 # 의존성 설치
 echo "📦 Installing dependencies..."
