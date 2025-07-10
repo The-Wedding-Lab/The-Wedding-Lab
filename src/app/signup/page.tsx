@@ -8,41 +8,40 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import { Button, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useSnackbarStore } from "@/store/useSnackbarStore";
+import { useSignup } from "@/hooks/useAuth";
 
 const Title = styled.h2`
-  font-size: 22px;
+  font-size: 28px;
   font-weight: bold;
   margin-bottom: 24px;
 `;
 
-const Section = styled.section`
-  background-color: #fff;
-  padding: 40px 24px;
-  max-width: 400px;
-  margin: 40px auto;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-`;
-
 const Field = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 `;
 
-const Label = styled.label`
-  display: block;
-  margin-bottom: 6px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #333;
-`;
+// const Label = styled.label`
+//   display: block;
+//   margin-bottom: 6px;
+//   font-size: 15px;
+//   font-weight: 500;
+//   color: #333;
+// `;
 
 const BottomText = styled.div`
-  text-align: center;
-  margin-top: 24px;
-  font-size: 14px;
-  color: #666;
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+`;
+
+const Section = styled.section`
+  background-color: #fff;
+  padding: 18px;
 `;
 
 export default function SignupPage() {
@@ -53,8 +52,16 @@ export default function SignupPage() {
     confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [agree, setAgree] = useState(false);
+
+  const { showStackSnackbar } = useSnackbarStore();
+  const router = useRouter();
+
+  // useSignup 훅을 컴포넌트 레벨에서 호출
+  const signupMutation = useSignup();
 
   const handleInputChange =
     (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,119 +71,180 @@ export default function SignupPage() {
       }));
     };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    // TODO: 회원가입 처리 로직
-    console.log("회원가입 데이터:", formData, "약관동의:", agree);
+  const handleSubmit = async () => {
+    const { name, email, password, confirmPassword } = formData;
+    if (!name || !email || !password || !confirmPassword) {
+      showStackSnackbar("모든 필드를 입력해주세요.", { variant: "error" });
+      return;
+    }
+    if (nameError) {
+      showStackSnackbar("이름은 2자 이상 입력해주세요.", { variant: "error" });
+      return;
+    }
+    if (emailError) {
+      showStackSnackbar("이메일 형식이 올바르지 않습니다.", {
+        variant: "error",
+      });
+      return;
+    }
+    if (passwordError) {
+      showStackSnackbar("비밀번호는 6자 이상 입력해주세요.", {
+        variant: "error",
+      });
+      return;
+    }
+    if (password !== confirmPassword) {
+      showStackSnackbar("비밀번호가 일치하지 않습니다.", { variant: "error" });
+      return;
+    }
+
+    // mutation 실행
+    signupMutation.mutate(
+      {
+        user_name: name,
+        user_email: email,
+        user_pw: password,
+      },
+      {
+        onSuccess: () => {
+          // 회원가입 성공 시 로그인 페이지로 이동
+          router.push("/login");
+        },
+      }
+    );
   };
 
   return (
-    <main>
+    <main
+      style={{
+        minHeight: "100vh",
+        scrollBehavior: "smooth",
+        position: "relative",
+        overflowAnchor: "none",
+      }}
+    >
       <Section>
         <Title>회원가입</Title>
-        <form onSubmit={handleSubmit}>
-          <Field>
-            <Label htmlFor="signup-name">Name</Label>
-            <AppTextField
-              id="signup-name"
-              placeholder="이름"
-              fullWidth
-              value={formData.name}
-              onChange={handleInputChange("name")}
-              required
-            />
-          </Field>
-          <Field>
-            <Label htmlFor="signup-email">Email Address</Label>
-            <AppTextField
-              id="signup-email"
-              placeholder="name@email.com"
-              type="email"
-              fullWidth
-              value={formData.email}
-              onChange={handleInputChange("email")}
-              required
-            />
-          </Field>
-          <Field>
-            <Label htmlFor="signup-password">Password</Label>
-            <AppTextField
-              id="signup-password"
-              placeholder="비밀번호"
-              type={showPassword ? "text" : "password"}
-              fullWidth
-              value={formData.password}
-              onChange={handleInputChange("password")}
-              required
-              InputProps={{
+
+        <Field>
+          <AppTextField
+            labelText="이름"
+            placeholder="이름"
+            fullWidth
+            value={formData.name}
+            onChange={handleInputChange("name")}
+            onBlur={() => {
+              if (formData.name.length < 2) {
+                setNameError(true);
+              } else {
+                setNameError(false);
+              }
+            }}
+            error={nameError}
+            helperText={nameError ? "이름은 2자 이상 입력해주세요." : null}
+          />
+        </Field>
+        <Field>
+          <AppTextField
+            labelText="이메일"
+            placeholder="이메일"
+            type="email"
+            fullWidth
+            value={formData.email}
+            onChange={handleInputChange("email")}
+            onBlur={() => {
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (!emailRegex.test(formData.email)) {
+                setEmailError(true);
+              } else {
+                setEmailError(false);
+              }
+            }}
+            error={emailError}
+            helperText={emailError ? "이메일 형식이 올바르지 않습니다." : null}
+          />
+        </Field>
+        <Field>
+          <AppTextField
+            name="password"
+            placeholder="비밀번호"
+            fullWidth
+            labelText="비밀번호"
+            type={showPassword ? "text" : "password"}
+            value={formData.password}
+            onChange={handleInputChange("password")}
+            onBlur={() => {
+              if (formData.password.length < 6) {
+                setPasswordError(true);
+              } else {
+                setPasswordError(false);
+              }
+            }}
+            error={passwordError}
+            helperText={
+              passwordError ? "비밀번호는 6자 이상 입력해주세요." : null
+            }
+            slotProps={{
+              input: {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="비밀번호 보기/숨기기"
-                      onClick={() => setShowPassword((v) => !v)}
-                      edge="end"
-                      tabIndex={-1}
+                      onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                      {showPassword ? (
+                        <Visibility color="disabled" fontSize="small" />
+                      ) : (
+                        <VisibilityOff color="disabled" fontSize="small" />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 ),
-              }}
-            />
-          </Field>
-          <Field>
-            <AppTextField
-              id="signup-confirm-password"
-              placeholder="비밀번호 확인"
-              type={showConfirm ? "text" : "password"}
-              fullWidth
-              value={formData.confirmPassword}
-              onChange={handleInputChange("confirmPassword")}
-              required
-              InputProps={{
+              },
+            }}
+          />
+        </Field>
+        <Field>
+          <AppTextField
+            name="password"
+            placeholder="비밀번호 확인"
+            fullWidth
+            labelText="비밀번호 확인"
+            type={showPassword ? "text" : "password"}
+            value={formData.confirmPassword}
+            onChange={handleInputChange("confirmPassword")}
+            slotProps={{
+              input: {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="비밀번호 확인 보기/숨기기"
-                      onClick={() => setShowConfirm((v) => !v)}
-                      edge="end"
-                      tabIndex={-1}
+                      aria-label="비밀번호 보기/숨기기"
+                      onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showConfirm ? <VisibilityOff /> : <Visibility />}
+                      {showPassword ? (
+                        <Visibility color="disabled" fontSize="small" />
+                      ) : (
+                        <VisibilityOff color="disabled" fontSize="small" />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 ),
-              }}
-            />
-          </Field>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={agree}
-                onChange={(e) => setAgree(e.target.checked)}
-                color="primary"
-              />
-            }
-            label="이용약관 및 개인정보 수집에 동의합니다."
-            sx={{ mb: 2 }}
+              },
+            }}
           />
-          <AppButton
-            color="highlight"
-            variant="contained"
-            fullWidth
-            type="submit"
-          >
-            회원가입
-          </AppButton>
-        </form>
+        </Field>
+        <AppButton
+          color="highlight"
+          variant="contained"
+          fullWidth
+          onClick={handleSubmit}
+          disabled={signupMutation.isPending}
+        >
+          {signupMutation.isPending ? "회원가입 중..." : "회원가입"}
+        </AppButton>
         <BottomText>
-          이미 계정이 있으신가요?{" "}
-          <a
-            href="/login"
-            style={{ color: "#1976d2", textDecoration: "underline" }}
-          >
-            로그인
-          </a>
+          <Typography variant="body2">이미 계정이 있으신가요?</Typography>
+          <Button onClick={() => router.push("/login")}>로그인</Button>
         </BottomText>
       </Section>
     </main>

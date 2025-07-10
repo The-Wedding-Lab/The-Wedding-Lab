@@ -1,0 +1,25 @@
+name: Deploy to Development
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            source ~/.bashrc || true
+            source ~/.profile || true
+            cd /home/projects/The-Wedding-Lab
+            git fetch origin
+            git reset --hard origin/develop
+            chmod +x ./deploy-dev.sh
+            bash ./deploy-dev.sh

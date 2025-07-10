@@ -9,7 +9,9 @@ const globalStyles = css`
     box-sizing: border-box;
     font-family: var(--font-pretendard) !important;
   }
-
+  ul {
+    list-style: none;
+  }
   /* styles/sakura.css 또는 styles/globals.css에 추가 */
   .sakura {
     position: absolute;
@@ -29,7 +31,6 @@ const globalStyles = css`
       transform: translateX(-100vw) translateY(100vh) rotate(1500deg);
       opacity: 0;
     }
-  }
 `;
 
 const GlobalStyles = () => <Global styles={globalStyles} />;

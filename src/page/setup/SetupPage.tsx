@@ -2,23 +2,144 @@
 
 import CardButton from "@/components/setup/CardButton";
 import AppButton from "@/components/ui/AppButton";
-import { Box, Typography } from "@mui/material";
-import React from "react";
+import {
+  Box,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
+import React, { useLayoutEffect, useRef, useEffect, useState } from "react";
 import Step1_WeddingInfo from "@/components/setup/steps/Step1_WeddingInfo";
 import Step2_AIPrompt from "@/components/setup/steps/Step2_AIPrompt";
 import Step3_EditTemplate from "@/components/setup/steps/Step3_EditTemplate";
 import Step4_Preview from "@/components/setup/steps/Step4_Preview";
 import Step5_Domain from "@/components/setup/steps/Step5_Domain";
-import { useWeddingDataStore } from "@/store/weddingDataStore";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import AppProgressBar from "@/components/ui/AppProgressBar";
+import { gsap } from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+// GSAP 플러그인 등록
+gsap.registerPlugin(ScrollToPlugin);
 
 const SetupPage = () => {
   const { step, setupData } = useWeddingDataStore();
   const { setTypeAndStart, nextStep, prevStep, setSetupData } =
     useWeddingDataStore((state) => state.actions);
 
+  const shouldScrollRef = useRef(false);
+  const stepContainerRef = useRef<HTMLDivElement>(null);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+
   const TOTAL_STEPS = setupData.type === "ai" ? 5 : 4;
   const progressValue = step >= 0 ? ((step + 1) / TOTAL_STEPS) * 100 : 0;
+
+  // GSAP 스크롤 애니메이션
+  const executeScrollToTop = () => {
+    // 기존 스크롤 애니메이션 모두 중지
+    gsap.killTweensOf(window);
+    gsap.killTweensOf(document.documentElement);
+    gsap.killTweensOf(document.body);
+
+    // 모바일 환경 감지
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768;
+
+    if (isMobile) {
+      // 모바일: 간단하고 부드러운 스크롤
+      gsap.to(window, {
+        duration: 0.5,
+        scrollTo: { y: 0 },
+        ease: "power1.out",
+        overwrite: true,
+      });
+    } else {
+      // 데스크톱: 더 부드러운 이징
+      gsap.to(window, {
+        duration: 0.7,
+        scrollTo: { y: 0 },
+        ease: "power1.inOut",
+        overwrite: true,
+      });
+    }
+  };
+
+  // 초기 렌더링 시 페이드인
+  useEffect(() => {
+    if (stepContainerRef.current && step >= 0) {
+      gsap.set(stepContainerRef.current, { opacity: 1, y: 0 });
+    }
+  }, []);
+
+  // 스크롤 먼저 실행 후 애니메이션
+  useLayoutEffect(() => {
+    if (stepContainerRef.current && step >= 0) {
+      // 기존 애니메이션 중지
+      gsap.killTweensOf(stepContainerRef.current);
+
+      // 스크롤이 필요한 경우 먼저 실행
+      if (shouldScrollRef.current) {
+        executeScrollToTop();
+        shouldScrollRef.current = false;
+
+        // 스크롤 중에는 컨텐츠를 숨김
+        gsap.set(stepContainerRef.current, { opacity: 0, y: 20 });
+
+        // 스크롤 완료 후 페이드인
+        gsap.to(stepContainerRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          ease: "power1.out",
+          delay: 0.3, // 스크롤 완료를 기다림
+        });
+      } else {
+        // 스크롤 없이 바로 페이드인
+        gsap.fromTo(
+          stepContainerRef.current,
+          {
+            opacity: 0,
+            y: 20,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power1.out",
+          }
+        );
+      }
+    }
+  }, [step]);
+
+  const scrollToTop = () => {
+    shouldScrollRef.current = true;
+  };
+
+  // 초기화 확인 다이얼로그 핸들러
+  const handlePrevClick = () => {
+    if (step === 0) {
+      setResetDialogOpen(true);
+    } else {
+      scrollToTop();
+      prevStep();
+    }
+  };
+
+  const handleResetConfirm = () => {
+    setResetDialogOpen(false);
+    scrollToTop();
+    prevStep();
+  };
+
+  const handleResetCancel = () => {
+    setResetDialogOpen(false);
+  };
 
   // 현재 step에 맞는 컴포넌트를 렌더링하는 함수
   const renderStepContent = () => {
@@ -26,7 +147,7 @@ const SetupPage = () => {
     if (setupData.type === "ai") {
       switch (step) {
         case 0:
-          return <Step1_WeddingInfo data={setupData} setData={setSetupData} />;
+          return <Step1_WeddingInfo />;
         case 1:
           return <Step2_AIPrompt data={setupData} setData={setSetupData} />;
         case 2:
@@ -43,7 +164,7 @@ const SetupPage = () => {
     else if (setupData.type === "template") {
       switch (step) {
         case 0:
-          return <Step1_WeddingInfo data={setupData} setData={setSetupData} />;
+          return <Step1_WeddingInfo />;
         case 1:
           return <Step3_EditTemplate data={setupData} setData={setSetupData} />;
         case 2:
@@ -74,7 +195,7 @@ const SetupPage = () => {
           my={2}
           display="flex"
           flexDirection="column"
-          gap={2}
+          gap={4}
         >
           <CardButton
             title="생성형 AI로 만들기"
@@ -110,7 +231,16 @@ const SetupPage = () => {
         <AppProgressBar value={progressValue} />
       </Box>
 
-      <Box sx={{ flex: 1 }}>{renderStepContent()}</Box>
+      <Box
+        ref={stepContainerRef}
+        sx={{
+          flex: 1,
+          minHeight: "70vh",
+          opacity: 0, // GSAP 애니메이션을 위한 초기 상태
+        }}
+      >
+        {renderStepContent()}
+      </Box>
 
       <Box
         className="NavigationContainer"
@@ -123,7 +253,7 @@ const SetupPage = () => {
           variant="outlined"
           color="natural"
           fullWidth
-          onClick={prevStep}
+          onClick={handlePrevClick}
         >
           {step === 0 ? "처음으로" : "이전"}
         </AppButton>
@@ -131,10 +261,15 @@ const SetupPage = () => {
           variant="contained"
           color="highlight"
           fullWidth
+          disabled={
+            (step === 0 && !setupData.step1Valid) ||
+            (step === 4 && !setupData.step5Valid)
+          }
           onClick={() => {
             if (step === TOTAL_STEPS - 1) {
               console.log("생성하기");
             } else {
+              scrollToTop();
               nextStep();
             }
           }}
@@ -142,6 +277,36 @@ const SetupPage = () => {
           {step === TOTAL_STEPS - 1 ? "생성하기" : "다음"}
         </AppButton>
       </Box>
+
+      {/* 초기화 확인 다이얼로그 */}
+      <Dialog open={resetDialogOpen} onClose={handleResetCancel}>
+        <DialogTitle>입력 정보 초기화</DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            sx={{ fontSize: 16, fontWeight: 500, color: "#777" }}
+          >
+            입력한 모든 정보가 초기화됩니다.
+            <br />
+            정말로 처음으로 돌아가시겠습니까?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <AppButton
+            onClick={handleResetCancel}
+            variant="outlined"
+            color="natural"
+          >
+            취소
+          </AppButton>
+          <AppButton
+            onClick={handleResetConfirm}
+            variant="contained"
+            color="highlight"
+          >
+            확인
+          </AppButton>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
