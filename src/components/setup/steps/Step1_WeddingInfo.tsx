@@ -82,7 +82,7 @@ const Step1_WeddingInfo = () => {
   // 유효성 상태를 스토어에 업데이트
   useEffect(() => {
     const isValid = isStep1Valid();
-    actions.setSetupData({ step1Valid: !isValid });
+    actions.setSetupData({ step1Valid: isValid });
   }, [setupData.weddingInfo, actions]);
 
   // 카카오맵 로드 상태 체크
@@ -150,13 +150,27 @@ const Step1_WeddingInfo = () => {
           예식 정보를 입력해주세요.
         </Typography>
         {/* 신랑 정보 */}
-        <AppAccordion>
+        <AppAccordion
+          success={
+            setupData.weddingInfo?.groom?.name &&
+            setupData.weddingInfo?.groom?.tel &&
+            setupData.weddingInfo?.groom?.account
+          }
+        >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#333333">신랑 정보</Typography>
+              <Typography color="#333333" fontWeight={500}>
+                🤵 신랑
+              </Typography>
             </Box>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails
+            sx={{
+              padding: "16px",
+              borderTop: "1px solid",
+              borderColor: "#C5C6CC",
+            }}
+          >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <AppTextField
                 labelText="성함"
@@ -189,13 +203,27 @@ const Step1_WeddingInfo = () => {
           </AccordionDetails>
         </AppAccordion>
         {/* 신부 정보 */}
-        <AppAccordion>
+        <AppAccordion
+          success={
+            setupData.weddingInfo?.bride?.name &&
+            setupData.weddingInfo?.bride?.tel &&
+            setupData.weddingInfo?.bride?.account
+          }
+        >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#333333">신부 정보</Typography>
+              <Typography color="#333333" fontWeight={500}>
+                👰 신부
+              </Typography>
             </Box>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails
+            sx={{
+              padding: "16px",
+              borderTop: "1px solid",
+              borderColor: "#C5C6CC",
+            }}
+          >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <AppTextField
                 labelText="성함"
@@ -227,77 +255,31 @@ const Step1_WeddingInfo = () => {
             </Box>
           </AccordionDetails>
         </AppAccordion>
-        {/* 예식 일시 DatePicker */}
-        <MobileDateTimePicker
-          open={isPickerOpen}
-          onClose={() => setIsPickerOpen(false)}
-          onAccept={handleDateTimeChange}
-          value={
-            setupData.weddingInfo?.weddingDateTime
-              ? dayjs(setupData.weddingInfo.weddingDateTime)
-              : null
-          }
-          onChange={handleDateTimeChange}
-          ampm={true}
-          enableAccessibleFieldDOMStructure={false}
-          views={["year", "month", "day", "hours", "minutes"]}
-          dayOfWeekFormatter={(day) => day.format("dd")}
-          slotProps={{
-            toolbar: {
-              hidden: true,
-            },
-            calendarHeader: {
-              format: "YYYY년 M월",
-            },
-          }}
-          slots={{
-            textField: (params) => (
-              <AppTextField
-                {...params}
-                placeholder="Click"
-                labelText="예식 일시"
-                fullWidth
-                onClick={() => setIsPickerOpen(true)}
-                slotProps={{
-                  input: {
-                    ...params.InputProps,
-                    readOnly: true,
-                  },
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "12px",
-                    cursor: "pointer",
-                  },
-                  "& .MuiInputBase-input": {
-                    cursor: "pointer",
-                  },
-                }}
-              />
-            ),
-          }}
-        />
-        {/* 예식 장소 daum Map */}
-        <AppTextField
-          labelText="예식 장소"
-          placeholder="Click"
-          fullWidth
-          value={setupData.weddingInfo?.location?.searchAddress || ""}
-          onClick={() => setAddrDialogOpen(true)}
-          slotProps={{
-            input: {
-              readOnly: true,
-            },
-          }}
-        />
         {/* 신랑혼주정보 */}
-        <AppAccordion>
+        <AppAccordion
+          success={
+            setupData.weddingInfo?.groom?.father?.name &&
+            setupData.weddingInfo?.groom?.father?.tel &&
+            setupData.weddingInfo?.groom?.father?.account &&
+            setupData.weddingInfo?.groom?.mother?.name &&
+            setupData.weddingInfo?.groom?.mother?.tel &&
+            setupData.weddingInfo?.groom?.mother?.account
+          }
+        >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#333333">신랑혼주정보</Typography>
+              <Typography color="#333333" fontWeight={500}>
+                👩‍👦 신랑 혼주님
+              </Typography>
             </Box>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails
+            sx={{
+              padding: "16px",
+              borderTop: "1px solid",
+              borderColor: "#C5C6CC",
+            }}
+          >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <AppTextField
                 labelText="아버님 성함"
@@ -488,13 +470,30 @@ const Step1_WeddingInfo = () => {
           </AccordionDetails>
         </AppAccordion>
         {/* 신부혼주정보 */}
-        <AppAccordion>
+        <AppAccordion
+          success={
+            setupData.weddingInfo?.bride?.father?.name &&
+            setupData.weddingInfo?.bride?.father?.tel &&
+            setupData.weddingInfo?.bride?.father?.account &&
+            setupData.weddingInfo?.bride?.mother?.name &&
+            setupData.weddingInfo?.bride?.mother?.tel &&
+            setupData.weddingInfo?.bride?.mother?.account
+          }
+        >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#333333">신부혼주정보</Typography>
+              <Typography color="#333333" fontWeight={500}>
+                👨‍👧 신부 혼주님
+              </Typography>
             </Box>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails
+            sx={{
+              padding: "16px",
+              borderTop: "1px solid",
+              borderColor: "#C5C6CC",
+            }}
+          >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <AppTextField
                 labelText="아버님 성함"
@@ -684,6 +683,79 @@ const Step1_WeddingInfo = () => {
             </Box>
           </AccordionDetails>
         </AppAccordion>
+        {/* 예식 일시 DatePicker */}
+        <MobileDateTimePicker
+          open={isPickerOpen}
+          onClose={() => setIsPickerOpen(false)}
+          onAccept={handleDateTimeChange}
+          value={
+            setupData.weddingInfo?.weddingDateTime
+              ? dayjs(setupData.weddingInfo.weddingDateTime)
+              : null
+          }
+          onChange={handleDateTimeChange}
+          ampm={true}
+          enableAccessibleFieldDOMStructure={false}
+          views={["year", "month", "day", "hours", "minutes"]}
+          dayOfWeekFormatter={(day) => day.format("dd")}
+          slotProps={{
+            toolbar: {
+              hidden: true,
+            },
+            calendarHeader: {
+              format: "YYYY년 M월",
+            },
+          }}
+          slots={{
+            textField: (params) => (
+              <AppTextField
+                {...params}
+                placeholder="👉 Touch"
+                labelText="예식 일시"
+                fullWidth
+                onClick={() => setIsPickerOpen(true)}
+                slotProps={{
+                  input: {
+                    ...params.InputProps,
+                    readOnly: true,
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "12px",
+                    cursor: "pointer",
+                    ...(setupData.weddingInfo?.weddingDateTime && {
+                      backgroundColor: "#ebffe7",
+                    }),
+                  },
+                  "& .MuiInputBase-input": {
+                    cursor: "pointer",
+                  },
+                }}
+              />
+            ),
+          }}
+        />
+        {/* 예식 장소 daum Map */}
+        <AppTextField
+          labelText="예식 장소"
+          placeholder="👉 Touch"
+          fullWidth
+          value={setupData.weddingInfo?.location?.searchAddress || ""}
+          onClick={() => setAddrDialogOpen(true)}
+          slotProps={{
+            input: {
+              readOnly: true,
+            },
+          }}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              ...(setupData.weddingInfo?.location?.searchAddress && {
+                backgroundColor: "#ebffe7",
+              }),
+            },
+          }}
+        />
       </Box>
 
       {/* 주소 검색 SwipeableDrawer */}

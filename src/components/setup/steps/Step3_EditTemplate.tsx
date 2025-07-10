@@ -119,7 +119,7 @@ const SelectableAccordion = ({
                   }}
                 />
               )}
-              <Typography>{title}</Typography>
+              <Typography fontWeight={500}>{title}</Typography>
             </Box>
             <Switch
               checked={selected}
