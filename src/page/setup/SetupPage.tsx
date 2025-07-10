@@ -39,11 +39,34 @@ const SetupPage = () => {
 
   // GSAP 스크롤 애니메이션
   const executeScrollToTop = () => {
-    gsap.to(window, {
-      duration: 0.8,
-      scrollTo: { y: 0, autoKill: true },
-      ease: "power2.inOut",
-    });
+    // 기존 스크롤 애니메이션 모두 중지
+    gsap.killTweensOf(window);
+    gsap.killTweensOf(document.documentElement);
+    gsap.killTweensOf(document.body);
+
+    // 모바일 환경 감지
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768;
+
+    if (isMobile) {
+      // 모바일: 간단하고 부드러운 스크롤
+      gsap.to(window, {
+        duration: 0.5,
+        scrollTo: { y: 0 },
+        ease: "power1.out",
+        overwrite: true,
+      });
+    } else {
+      // 데스크톱: 더 부드러운 이징
+      gsap.to(window, {
+        duration: 0.7,
+        scrollTo: { y: 0 },
+        ease: "power1.inOut",
+        overwrite: true,
+      });
+    }
   };
 
   // 초기 렌더링 시 페이드인
@@ -63,23 +86,34 @@ const SetupPage = () => {
       if (shouldScrollRef.current) {
         executeScrollToTop();
         shouldScrollRef.current = false;
-      }
 
-      // 스크롤 완료 후 페이드인 애니메이션 실행
-      gsap.fromTo(
-        stepContainerRef.current,
-        {
-          opacity: 0,
-          y: 30,
-        },
-        {
+        // 스크롤 중에는 컨텐츠를 숨김
+        gsap.set(stepContainerRef.current, { opacity: 0, y: 20 });
+
+        // 스크롤 완료 후 페이드인
+        gsap.to(stepContainerRef.current, {
           opacity: 1,
           y: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          delay: 0.1, // 스크롤 시작 후 약간의 딜레이
-        }
-      );
+          duration: 0.4,
+          ease: "power1.out",
+          delay: 0.3, // 스크롤 완료를 기다림
+        });
+      } else {
+        // 스크롤 없이 바로 페이드인
+        gsap.fromTo(
+          stepContainerRef.current,
+          {
+            opacity: 0,
+            y: 20,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power1.out",
+          }
+        );
+      }
     }
   }, [step]);
 

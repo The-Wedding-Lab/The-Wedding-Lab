@@ -30,6 +30,7 @@ import DaumPostcode from "react-daum-postcode";
 import AppAccordion from "@/components/ui/AppAccordion";
 import AppButton from "@/components/ui/AppButton";
 import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
+import AppTwemoji from "@/components/ui/AppTwemoji";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import { formatPhoneNumber } from "@/hooks/utils";
 
@@ -159,9 +160,11 @@ const Step1_WeddingInfo = () => {
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#333333" fontWeight={500}>
-                🤵 신랑
-              </Typography>
+              <AppTwemoji>
+                <Typography color="#333333" fontWeight={500}>
+                  🤵 신랑
+                </Typography>
+              </AppTwemoji>
             </Box>
           </AccordionSummary>
           <AccordionDetails
@@ -212,9 +215,11 @@ const Step1_WeddingInfo = () => {
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#333333" fontWeight={500}>
-                👰 신부
-              </Typography>
+              <AppTwemoji>
+                <Typography color="#333333" fontWeight={500}>
+                  👰 신부
+                </Typography>
+              </AppTwemoji>
             </Box>
           </AccordionSummary>
           <AccordionDetails
@@ -268,9 +273,11 @@ const Step1_WeddingInfo = () => {
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#333333" fontWeight={500}>
-                👩‍👦 신랑 혼주님
-              </Typography>
+              <AppTwemoji>
+                <Typography color="#333333" fontWeight={500}>
+                  👫 신랑 혼주님
+                </Typography>
+              </AppTwemoji>
             </Box>
           </AccordionSummary>
           <AccordionDetails
@@ -482,9 +489,11 @@ const Step1_WeddingInfo = () => {
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <Typography color="#333333" fontWeight={500}>
-                👨‍👧 신부 혼주님
-              </Typography>
+              <AppTwemoji>
+                <Typography color="#333333" fontWeight={500}>
+                  👫 신부 혼주님
+                </Typography>
+              </AppTwemoji>
             </Box>
           </AccordionSummary>
           <AccordionDetails
