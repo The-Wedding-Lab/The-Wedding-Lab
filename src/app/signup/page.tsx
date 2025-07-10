@@ -8,8 +8,6 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import { Button, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useSnackbarStore } from "@/store/useSnackbarStore";
@@ -25,13 +23,13 @@ const Field = styled.div`
   margin-bottom: 16px;
 `;
 
-const Label = styled.label`
-  display: block;
-  margin-bottom: 6px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #333;
-`;
+// const Label = styled.label`
+//   display: block;
+//   margin-bottom: 6px;
+//   font-size: 15px;
+//   font-weight: 500;
+//   color: #333;
+// `;
 
 const BottomText = styled.div`
   margin-top: 8px;
