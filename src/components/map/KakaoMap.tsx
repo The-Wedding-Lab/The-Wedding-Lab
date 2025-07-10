@@ -20,7 +20,7 @@ declare global {
 }
 
 // 카카오 자바스크립트 키 (본인 키로 교체)
-const KAKAO_MAP_API_KEY = "458613b2d0c9402b3f8177c596794c90";
+const KAKAO_MAP_API_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY;
 
 // position props 타입 추가
 interface KakaoMapProps {

@@ -42,6 +42,14 @@ export default function MapPage() {
     });
   };
 
+  const getDirectionLink = () => {
+    if (!position || !searchedAddress) return "#";
+    const { lat, lng } = position;
+    return `https://map.kakao.com/link/to/${encodeURIComponent(
+      searchedAddress
+    )},${lat},${lng}`;
+  };
+
   return (
     <main>
       <section>
@@ -84,7 +92,9 @@ export default function MapPage() {
             검색
           </AppButton>
         </div>
+
         <KakaoMap position={position} />
+
         {searchedAddress && (
           <div
             style={{
@@ -101,20 +111,35 @@ export default function MapPage() {
             <span>{searchedAddress}</span>
           </div>
         )}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginTop: 16,
-            fontSize: 16,
-            fontWeight: 500,
-            color: "#333",
-          }}
-        >
-          <span>오는 방법 : </span>
-          <span>{/* 오는 방법 추가 */}</span>
-        </div>
+
+        {position && searchedAddress && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              marginTop: 16,
+              fontSize: 16,
+              fontWeight: 500,
+              color: "#333",
+            }}
+          >
+            <span>오는 방법 :</span>
+            <a
+              href={getDirectionLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <AppButton
+                variant="outlined"
+                color="primary"
+                style={{ padding: "6px 12px", fontSize: 14 }}
+              >
+                카카오맵으로 길찾기
+              </AppButton>
+            </a>
+          </div>
+        )}
       </section>
     </main>
   );

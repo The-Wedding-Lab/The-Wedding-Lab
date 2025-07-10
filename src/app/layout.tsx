@@ -1,5 +1,5 @@
 "use client";
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import localFont from "next/font/local";
 import ThemeProvider from "../providers/ThemeProvider";
 import GlobalStyles from "./globalStyles";
