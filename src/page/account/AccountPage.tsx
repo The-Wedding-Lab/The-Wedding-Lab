@@ -15,7 +15,7 @@ import { AccountBalance, Person, ContentCopy } from "@mui/icons-material";
 import { useSnackbarStore } from "@/store/useSnackbarStore";
 
 interface AccountInfo {
-  bank: string;
+  bankName: string;
   account: string;
   name: string;
   deceased?: boolean; // 고인 여부
@@ -34,35 +34,35 @@ const AccountPage = () => {
   // 예시 데이터
   const [accountData] = useState<AccountData>({
     groom: {
-      bank: "신한은행",
+      bankName: "신한은행",
       account: "110-123456-789",
       name: "김신랑",
     },
     groomFather: {
-      bank: "국민은행",
+      bankName: "국민은행",
       account: "123-456789-012",
       name: "김아버지",
       deceased: false,
     },
     groomMother: {
-      bank: "국민은행",
+      bankName: "국민은행",
       account: "123-456789-012",
       name: "김어머님",
       deceased: true,
     },
     bride: {
-      bank: "하나은행",
+      bankName: "하나은행",
       account: "123-456789-012",
       name: "이신부",
     },
     brideFather: {
-      bank: "농협은행",
+      bankName: "농협은행",
       account: "123-456789-012",
       name: "이아버지",
       deceased: false,
     },
     brideMother: {
-      bank: "기업은행",
+      bankName: "기업은행",
       account: "123-456789-012",
       name: "이어머니",
       deceased: false,
@@ -122,7 +122,7 @@ const AccountPage = () => {
                   variant="body2"
                   sx={{ fontWeight: 500, fontSize: 13 }}
                 >
-                  {accountData[side].bank}
+                  {accountData[side].bankName}
                 </Typography>
               </Box>
             </Box>
@@ -287,7 +287,7 @@ const AccountPage = () => {
                 label={
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Typography sx={{ fontSize: "14px", fontWeight: 600 }}>
-                      🤵 신랑측
+                      신랑측
                     </Typography>
                     <Box
                       sx={{
@@ -312,7 +312,7 @@ const AccountPage = () => {
                 label={
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Typography sx={{ fontSize: "14px", fontWeight: 600 }}>
-                      👰 신부측
+                      신부측
                     </Typography>
                     <Box
                       sx={{
