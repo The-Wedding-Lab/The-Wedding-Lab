@@ -93,7 +93,7 @@ export default function MapPage() {
           </AppButton>
         </div>
 
-        <KakaoMap position={position} />
+        <KakaoMap position={position} addressName={searchedAddress} />
 
         {searchedAddress && (
           <div
