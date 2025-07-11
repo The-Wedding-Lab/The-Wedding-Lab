@@ -52,7 +52,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         // 예식 장소
         searchAddress: "", // 주소
         venueName: "", // 장소명
-        hall: "", // 홀
+        hall: "", // 홀,층
         lat: 0, // 위도
         lng: 0, // 경도
       },
@@ -66,6 +66,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         father: {
           name: "", // 아버지 이름
           tel: "", // 전화번호
+          bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
           deceasedIcon: "icon", // 고인 아이콘 타입
@@ -73,6 +74,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         mother: {
           name: "", // 어머니 이름
           tel: "", // 전화번호
+          bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
           deceasedIcon: "icon", // 고인 아이콘 타입
@@ -83,11 +85,13 @@ const initialState: Omit<WeddingDataState, "actions"> = {
       bride: {
         name: "", // 이름 (성+이름 혹은 이름만 가능)
         tel: "", // 전화번호
+        bank: "", // 은행
         account: "", // 계좌번호
         // 혼주
         father: {
           name: "", // 아버지 이름
           tel: "", // 전화번호
+          bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
           deceasedIcon: "icon", // 고인 아이콘 타입
@@ -95,6 +99,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         mother: {
           name: "", // 어머니 이름
           tel: "", // 전화번호
+          bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
           deceasedIcon: "icon", // 고인 아이콘 타입

@@ -33,6 +33,7 @@ import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
 import AppTwemoji from "@/components/ui/AppTwemoji";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import { formatPhoneNumber } from "@/hooks/utils";
+import AppDropBox from "@/components/ui/AppDropBox";
 
 // 카카오맵 타입 선언
 declare global {
@@ -46,6 +47,19 @@ const Step1_WeddingInfo = () => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [addrDialogOpen, setAddrDialogOpen] = useState(false);
 
+  // 은행 목록
+  const bankList = [
+    { value: "국민은행", label: "국민은행" },
+    { value: "신한은행", label: "신한은행" },
+    { value: "하나은행", label: "하나은행" },
+    { value: "우리은행", label: "우리은행" },
+    { value: "기업은행", label: "기업은행" },
+    { value: "농협은행", label: "농협은행" },
+    { value: "대구은행", label: "대구은행" },
+    { value: "부산은행", label: "부산은행" },
+    { value: "광주은행", label: "광주은행" },
+  ];
+
   // 필수 필드 유효성 검사
   const isStep1Valid = () => {
     const { weddingInfo } = setupData;
@@ -54,29 +68,25 @@ const Step1_WeddingInfo = () => {
       // 신랑 정보
       weddingInfo?.groom?.name &&
       weddingInfo?.groom?.tel &&
-      weddingInfo?.groom?.account &&
       // 신부 정보
       weddingInfo?.bride?.name &&
       weddingInfo?.bride?.tel &&
-      weddingInfo?.bride?.account &&
       // 예식 일시
       weddingInfo?.weddingDateTime &&
       // 예식 장소
       weddingInfo?.location?.searchAddress &&
+      weddingInfo?.location?.venueName &&
+      weddingInfo?.location?.hall &&
       // 신랑 혼주 정보
       weddingInfo?.groom?.father?.name &&
       weddingInfo?.groom?.father?.tel &&
-      weddingInfo?.groom?.father?.account &&
       weddingInfo?.groom?.mother?.name &&
       weddingInfo?.groom?.mother?.tel &&
-      weddingInfo?.groom?.mother?.account &&
       // 신부 혼주 정보
       weddingInfo?.bride?.father?.name &&
       weddingInfo?.bride?.father?.tel &&
-      weddingInfo?.bride?.father?.account &&
       weddingInfo?.bride?.mother?.name &&
-      weddingInfo?.bride?.mother?.tel &&
-      weddingInfo?.bride?.mother?.account
+      weddingInfo?.bride?.mother?.tel
     );
   };
 
@@ -150,12 +160,68 @@ const Step1_WeddingInfo = () => {
         <Typography fontSize={24} fontWeight={700} gutterBottom>
           예식 정보를 입력해주세요.
         </Typography>
+        {/* 샘플데이터 테스트용 */}
+        <AppButton
+          onClick={() => {
+            actions.setSetupData({
+              ...setupData,
+              weddingInfo: {
+                ...setupData.weddingInfo,
+                groom: {
+                  name: "홍길동",
+                  tel: "010-1234-5678",
+                  bank: "국민은행",
+                  account: "123-456789-012",
+                  father: {
+                    name: "길동부",
+                    tel: "010-1234-5678",
+                    bank: "국민은행",
+                    account: "123-456789-012",
+                  },
+                  mother: {
+                    name: "길동모",
+                    tel: "010-1234-5678",
+                    bank: "국민은행",
+                    account: "123-456789-012",
+                  },
+                },
+                bride: {
+                  name: "영희",
+                  tel: "010-1234-5678",
+                  bank: "국민은행",
+                  account: "123-456789-012",
+                  father: {
+                    name: "영희부",
+                    tel: "010-1234-5678",
+                    bank: "국민은행",
+                    account: "123-456789-012",
+                  },
+                  mother: {
+                    name: "영희모",
+                    tel: "010-1234-5678",
+                    bank: "국민은행",
+                    account: "123-456789-012",
+                  },
+                },
+                weddingDateTime: "2025-07-25T10:00:00",
+                location: {
+                  searchAddress: "서울특별시 영등포구 영등포로 123",
+                  venueName: "더컨벤션 영등포",
+                  hall: "2층 그랜드볼룸",
+                  lat: 37.5562637915563,
+                  lng: 126.8368847974,
+                },
+              },
+            });
+          }}
+        >
+          샘플 데이터 입력
+        </AppButton>
         {/* 신랑 정보 */}
         <AppAccordion
           success={
             setupData.weddingInfo?.groom?.name &&
-            setupData.weddingInfo?.groom?.tel &&
-            setupData.weddingInfo?.groom?.account
+            setupData.weddingInfo?.groom?.tel
           }
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
@@ -194,8 +260,18 @@ const Step1_WeddingInfo = () => {
                 }
                 type="tel"
               />
-              <AppTextField
+              <AppDropBox
                 labelText="계좌번호"
+                fullWidth
+                value={setupData.weddingInfo?.groom?.bank || ""}
+                onChange={(value) => actions.setGroomInfo({ bank: value })}
+                allowCustomInput={true}
+                customInputPlaceholder="은행명을 직접 입력해주세요"
+                placeholder="은행을 선택해주세요"
+                options={bankList}
+              />
+              <AppTextField
+                placeholder="계좌번호"
                 fullWidth
                 value={setupData.weddingInfo?.groom?.account || ""}
                 onChange={(e) =>
@@ -209,8 +285,7 @@ const Step1_WeddingInfo = () => {
         <AppAccordion
           success={
             setupData.weddingInfo?.bride?.name &&
-            setupData.weddingInfo?.bride?.tel &&
-            setupData.weddingInfo?.bride?.account
+            setupData.weddingInfo?.bride?.tel
           }
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
@@ -249,8 +324,18 @@ const Step1_WeddingInfo = () => {
                 }
                 type="tel"
               />
-              <AppTextField
+              <AppDropBox
                 labelText="계좌번호"
+                fullWidth
+                value={setupData.weddingInfo?.bride?.bank || ""}
+                onChange={(value) => actions.setBrideInfo({ bank: value })}
+                allowCustomInput={true}
+                customInputPlaceholder="은행명을 직접 입력해주세요"
+                placeholder="은행을 선택해주세요"
+                options={bankList}
+              />
+              <AppTextField
+                placeholder="계좌번호"
                 fullWidth
                 value={setupData.weddingInfo?.bride?.account || ""}
                 onChange={(e) =>
@@ -265,10 +350,8 @@ const Step1_WeddingInfo = () => {
           success={
             setupData.weddingInfo?.groom?.father?.name &&
             setupData.weddingInfo?.groom?.father?.tel &&
-            setupData.weddingInfo?.groom?.father?.account &&
             setupData.weddingInfo?.groom?.mother?.name &&
-            setupData.weddingInfo?.groom?.mother?.tel &&
-            setupData.weddingInfo?.groom?.mother?.account
+            setupData.weddingInfo?.groom?.mother?.tel
           }
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
@@ -317,8 +400,25 @@ const Step1_WeddingInfo = () => {
                 }
                 type="tel"
               />
-              <AppTextField
+              <AppDropBox
                 labelText="아버님 계좌번호"
+                fullWidth
+                value={setupData.weddingInfo?.groom?.father?.bank || ""}
+                onChange={(value) =>
+                  actions.setGroomInfo({
+                    father: {
+                      ...setupData.weddingInfo.groom.father,
+                      bank: value,
+                    },
+                  })
+                }
+                allowCustomInput={true}
+                customInputPlaceholder="은행명을 직접 입력해주세요"
+                placeholder="은행을 선택해주세요"
+                options={bankList}
+              />
+              <AppTextField
+                placeholder="계좌번호"
                 fullWidth
                 value={setupData.weddingInfo?.groom?.father?.account || ""}
                 onChange={(e) =>
@@ -410,8 +510,25 @@ const Step1_WeddingInfo = () => {
                 }
                 type="tel"
               />
-              <AppTextField
+              <AppDropBox
                 labelText="어머님 계좌번호"
+                fullWidth
+                value={setupData.weddingInfo?.groom?.mother?.bank || ""}
+                onChange={(value) =>
+                  actions.setGroomInfo({
+                    mother: {
+                      ...setupData.weddingInfo.groom.mother,
+                      bank: value,
+                    },
+                  })
+                }
+                allowCustomInput={true}
+                customInputPlaceholder="은행명을 직접 입력해주세요"
+                placeholder="은행을 선택해주세요"
+                options={bankList}
+              />
+              <AppTextField
+                placeholder="계좌번호"
                 fullWidth
                 value={setupData.weddingInfo?.groom?.mother?.account || ""}
                 onChange={(e) =>
@@ -481,10 +598,8 @@ const Step1_WeddingInfo = () => {
           success={
             setupData.weddingInfo?.bride?.father?.name &&
             setupData.weddingInfo?.bride?.father?.tel &&
-            setupData.weddingInfo?.bride?.father?.account &&
             setupData.weddingInfo?.bride?.mother?.name &&
-            setupData.weddingInfo?.bride?.mother?.tel &&
-            setupData.weddingInfo?.bride?.mother?.account
+            setupData.weddingInfo?.bride?.mother?.tel
           }
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
@@ -533,8 +648,25 @@ const Step1_WeddingInfo = () => {
                 }
                 type="tel"
               />
-              <AppTextField
+              <AppDropBox
                 labelText="아버님 계좌번호"
+                fullWidth
+                value={setupData.weddingInfo?.bride?.father?.bank || ""}
+                onChange={(value) =>
+                  actions.setBrideInfo({
+                    father: {
+                      ...setupData.weddingInfo.bride.father,
+                      bank: value,
+                    },
+                  })
+                }
+                allowCustomInput={true}
+                customInputPlaceholder="은행명을 직접 입력해주세요"
+                placeholder="은행을 선택해주세요"
+                options={bankList}
+              />
+              <AppTextField
+                placeholder="계좌번호"
                 fullWidth
                 value={setupData.weddingInfo?.bride?.father?.account || ""}
                 onChange={(e) =>
@@ -626,8 +758,25 @@ const Step1_WeddingInfo = () => {
                 }
                 type="tel"
               />
-              <AppTextField
+              <AppDropBox
                 labelText="어머님 계좌번호"
+                fullWidth
+                value={setupData.weddingInfo?.bride?.mother?.bank || ""}
+                onChange={(value) =>
+                  actions.setBrideInfo({
+                    mother: {
+                      ...setupData.weddingInfo.bride.mother,
+                      bank: value,
+                    },
+                  })
+                }
+                allowCustomInput={true}
+                customInputPlaceholder="은행명을 직접 입력해주세요"
+                placeholder="은행을 선택해주세요"
+                options={bankList}
+              />
+              <AppTextField
+                placeholder="계좌번호"
                 fullWidth
                 value={setupData.weddingInfo?.bride?.mother?.account || ""}
                 onChange={(e) =>
@@ -760,6 +909,34 @@ const Step1_WeddingInfo = () => {
           sx={{
             "& .MuiOutlinedInput-root": {
               ...(setupData.weddingInfo?.location?.searchAddress && {
+                backgroundColor: "#ebffe7",
+              }),
+            },
+          }}
+        />
+        <AppTextField
+          fullWidth
+          placeholder="더컨벤션 영등포"
+          value={setupData.weddingInfo?.location?.venueName || ""}
+          onChange={(e) =>
+            actions.setWeddingLocation({ venueName: e.target.value })
+          }
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              ...(setupData.weddingInfo?.location?.venueName && {
+                backgroundColor: "#ebffe7",
+              }),
+            },
+          }}
+        />
+        <AppTextField
+          fullWidth
+          placeholder="2층 그랜드볼룸"
+          value={setupData.weddingInfo?.location?.hall || ""}
+          onChange={(e) => actions.setWeddingLocation({ hall: e.target.value })}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              ...(setupData.weddingInfo?.location?.hall && {
                 backgroundColor: "#ebffe7",
               }),
             },

@@ -1,4 +1,11 @@
+import MapPage from "@/app/map/page";
 import AppButton from "@/components/ui/AppButton";
+import AccountPage from "@/page/account/AccountPage";
+import EndingPage from "@/page/ending/EndingPage";
+import FamilyInfoPage from "@/page/family/FamilyInfoPage";
+import GalleryPage from "@/page/gallery/GalleryPage";
+import MainCoverPage from "@/page/main/MainCoverPage";
+import NotificationPage from "@/page/notification/NotificationPage";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
 import { Box, Button, Typography } from "@mui/material";
@@ -116,13 +123,23 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           gap: 2,
           flexWrap: "wrap",
+          justifyContent: "center",
         }}
       >
         {Object.keys(enabledPages).map((page) => (
-          <PreviewBox key={page}>{page}</PreviewBox>
+          <>
+            {page === "coverDesign" && <MainCoverPage />}
+            {page === "calendar" && <NotificationPage />}
+            {page === "introMessage" && <>인트로메세지</>}
+            {page === "familyInfo" && <FamilyInfoPage />}
+            {page === "gallery" && <GalleryPage />}
+            {page === "mapDirections" && <MapPage />}
+            {page === "accountInfo" && <AccountPage />}
+            {page === "endingMessage" && <EndingPage />}
+          </>
         ))}
       </Box>
     </Box>

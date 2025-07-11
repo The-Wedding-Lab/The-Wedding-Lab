@@ -13,9 +13,10 @@ import {
 } from "@mui/material";
 import { AccountBalance, Person, ContentCopy } from "@mui/icons-material";
 import { useSnackbarStore } from "@/store/useSnackbarStore";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
 interface AccountInfo {
-  bankName: string;
+  bank: string;
   account: string;
   name: string;
   deceased?: boolean; // 고인 여부
@@ -31,41 +32,43 @@ interface AccountData {
 }
 
 const AccountPage = () => {
+  const { setupData } = useWeddingDataStore();
+
   // 예시 데이터
   const [accountData] = useState<AccountData>({
     groom: {
-      bankName: "신한은행",
-      account: "110-123456-789",
-      name: "김신랑",
+      bank: setupData.weddingInfo.groom.bank,
+      account: setupData.weddingInfo.groom.account,
+      name: setupData.weddingInfo.groom.name,
     },
     groomFather: {
-      bankName: "국민은행",
-      account: "123-456789-012",
-      name: "김아버지",
-      deceased: false,
+      bank: setupData.weddingInfo.groom.father.bank,
+      account: setupData.weddingInfo.groom.father.account,
+      name: setupData.weddingInfo.groom.father.name,
+      deceased: setupData.weddingInfo.groom.father.deceased,
     },
     groomMother: {
-      bankName: "국민은행",
-      account: "123-456789-012",
-      name: "김어머님",
-      deceased: true,
+      bank: setupData.weddingInfo.groom.mother.bank,
+      account: setupData.weddingInfo.groom.mother.account,
+      name: setupData.weddingInfo.groom.mother.name,
+      deceased: setupData.weddingInfo.groom.mother.deceased,
     },
     bride: {
-      bankName: "하나은행",
-      account: "123-456789-012",
-      name: "이신부",
+      bank: setupData.weddingInfo.bride.bank,
+      account: setupData.weddingInfo.bride.account,
+      name: setupData.weddingInfo.bride.name,
     },
     brideFather: {
-      bankName: "농협은행",
-      account: "123-456789-012",
-      name: "이아버지",
-      deceased: false,
+      bank: setupData.weddingInfo.bride.father.bank,
+      account: setupData.weddingInfo.bride.father.account,
+      name: setupData.weddingInfo.bride.father.name,
+      deceased: setupData.weddingInfo.bride.father.deceased,
     },
     brideMother: {
-      bankName: "기업은행",
-      account: "123-456789-012",
-      name: "이어머니",
-      deceased: false,
+      bank: setupData.weddingInfo.bride.mother.bank,
+      account: setupData.weddingInfo.bride.mother.account,
+      name: setupData.weddingInfo.bride.mother.name,
+      deceased: setupData.weddingInfo.bride.mother.deceased,
     },
   });
 
@@ -122,7 +125,7 @@ const AccountPage = () => {
                   variant="body2"
                   sx={{ fontWeight: 500, fontSize: 13 }}
                 >
-                  {accountData[side].bankName}
+                  {accountData[side].bank}
                 </Typography>
               </Box>
             </Box>
