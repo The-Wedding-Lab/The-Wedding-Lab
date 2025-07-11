@@ -54,44 +54,6 @@ export default function MapPage() {
     <main>
       <section>
         <Title>오시는 길</Title>
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            marginBottom: 16,
-            alignItems: "center",
-          }}
-        >
-          <span
-            style={{
-              fontSize: 15,
-              fontWeight: 500,
-              color: "#333",
-              minWidth: 70,
-            }}
-          >
-            주소 검색
-          </span>
-          <AppTextField
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="주소를 입력하세요"
-            size="small"
-            style={{ flex: 1, height: 40 }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSearch();
-            }}
-          />
-          <AppButton
-            variant="contained"
-            color="highlight"
-            onClick={handleSearch}
-            disabled={loading}
-            style={{ minWidth: 80, height: 40, padding: "0 16px" }}
-          >
-            검색
-          </AppButton>
-        </div>
 
         <KakaoMap position={position} addressName={searchedAddress} />
 
