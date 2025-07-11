@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 "use client";
+=======
+import MapPage from "@/page/map/mapPage";
+>>>>>>> Stashed changes
 
 import MapApiPage from "@/page/map/MapApiPage";
 import styled from "@emotion/styled";

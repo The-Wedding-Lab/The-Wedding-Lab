@@ -33,6 +33,7 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
+  Modifier,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -77,7 +78,7 @@ const SelectableAccordion = ({
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? "none" : transition, // 드래그 중에는 transition 비활성화
+    transition: isDragging ? "none" : transition,
     opacity: isDragging ? 0.5 : 1,
     cursor: isDragging ? "grabbing" : "default",
   };
@@ -88,11 +89,17 @@ const SelectableAccordion = ({
         sx={{
           width: "100%",
           backgroundColor: isDragOverlay ? "background.paper" : "transparent",
-          ...(isDragging && {
-            border: "2px dashed #006ffd",
-            borderRadius: "12px",
-            transition: "border-color 0.2s ease",
+          ...(isDragOverlay && {
+            border: "none",
+            boxShadow: "none",
           }),
+          ...(isDragging &&
+            !isDragOverlay && {
+              border: "2px dashed #90a4ae",
+              borderRadius: "12px",
+              backgroundColor: "#f5f5f5",
+              transition: "all 0.2s ease",
+            }),
         }}
         selected={selected}
       >
@@ -115,7 +122,12 @@ const SelectableAccordion = ({
                     "&:active": { cursor: "grabbing" },
                     "&:focus": { outline: "none" },
                     "&:focus-visible": { outline: "none" },
+                    "&:hover": { color: "#90a4ae" },
                     touchAction: "none",
+                    userSelect: "none",
+                    WebkitUserSelect: "none",
+                    color: isDragging ? "#90a4ae" : "#bdbdbd",
+                    transition: "color 0.2s ease",
                   }}
                 />
               )}
@@ -1015,6 +1027,14 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
   // 드래그 상태를 추적하는 ref
   const isDraggingRef = React.useRef(false);
 
+  // 스크롤 오프셋을 보정하는 modifier
+  const adjustForScrollOffset: Modifier = ({ transform }) => {
+    return {
+      ...transform,
+      y: transform.y + window.scrollY, // 스크롤된 만큼 아래로 이동
+    };
+  };
+
   // Step4_Preview와 동일한 방식으로 스토어에서 직접 순서 계산
   const [sortedItems, setSortedItems] = useState<string[]>([]);
 
@@ -1084,10 +1104,11 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
     })
   );
 
-  // 드래그 중일 때 스크롤 방지
+  // 드래그 중일 때 스크롤 방지를 제거
   useEffect(() => {
+    // 드래그 중에도 스크롤 허용
     if (activeId) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = "auto";
     } else {
       document.body.style.overflow = "unset";
     }
@@ -1102,6 +1123,23 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
       activeId: event.active.id,
       currentItems: sortedItems,
     });
+
+    // 네이티브 앱으로 진동 메시지 전송
+    if (typeof window !== "undefined") {
+      // React Native WebView의 경우
+      if ((window as any).ReactNativeWebView?.postMessage) {
+        (window as any).ReactNativeWebView.postMessage("vibrate");
+      }
+      // 일반 WebView의 경우
+      else if (window.postMessage) {
+        window.postMessage("vibrate", "*");
+      }
+      // 안드로이드 WebView 인터페이스의 경우 (예시)
+      else if ((window as any).Android?.vibrate) {
+        (window as any).Android.vibrate();
+      }
+    }
+
     isDraggingRef.current = true;
     setActiveId(event.active.id as string);
   }
@@ -1226,8 +1264,36 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
               {sortedItems.map((id) => renderAccordion(id))}
             </Box>
           </SortableContext>
-          <DragOverlay>
-            {activeId ? renderAccordion(activeId, true) : null}
+          <DragOverlay
+            modifiers={[adjustForScrollOffset]}
+            dropAnimation={{
+              duration: 150,
+              easing: "cubic-bezier(0.2, 0, 0, 1)",
+            }}
+            style={{
+              position: "absolute",
+              zIndex: 9999,
+              pointerEvents: "none",
+            }}
+          >
+            {activeId ? (
+              <Box
+                sx={{
+                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+                  backgroundColor: "background.paper",
+                  borderRadius: "12px",
+                  border: "1px solid #e0e0e0",
+                  opacity: 0.95,
+                  pointerEvents: "none",
+                  transformOrigin: "left center",
+                  maxWidth: "300px",
+                  transform: "translate(20px, -100%)",
+                  position: "relative",
+                }}
+              >
+                {renderAccordion(activeId, true)}
+              </Box>
+            ) : null}
           </DragOverlay>
         </DndContext>
       </Box>
