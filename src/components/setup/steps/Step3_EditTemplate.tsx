@@ -177,6 +177,175 @@ const SelectableAccordion = ({
 ////////////// 컴포넌트
 
 /**
+ * 컬러피커 섹션
+ */
+const ColorPickerSection = ({
+  selectedColor,
+  onColorChange,
+}: {
+  selectedColor: string;
+  onColorChange: (color: string) => void;
+}) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // 미리 정의된 색상 팔레트
+  const colorPalette = [
+    "#f4f0ea", // 기본 베이지
+    "#ffffff", // 화이트
+    "#fdf6f0", // 연한 복숭아
+    "#f0f8ff", // 연한 하늘색
+    "#fff5f5", // 연한 핑크
+    "#f0fff0", // 연한 민트
+    "#fff8dc", // 연한 노랑
+    "#f5f5dc", // 베이지
+    "#e6e6fa", // 라벤더
+    "#ffe4e1", // 미스티로즈
+    "#f0ffff", // 아주어
+    "#fafad2", // 라이트골든로드
+  ];
+
+  return (
+    <>
+      <Box sx={{ mt: 2 }}>
+        <Typography fontSize={14} fontWeight={500} mb={1} color="#333">
+          배경색 선택
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box
+            onClick={() => setDrawerOpen(true)}
+            sx={{
+              width: "50px",
+              height: "40px",
+              backgroundColor: selectedColor,
+              border: "2px solid #ddd",
+              borderRadius: "8px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                borderColor: "#2C83E9",
+                transform: "scale(1.05)",
+              },
+              "&:active": {
+                transform: "scale(0.95)",
+              },
+            }}
+          ></Box>
+          <Typography fontSize={12} color="#666">
+            {selectedColor}
+          </Typography>
+        </Box>
+      </Box>
+
+      <AppSwipeableDrawer
+        open={drawerOpen}
+        title="배경색 선택"
+        onOpen={() => setDrawerOpen(true)}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <Box>
+          <Typography fontSize={16} fontWeight={600} mb={2}>
+            추천 색상
+          </Typography>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: 2,
+              mb: 3,
+            }}
+          >
+            {colorPalette.map((color) => (
+              <Box
+                key={color}
+                onClick={() => {
+                  onColorChange(color);
+                  setDrawerOpen(false);
+                }}
+                sx={{
+                  width: "60px",
+                  height: "60px",
+                  backgroundColor: color,
+                  border:
+                    selectedColor === color
+                      ? "3px solid #2C83E9"
+                      : "2px solid #ddd",
+                  borderRadius: "12px",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  "&:hover": {
+                    transform: "scale(1.1)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                  },
+                  "&:active": {
+                    transform: "scale(0.95)",
+                  },
+                }}
+              >
+                {selectedColor === color && (
+                  <Box
+                    sx={{
+                      width: "20px",
+                      height: "20px",
+                      backgroundColor: "#2C83E9",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography fontSize={12} color="white">
+                      ✓
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            ))}
+          </Box>
+
+          <Typography fontSize={16} fontWeight={600} mb={2}>
+            사용자 지정 색상
+          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box
+              component="input"
+              type="color"
+              value={selectedColor}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onColorChange(e.target.value);
+              }}
+              sx={{
+                width: "60px",
+                height: "60px",
+                border: "2px solid #ddd",
+                borderRadius: "12px",
+                cursor: "pointer",
+                "&::-webkit-color-swatch": {
+                  border: "none",
+                  borderRadius: "8px",
+                },
+                "&::-webkit-color-swatch-wrapper": {
+                  padding: "4px",
+                  borderRadius: "12px",
+                },
+              }}
+            />
+            <Typography fontSize={14} color="#666">
+              직접 색상을 선택하세요
+            </Typography>
+          </Box>
+        </Box>
+      </AppSwipeableDrawer>
+    </>
+  );
+};
+
+/**
  * 양가 가족 안내
  */
 const FamilyInfoAccordion = ({
@@ -240,6 +409,15 @@ const FamilyInfoAccordion = ({
           label="계좌번호 표시"
         />
       </FormGroup>
+
+      {!isDragOverlay && (
+        <ColorPickerSection
+          selectedColor={familyInfo?.backgroundColor || "#f4f0ea"}
+          onColorChange={(color) =>
+            updateFamilyInfo({ backgroundColor: color })
+          }
+        />
+      )}
     </SelectableAccordion>
   );
 };
@@ -580,9 +758,6 @@ const CoverDesignAccordion = ({
       },
     });
   };
-
-  //이미지 업로드 상태 관리 - FileData 타입으로 변경
-  const [uploadedImages, setUploadedImages] = useState<FileData[]>([]);
 
   const handleUpload = async (filesData: FileData[]) => {
     actions.setSetupData({
@@ -939,8 +1114,15 @@ const EndingMessageAccordion = ({
   const [uploadedImages, setUploadedImages] = useState<FileData[]>([]);
 
   const handleUpload = async (filesData: FileData[]) => {
-    console.log("업로드 시작 추후에 API 연동:", filesData);
-    setUploadedImages(filesData);
+    actions.setSetupData({
+      weddingInfo: {
+        ...setupData.weddingInfo,
+        pages: {
+          ...setupData.weddingInfo.pages,
+          endingMessage: { ...endingMessage, image: filesData[0] },
+        },
+      },
+    });
   };
 
   return (
@@ -959,12 +1141,13 @@ const EndingMessageAccordion = ({
         multiple={false}
         maxFiles={1}
       />
-      {uploadedImages.length > 0 && (
+      {endingMessage?.image?.url && (
         <ImageGallery
-          images={uploadedImages.map((fileData) => fileData.file)}
+          images={[endingMessage?.image?.url]}
           onImageRemove={(index: number) => {
-            const newImages = uploadedImages.filter((_, i) => i !== index);
-            setUploadedImages(newImages);
+            updateEndingMessage({
+              image: { ...endingMessage?.image, url: "" },
+            });
           }}
           mode="single"
           imageHeight={200}
@@ -979,40 +1162,6 @@ const EndingMessageAccordion = ({
         value={endingMessage?.text || ""}
         onChange={(e) => updateEndingMessage({ text: e.target.value })}
       />
-      {!isDragOverlay && (
-        <>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 1,
-              flexWrap: "wrap",
-              mt: 2,
-            }}
-          >
-            <AppChipCheckBox
-              label="이미지 위"
-              checked={endingMessage?.image?.position === "top"}
-              onCheckedChange={() =>
-                updateEndingMessage({
-                  image: { ...endingMessage?.image, position: "top" },
-                })
-              }
-              radioMode={true}
-            />
-            <AppChipCheckBox
-              label="이미지 아래"
-              checked={endingMessage?.image?.position === "bottom"}
-              onCheckedChange={() =>
-                updateEndingMessage({
-                  image: { ...endingMessage?.image, position: "bottom" },
-                })
-              }
-              radioMode={true}
-            />
-          </Box>
-        </>
-      )}
     </SelectableAccordion>
   );
 };

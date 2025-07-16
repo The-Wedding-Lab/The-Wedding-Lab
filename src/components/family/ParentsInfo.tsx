@@ -1,38 +1,16 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { Box, Typography } from "@mui/material";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
-interface ParentInfo {
-  name: string;
-  deceased?: boolean;
-}
+export const ParentsInfo: React.FC = () => {
+  const { setupData } = useWeddingDataStore();
 
-interface ParentsInfoProps {
-  groomFather: ParentInfo;
-  groomMother: ParentInfo;
-  groomName: string;
-  brideFather: ParentInfo;
-  brideMother: ParentInfo;
-  brideName: string;
-  backgroundColor?: string;
-}
-
-const formatName = (parent: ParentInfo) =>
-  parent.deceased ? `故${parent.name}` : parent.name;
-
-export const ParentsInfo: React.FC<ParentsInfoProps> = ({
-  groomFather,
-  groomMother,
-  groomName,
-  brideFather,
-  brideMother,
-  brideName,
-  backgroundColor = "#f9f7f3",
-}) => {
   return (
     <Box
       css={css`
-        background-color: ${backgroundColor};
+        background-color: ${setupData.weddingInfo?.pages?.familyInfo
+          ?.backgroundColor};
         padding: 48px 24px;
         display: flex;
         flex-direction: column;
@@ -49,20 +27,23 @@ export const ParentsInfo: React.FC<ParentsInfoProps> = ({
         <Typography
           css={css`
             font-size: 1.1rem;
-            color: #444;
+            color: ${setupData.weddingInfo?.pages?.familyInfo?.fontColor};
             margin-bottom: 4px;
           `}
         >
-          {formatName(groomFather)} · {formatName(groomMother)} 의 아들
+          {setupData.weddingInfo?.groom?.father?.deceased && "故"}
+          {setupData.weddingInfo?.groom?.father?.name} ·{" "}
+          {setupData.weddingInfo?.groom?.mother?.deceased && "故"}
+          {setupData.weddingInfo?.groom?.mother?.name} 의 아들
         </Typography>
         <Typography
           css={css`
             font-size: 1.3rem;
             font-weight: 500;
-            color: #2d2d2d;
+            color: ${setupData.weddingInfo?.pages?.familyInfo?.fontColor};
           `}
         >
-          신랑 {groomName}
+          신랑 {setupData.weddingInfo?.groom?.name}
         </Typography>
       </Box>
 
@@ -74,20 +55,23 @@ export const ParentsInfo: React.FC<ParentsInfoProps> = ({
         <Typography
           css={css`
             font-size: 1.1rem;
-            color: #444;
+            color: ${setupData.weddingInfo?.pages?.familyInfo?.fontColor};
             margin-bottom: 4px;
           `}
         >
-          {formatName(brideFather)} · {formatName(brideMother)} 의 딸
+          {setupData.weddingInfo?.bride?.father?.deceased && "故"}
+          {setupData.weddingInfo?.bride?.father?.name} ·{" "}
+          {setupData.weddingInfo?.bride?.mother?.deceased && "故"}
+          {setupData.weddingInfo?.bride?.mother?.name} 의 딸
         </Typography>
         <Typography
           css={css`
             font-size: 1.3rem;
             font-weight: 500;
-            color: #2d2d2d;
+            color: ${setupData.weddingInfo?.pages?.familyInfo?.fontColor};
           `}
         >
-          신부 {brideName}
+          신부 {setupData.weddingInfo?.bride?.name}
         </Typography>
       </Box>
     </Box>

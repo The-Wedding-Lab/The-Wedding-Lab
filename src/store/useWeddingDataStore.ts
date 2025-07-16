@@ -134,6 +134,8 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           order: 2, // 순서
           telEnabled: true, // 전화번호 표시 여부
           accountEnabled: true, // 계좌번호 표시 여부
+          backgroundColor: "#f4f0ea", // 배경색
+          fontColor: "#000000", // 텍스트 색상
         },
         // 캘린더
         calendar: {
