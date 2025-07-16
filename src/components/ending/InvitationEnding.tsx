@@ -1,19 +1,15 @@
 /** @jsxImportSource @emotion/react */
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import { css } from "@emotion/react";
 import { Box, Typography } from "@mui/material";
 
-interface InvitationEndingProps {
-  message: string;
-  backgroundImageUrl?: string;
-}
-
 const DEFAULT_IMAGE = "/ending-img.jpg";
 
-export const InvitationEnding: React.FC<InvitationEndingProps> = ({
-  message,
-  backgroundImageUrl,
-}) => {
-  const imageUrl = backgroundImageUrl || DEFAULT_IMAGE;
+export const InvitationEnding: React.FC = () => {
+  const { setupData } = useWeddingDataStore();
+
+  const imageUrl = setupData.weddingInfo?.pages?.endingMessage?.image?.url;
+  const message = setupData.weddingInfo?.pages?.endingMessage?.text;
 
   return (
     <Box
