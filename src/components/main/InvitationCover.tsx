@@ -1,22 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { Box, Typography } from "@mui/material";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
-interface InvitationCoverProps {
-  imageUrl: string;
-  message?: string | null;
-  brideName: string;
-  groomName: string;
-}
+export const InvitationCover: React.FC = () => {
+  const { setupData } = useWeddingDataStore();
+  const coverDesign = setupData.weddingInfo?.pages?.coverDesign;
 
-export const InvitationCover: React.FC<InvitationCoverProps> = ({
-  imageUrl,
-  message,
-  brideName,
-  groomName,
-}) => {
-  const displayMessage =
-    message?.trim() || `${groomName} & ${brideName}\n저희 결혼합니다`;
+  const displayMessage = coverDesign?.text?.trim() || "";
 
   return (
     <Box
@@ -30,19 +21,21 @@ export const InvitationCover: React.FC<InvitationCoverProps> = ({
         box-sizing: border-box;
       `}
     >
-      <Box
-        component="img"
-        src={imageUrl}
-        alt="청첩장 커버 이미지"
-        css={css`
-          width: 100%;
-          height: 65vh;
-          object-fit: cover;
-          border-radius: 28px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-          margin-bottom: 32px;
-        `}
-      />
+      {coverDesign?.image?.url && (
+        <Box
+          component="img"
+          src={coverDesign.image.url}
+          alt="청첩장 커버 이미지"
+          css={css`
+            width: 100%;
+            height: 65vh;
+            object-fit: cover;
+            border-radius: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+          `}
+        />
+      )}
 
       <Box
         css={css`

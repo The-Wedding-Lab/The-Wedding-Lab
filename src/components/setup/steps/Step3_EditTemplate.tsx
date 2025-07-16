@@ -47,6 +47,15 @@ import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
 import UploadForm from "@/components/uploadForm/UploadForm";
 import ImageGallery from "@/components/uploadForm/ImageGallery";
 
+// 공통 FileData 인터페이스
+interface FileData {
+  file: File;
+  name: string;
+  size: number;
+  binaryData: ArrayBuffer;
+  url: string; // data URL 추가
+}
+
 interface SelectableAccordionProps {
   title: string;
   selected: boolean;
@@ -457,12 +466,12 @@ const GalleryAccordion = ({
     });
   };
 
-  //이미지 업로드 상태 관리
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  //이미지 업로드 상태 관리 - FileData 타입으로 변경
+  const [uploadedImages, setUploadedImages] = useState<FileData[]>([]);
 
-  const handleUpload = async (files: File[]) => {
-    console.log("업로드 시작 추후에 API 연동:", files);
-    setUploadedImages(files);
+  const handleUpload = async (filesData: FileData[]) => {
+    console.log("업로드 시작 추후에 API 연동:", filesData);
+    setUploadedImages(filesData);
   };
 
   return (
@@ -476,14 +485,14 @@ const GalleryAccordion = ({
       <UploadForm
         title="갤러리 이미지 업로드"
         description="최대 10개까지 업로드 가능합니다."
-        onUpload={handleUpload}
+        onFilesChange={handleUpload}
         accept="image/*"
         multiple={true}
         maxFiles={10}
       />
       {uploadedImages.length > 0 && (
         <ImageGallery
-          images={uploadedImages}
+          images={uploadedImages.map((fileData) => fileData.file)}
           onImageRemove={(index: number) => {
             const newImages = uploadedImages.filter((_, i) => i !== index);
             setUploadedImages(newImages);
@@ -572,12 +581,19 @@ const CoverDesignAccordion = ({
     });
   };
 
-  //이미지 업로드 상태 관리
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  //이미지 업로드 상태 관리 - FileData 타입으로 변경
+  const [uploadedImages, setUploadedImages] = useState<FileData[]>([]);
 
-  const handleUpload = async (files: File[]) => {
-    console.log("업로드 시작 추후에 API 연동:", files);
-    setUploadedImages(files);
+  const handleUpload = async (filesData: FileData[]) => {
+    actions.setSetupData({
+      weddingInfo: {
+        ...setupData.weddingInfo,
+        pages: {
+          ...setupData.weddingInfo.pages,
+          coverDesign: { ...coverDesign, image: filesData[0] },
+        },
+      },
+    });
   };
 
   return (
@@ -591,18 +607,15 @@ const CoverDesignAccordion = ({
       <UploadForm
         title="커버 이미지 업로드"
         description="커버 이미지를 업로드하세요"
-        onUpload={handleUpload}
+        onFilesChange={handleUpload}
         accept="image/*"
         multiple={false}
         maxFiles={1}
       />
-      {uploadedImages.length > 0 && (
+      {coverDesign?.image?.url && (
         <ImageGallery
-          images={uploadedImages}
-          onImageRemove={(index: number) => {
-            const newImages = uploadedImages.filter((_, i) => i !== index);
-            setUploadedImages(newImages);
-          }}
+          images={[coverDesign.image.file]}
+          onImageRemove={() => {}}
           mode="single"
           imageHeight={200}
         />
@@ -649,11 +662,11 @@ const IntroMessageAccordion = ({
   };
 
   //이미지 업로드 상태 관리
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<FileData[]>([]);
 
-  const handleUpload = async (files: File[]) => {
-    console.log("업로드 시작 추후에 API 연동:", files);
-    setUploadedImages(files);
+  const handleUpload = async (filesData: FileData[]) => {
+    console.log("업로드 시작 추후에 API 연동:", filesData);
+    setUploadedImages(filesData);
   };
 
   return (
@@ -667,14 +680,14 @@ const IntroMessageAccordion = ({
       <UploadForm
         title="모시는 글 이미지 업로드"
         description="모시는 글 이미지를 업로드하세요"
-        onUpload={handleUpload}
+        onFilesChange={handleUpload}
         accept="image/*"
         multiple={false}
         maxFiles={1}
       />
       {uploadedImages.length > 0 && (
         <ImageGallery
-          images={uploadedImages}
+          images={uploadedImages.map((fileData) => fileData.file)}
           onImageRemove={(index: number) => {
             const newImages = uploadedImages.filter((_, i) => i !== index);
             setUploadedImages(newImages);
@@ -923,11 +936,11 @@ const EndingMessageAccordion = ({
   };
 
   //이미지 업로드 상태 관리
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<FileData[]>([]);
 
-  const handleUpload = async (files: File[]) => {
-    console.log("업로드 시작 추후에 API 연동:", files);
-    setUploadedImages(files);
+  const handleUpload = async (filesData: FileData[]) => {
+    console.log("업로드 시작 추후에 API 연동:", filesData);
+    setUploadedImages(filesData);
   };
 
   return (
@@ -941,14 +954,14 @@ const EndingMessageAccordion = ({
       <UploadForm
         title="마지막 글 이미지 업로드"
         description="마지막 글 이미지를 업로드하세요"
-        onUpload={handleUpload}
+        onFilesChange={handleUpload}
         accept="image/*"
         multiple={false}
         maxFiles={1}
       />
       {uploadedImages.length > 0 && (
         <ImageGallery
-          images={uploadedImages}
+          images={uploadedImages.map((fileData) => fileData.file)}
           onImageRemove={(index: number) => {
             const newImages = uploadedImages.filter((_, i) => i !== index);
             setUploadedImages(newImages);

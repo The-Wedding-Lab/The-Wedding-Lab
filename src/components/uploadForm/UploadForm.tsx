@@ -1,25 +1,25 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  LinearProgress,
-  IconButton,
-} from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import { CloudUpload, Delete, AttachFile } from "@mui/icons-material";
 import AppButton from "../ui/AppButton";
+
+interface FileData {
+  file: File;
+  name: string;
+  size: number;
+  binaryData: ArrayBuffer;
+  url: string; // data URL 추가
+}
 
 interface UploadFormProps {
   accept?: string;
   multiple?: boolean;
   maxFiles?: number;
-  onFilesChange?: (files: File[]) => void;
-  onUpload?: (files: File[]) => Promise<void>;
+  onFilesChange?: (filesData: FileData[]) => void;
   title?: string;
   description?: string;
-  uploadButtonText?: string;
 }
 
 const UploadForm: React.FC<UploadFormProps> = ({
@@ -27,21 +27,37 @@ const UploadForm: React.FC<UploadFormProps> = ({
   multiple = true,
   maxFiles = 10,
   onFilesChange,
-  onUpload,
   title = "파일을 선택해주세요",
   description = "업로드할 파일을 선택하세요",
-  uploadButtonText = "업로드",
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedFiles, setUploadedFiles] = useState<FileData[]>([]);
 
   const handleFileSelect = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const readFileAsBinary = (file: File): Promise<ArrayBuffer> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as ArrayBuffer);
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const readFileAsDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const files = Array.from(event.target.files || []);
 
     if (files.length === 0) return;
@@ -53,9 +69,31 @@ const UploadForm: React.FC<UploadFormProps> = ({
       return;
     }
 
-    const newFiles = [...uploadedFiles, ...files];
-    setUploadedFiles(newFiles);
-    onFilesChange?.(newFiles);
+    try {
+      // 파일들을 바이너리 데이터와 URL로 변환
+      const filesWithData = await Promise.all(
+        files.map(async (file) => {
+          const [binaryData, url] = await Promise.all([
+            readFileAsBinary(file),
+            readFileAsDataURL(file),
+          ]);
+          return {
+            file,
+            name: file.name,
+            size: file.size,
+            binaryData,
+            url,
+          };
+        })
+      );
+
+      const newFiles = [...uploadedFiles, ...filesWithData];
+      setUploadedFiles(newFiles);
+      onFilesChange?.(newFiles);
+    } catch (error) {
+      console.error("파일 읽기 실패:", error);
+      alert("파일을 읽는데 실패했습니다.");
+    }
 
     // input 초기화
     if (fileInputRef.current) {
@@ -67,44 +105,6 @@ const UploadForm: React.FC<UploadFormProps> = ({
     const newFiles = uploadedFiles.filter((_, i) => i !== index);
     setUploadedFiles(newFiles);
     onFilesChange?.(newFiles);
-  };
-
-  const handleUpload = async () => {
-    if (uploadedFiles.length === 0 || !onUpload) return;
-
-    setIsUploading(true);
-    setUploadProgress(0);
-
-    try {
-      // 프로그레스 시뮬레이션
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return prev;
-          }
-          return prev + Math.random() * 10;
-        });
-      }, 200);
-
-      await onUpload(uploadedFiles);
-
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-
-      // 업로드 완료 후 파일 리스트 초기화
-      setTimeout(() => {
-        setUploadedFiles([]);
-        onFilesChange?.([]);
-        setIsUploading(false);
-        setUploadProgress(0);
-      }, 1000);
-    } catch (error) {
-      console.error("업로드 실패:", error);
-      setIsUploading(false);
-      setUploadProgress(0);
-      alert("업로드에 실패했습니다.");
-    }
   };
 
   const formatFileSize = (bytes: number) => {
@@ -205,7 +205,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
               p: 1,
             }}
           >
-            {uploadedFiles.map((file, index) => (
+            {uploadedFiles.map((fileData, index) => (
               <Box
                 key={index}
                 sx={{
@@ -229,10 +229,10 @@ const UploadForm: React.FC<UploadFormProps> = ({
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {file.name}
+                    {fileData.name}
                   </Typography>
                   <Typography fontSize={12} color="#666">
-                    {formatFileSize(file.size)}
+                    {formatFileSize(fileData.size)}
                   </Typography>
                 </Box>
                 <IconButton
@@ -246,71 +246,6 @@ const UploadForm: React.FC<UploadFormProps> = ({
               </Box>
             ))}
           </Box>
-        </Box>
-      )}
-
-      {/* 업로드 버튼 & 프로그레스 */}
-      {uploadedFiles.length > 0 && (
-        <Box>
-          <Button
-            variant="contained"
-            fullWidth
-            size="large"
-            onClick={handleUpload}
-            disabled={isUploading}
-            sx={{
-              borderRadius: "12px",
-              textTransform: "none",
-              fontSize: "16px",
-              py: 1.5,
-            }}
-          >
-            {isUploading ? "업로드 중..." : uploadButtonText}
-          </Button>
-
-          {isUploading && (
-            <Box sx={{ mt: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  mb: 1,
-                }}
-              >
-                <Box sx={{ width: "100%", mr: 1 }}>
-                  <LinearProgress
-                    variant="determinate"
-                    value={uploadProgress}
-                    sx={{
-                      height: 8,
-                      borderRadius: 4,
-                      "& .MuiLinearProgress-bar": {
-                        borderRadius: 4,
-                      },
-                    }}
-                  />
-                </Box>
-                <Box sx={{ minWidth: 35 }}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    fontSize={12}
-                  >
-                    {`${Math.round(uploadProgress)}%`}
-                  </Typography>
-                </Box>
-              </Box>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                textAlign="center"
-                display="block"
-                fontSize={12}
-              >
-                파일을 업로드하는 중입니다...
-              </Typography>
-            </Box>
-          )}
         </Box>
       )}
     </Box>

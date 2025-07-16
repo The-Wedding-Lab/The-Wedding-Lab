@@ -116,24 +116,6 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           display: "block",
         }}
       />
-      {/* 삭제 버튼 */}
-      {showRemoveButton && (
-        <IconButton
-          size="small"
-          onClick={(e) => handleRemoveImage(0, e)}
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 1)",
-            },
-          }}
-        >
-          <Delete fontSize="small" color="error" />
-        </IconButton>
-      )}
     </Box>
   );
 
