@@ -69,7 +69,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "icon", // 고인 아이콘 타입
+          deceasedIcon: "🌼", // 고인 아이콘 타입
         },
         mother: {
           name: "", // 어머니 이름
@@ -77,7 +77,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "icon", // 고인 아이콘 타입
+          deceasedIcon: "🌼", // 고인 아이콘 타입
         },
       },
 
@@ -94,7 +94,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "icon", // 고인 아이콘 타입
+          deceasedIcon: "🌼", // 고인 아이콘 타입
         },
         mother: {
           name: "", // 어머니 이름
@@ -102,7 +102,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "icon", // 고인 아이콘 타입
+          deceasedIcon: "🌼", // 고인 아이콘 타입
         },
       },
       //폰트
@@ -133,7 +133,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           enabled: true, // 기본값 true
           order: 2, // 순서
           telEnabled: true, // 전화번호 표시 여부
-          accountEnabled: true, // 계좌번호 표시 여부
+          accountEnabled: true, // 계좌번호 표시 여부 (미사용)
           backgroundColor: "#f4f0ea", // 배경색
           fontColor: "#000000", // 텍스트 색상
         },
@@ -152,8 +152,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           enabled: true, // 기본값 true
           order: 4, // 순서
           images: [], // 이미지 배열
-          displayType: "swipe", // 표시 타입 (swipe, paging, grid)
-          zoomOnClick: true, // 클릭 시 확대 여부
+          displayType: "stacked", // 표시 타입 (stacked, scroll, grid)
         },
         // 오시는 길
         mapDirections: {
@@ -188,6 +187,8 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         accountInfo: {
           enabled: false, // 기본값 false
           order: 6, // 순서
+          title: "", // 제목
+          description: "", // 설명
           kakaopayLink: "", // 카카오페이 링크
         },
         // 마지막 글

@@ -11,15 +11,16 @@ import {
   Button,
   Paper,
 } from "@mui/material";
-import { AccountBalance, Person, ContentCopy } from "@mui/icons-material";
+import { Person, ContentCopy } from "@mui/icons-material";
 import { useSnackbarStore } from "@/store/useSnackbarStore";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
+import AppTwemoji from "@/components/ui/AppTwemoji";
 
 interface AccountInfo {
   bank: string;
   account: string;
   name: string;
-  deceased?: boolean; // 고인 여부
+  deceased?: boolean;
 }
 
 interface AccountData {
@@ -33,9 +34,12 @@ interface AccountData {
 
 const AccountPage = () => {
   const { setupData } = useWeddingDataStore();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const showStackSnackbar = useSnackbarStore(
+    (state) => state.showStackSnackbar
+  );
 
-  // 예시 데이터
-  const [accountData] = useState<AccountData>({
+  const accountData: AccountData = {
     groom: {
       bank: setupData.weddingInfo.groom.bank,
       account: setupData.weddingInfo.groom.account,
@@ -70,162 +74,139 @@ const AccountPage = () => {
       name: setupData.weddingInfo.bride.mother.name,
       deceased: setupData.weddingInfo.bride.mother.deceased,
     },
-  });
-
-  const [activeTab, setActiveTab] = useState(0);
-  const showStackSnackbar = useSnackbarStore(
-    (state) => state.showStackSnackbar
-  );
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
   };
 
-  const renderAccountCard = (side: keyof AccountData, title: string) => {
-    const handleCopy = async () => {
-      try {
-        await navigator.clipboard.writeText(accountData[side].account);
-        showStackSnackbar("계좌번호가 복사되었습니다", { variant: "success" });
-      } catch {
-        showStackSnackbar("복사에 실패했습니다", { variant: "error" });
-      }
-    };
+  const handleCopy = async (account: string, name: string) => {
+    try {
+      await navigator.clipboard.writeText(account);
+      showStackSnackbar(`${name}님의 계좌번호가 복사되었습니다`, {
+        variant: "success",
+      });
+    } catch {
+      showStackSnackbar("복사에 실패했습니다", { variant: "error" });
+    }
+  };
+
+  const AccountSection = ({
+    bank,
+    account,
+    name,
+    role,
+  }: {
+    bank: string;
+    account: string;
+    name: string;
+    role: string;
+  }) => {
+    if (!name || !account || !bank) {
+      return null;
+    }
 
     return (
-      <Card
-        sx={{
-          mb: 1, // margin-bottom 줄임
-          borderRadius: "10px",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-          border: "1px solid #e0e0e0",
-        }}
-      >
-        <CardContent sx={{ p: 1.5 }}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <Person sx={{ color: "#0065F8", mr: 0.5, fontSize: 18 }} />
-            <Typography
-              variant="subtitle1"
-              sx={{ fontWeight: 600, color: "#333", fontSize: 15 }}
-            >
-              {title}
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <AccountBalance sx={{ color: "#666", fontSize: 15 }} />
+      <Box sx={{ width: "100%" }}>
+        <Card
+          sx={{
+            mb: 2,
+            borderRadius: "12px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+            border: "1px solid #e0e0e0",
+          }}
+        >
+          <CardContent sx={{ p: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: 600, color: "#333", fontSize: 16 }}
+              >
+                <AppTwemoji>{role}</AppTwemoji>
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <Box>
                 <Typography
                   variant="caption"
                   color="#666"
-                  sx={{ fontSize: "11px" }}
+                  sx={{ fontSize: "12px", display: "block" }}
                 >
                   은행
                 </Typography>
                 <Typography
                   variant="body2"
-                  sx={{ fontWeight: 500, fontSize: 13 }}
+                  sx={{ fontWeight: 500, fontSize: 14 }}
                 >
-                  {accountData[side].bank}
+                  {bank}
                 </Typography>
               </Box>
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <AccountBalance sx={{ color: "#666", fontSize: 15 }} />
+
               <Box>
                 <Typography
                   variant="caption"
                   color="#666"
-                  sx={{ fontSize: "11px" }}
+                  sx={{ fontSize: "12px", display: "block" }}
                 >
                   계좌번호
                 </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 500,
-                      fontFamily: "monospace",
-                      fontSize: 13,
-                    }}
-                  >
-                    {accountData[side].account}
-                  </Typography>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<ContentCopy sx={{ fontSize: 15 }} />}
-                    onClick={handleCopy}
-                    sx={{
-                      ml: 0.5,
-                      fontSize: "11px",
-                      minWidth: 0,
-                      p: "1px 6px",
-                      height: 24,
-                    }}
-                  >
-                    복사
-                  </Button>
-                </Box>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 500,
+                    fontFamily: "monospace",
+                    fontSize: 14,
+                    mb: 1,
+                  }}
+                >
+                  {account}
+                </Typography>
               </Box>
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              <Person sx={{ color: "#666", fontSize: 15 }} />
+
               <Box>
                 <Typography
                   variant="caption"
                   color="#666"
-                  sx={{ fontSize: "11px" }}
+                  sx={{ fontSize: "12px", display: "block" }}
                 >
                   예금주
                 </Typography>
                 <Typography
                   variant="body2"
-                  sx={{ fontWeight: 500, fontSize: 13 }}
+                  sx={{ fontWeight: 500, fontSize: 14, mb: 1 }}
                 >
-                  {accountData[side].name}
+                  {name}
                 </Typography>
               </Box>
+
+              <Box>
+                <Button
+                  variant="outlined"
+                  startIcon={<ContentCopy fontSize="small" />}
+                  onClick={() => handleCopy(account, name)}
+                  size="small"
+                  sx={{
+                    borderRadius: "20px",
+                    px: 2,
+                    py: 0.5,
+                    fontSize: "12px",
+                    minWidth: "auto",
+                  }}
+                  fullWidth
+                >
+                  계좌번호 복사
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </Box>
     );
-  };
-
-  // 부모님 계좌 필터링
-  const getParentAccounts = (side: "groom" | "bride") => {
-    const fatherKey = side === "groom" ? "groomFather" : "brideFather";
-    const motherKey = side === "groom" ? "groomMother" : "brideMother";
-    return [
-      {
-        key: fatherKey as keyof AccountData,
-        label: side === "groom" ? "신랑 아버지" : "신부 아버지",
-      },
-      {
-        key: motherKey as keyof AccountData,
-        label: side === "groom" ? "신랑 어머니" : "신부 어머니",
-      },
-    ].filter(
-      ({ key }) =>
-        accountData[key].deceased !== true && accountData[key].account
-    );
-  };
-
-  // 신랑측/신부측 가족 수 계산
-  const getAliveCount = (side: "groom" | "bride") => {
-    const keys: (keyof AccountData)[] =
-      side === "groom"
-        ? ["groom", "groomFather", "groomMother"]
-        : ["bride", "brideFather", "brideMother"];
-    return keys.filter((key) => !accountData[key].deceased).length;
   };
 
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        py: 3,
+        py: 4,
         px: 2,
+        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
       }}
     >
       <Box
@@ -234,177 +215,110 @@ const AccountPage = () => {
           margin: "0 auto",
         }}
       >
-        <Box sx={{ mb: 4, textAlign: "center" }}>
-          <Typography fontSize={24} fontWeight={700} gutterBottom>
-            제목
+        <Box sx={{ textAlign: "center", mb: 4 }}>
+          <Typography fontSize={28} fontWeight={700} gutterBottom color="#333">
+            마음 전하실 곳
           </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              color: "#666",
-              fontSize: "14px",
-            }}
-          >
-            축하의 마음을 전해주세요
+          <Typography fontSize={16} color="#666" mb={4}>
+            소중한 마음을 담아 축하해 주세요
           </Typography>
         </Box>
-        <Box sx={{ mb: 4 }}>
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: "12px",
-              overflow: "hidden",
-            }}
-          >
-            <Tabs
-              value={activeTab}
-              onChange={handleTabChange}
-              sx={{
-                "& .MuiTabs-indicator": {
-                  backgroundColor: "#0065F8",
-                  height: "3px",
-                },
-                "& .MuiTab-root": {
-                  fontSize: "16px",
-                  fontWeight: 600,
-                  color: "#666",
-                  textTransform: "none",
-                  minHeight: "56px",
-                  position: "relative",
-                  "&.Mui-selected": {
-                    color: "#0065F8",
-                    backgroundColor: "#ffffff",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                  },
-                  "&:hover": {
-                    backgroundColor: "#ffffff",
-                    color: "#0065F8",
-                  },
-                },
-                "& .MuiTabs-flexContainer": {
-                  gap: 0,
-                },
-              }}
-            >
-              <Tab
-                label={
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Typography sx={{ fontSize: "14px", fontWeight: 600 }}>
-                      신랑측
-                    </Typography>
-                    <Box
-                      sx={{
-                        backgroundColor: activeTab === 0 ? "#0065F8" : "#ccc",
-                        color: "white",
-                        borderRadius: "50%",
-                        width: "20px",
-                        height: "20px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "12px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {getAliveCount("groom")}
-                    </Box>
-                  </Box>
-                }
-              />
-              <Tab
-                label={
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Typography sx={{ fontSize: "14px", fontWeight: 600 }}>
-                      신부측
-                    </Typography>
-                    <Box
-                      sx={{
-                        backgroundColor: activeTab === 1 ? "#0065F8" : "#ccc",
-                        color: "white",
-                        borderRadius: "50%",
-                        width: "20px",
-                        height: "20px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "12px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {getAliveCount("bride")}
-                    </Box>
-                  </Box>
-                }
-              />
-            </Tabs>
-          </Paper>
-        </Box>
-        <Box sx={{ mb: 4 }}>
-          {activeTab === 0 && (
-            <Box>
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr",
-                  gap: 1.5,
-                  mb: 1.5,
-                }}
-              >
-                {renderAccountCard("groom", "신랑")}
-              </Box>
-              {(() => {
-                const parents = getParentAccounts("groom");
-                return (
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        parents.length === 2
-                          ? { xs: "1fr", sm: "1fr 1fr" }
-                          : "1fr",
-                      gap: 1.5,
-                    }}
-                  >
-                    {parents.map((p) =>
-                      renderAccountCard(p.key as keyof AccountData, p.label)
-                    )}
-                  </Box>
-                );
-              })()}
-            </Box>
-          )}
 
-          {activeTab === 1 && (
+        <Paper
+          elevation={0}
+          sx={{
+            borderRadius: "16px",
+            overflow: "hidden",
+            mb: 3,
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <Tabs
+            value={selectedTab}
+            onChange={(_, newValue) => setSelectedTab(newValue)}
+            sx={{
+              "& .MuiTabs-indicator": {
+                backgroundColor: "#2C83E9",
+                height: "3px",
+              },
+              "& .MuiTab-root": {
+                fontSize: "16px",
+                fontWeight: 600,
+                color: "#666",
+                textTransform: "none",
+                minHeight: "60px",
+                "&.Mui-selected": {
+                  color: "#2C83E9",
+                },
+                flex: 1,
+                "&:hover": {
+                  backgroundColor: "rgba(44, 131, 233, 0.04)",
+                },
+              },
+            }}
+          >
+            <Tab
+              label={
+                <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+                  신랑측
+                </Typography>
+              }
+            />
+            <Tab
+              label={
+                <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+                  신부측
+                </Typography>
+              }
+            />
+          </Tabs>
+        </Paper>
+
+        <Box sx={{ px: 1 }}>
+          {selectedTab === 0 ? (
+            // 신랑측
             <Box>
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr",
-                  gap: 1.5,
-                  mb: 1.5,
-                }}
-              >
-                {renderAccountCard("bride", "신부")}
-              </Box>
-              {(() => {
-                const parents = getParentAccounts("bride");
-                return (
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        parents.length === 2
-                          ? { xs: "1fr", sm: "1fr 1fr" }
-                          : "1fr",
-                      gap: 1.5,
-                    }}
-                  >
-                    {parents.map((p) =>
-                      renderAccountCard(p.key as keyof AccountData, p.label)
-                    )}
-                  </Box>
-                );
-              })()}
+              <AccountSection
+                bank={accountData.groom.bank}
+                account={accountData.groom.account}
+                name={accountData.groom.name}
+                role="🤵 신랑"
+              />
+              <AccountSection
+                bank={accountData.groomFather.bank}
+                account={accountData.groomFather.account}
+                name={accountData.groomFather.name}
+                role="👫 신랑 아버지"
+              />
+              <AccountSection
+                bank={accountData.groomMother.bank}
+                account={accountData.groomMother.account}
+                name={accountData.groomMother.name}
+                role="👫 신랑 어머니"
+              />
+            </Box>
+          ) : (
+            // 신부측
+            <Box>
+              <AccountSection
+                bank={accountData.bride.bank}
+                account={accountData.bride.account}
+                name={accountData.bride.name}
+                role="👰 신부"
+              />
+              <AccountSection
+                bank={accountData.brideFather.bank}
+                account={accountData.brideFather.account}
+                name={accountData.brideFather.name}
+                role="👫 신부 아버지"
+              />
+              <AccountSection
+                bank={accountData.brideMother.bank}
+                account={accountData.brideMother.account}
+                name={accountData.brideMother.name}
+                role="👫 신부 어머니"
+              />
             </Box>
           )}
         </Box>

@@ -79,14 +79,10 @@ const Step1_WeddingInfo = () => {
       weddingInfo?.location?.hall &&
       // 신랑 혼주 정보
       weddingInfo?.groom?.father?.name &&
-      weddingInfo?.groom?.father?.tel &&
       weddingInfo?.groom?.mother?.name &&
-      weddingInfo?.groom?.mother?.tel &&
       // 신부 혼주 정보
       weddingInfo?.bride?.father?.name &&
-      weddingInfo?.bride?.father?.tel &&
-      weddingInfo?.bride?.mother?.name &&
-      weddingInfo?.bride?.mother?.tel
+      weddingInfo?.bride?.mother?.name
     );
   };
 
@@ -177,12 +173,16 @@ const Step1_WeddingInfo = () => {
                     tel: "010-1234-5678",
                     bank: "국민은행",
                     account: "123-456789-012",
+                    deceased: true,
+                    deceasedIcon: "🌼",
                   },
                   mother: {
                     name: "길동모",
                     tel: "010-1234-5678",
                     bank: "국민은행",
                     account: "123-456789-012",
+                    deceased: true,
+                    deceasedIcon: "故",
                   },
                 },
                 bride: {
@@ -349,9 +349,7 @@ const Step1_WeddingInfo = () => {
         <AppAccordion
           success={
             setupData.weddingInfo?.groom?.father?.name &&
-            setupData.weddingInfo?.groom?.father?.tel &&
-            setupData.weddingInfo?.groom?.mother?.name &&
-            setupData.weddingInfo?.groom?.mother?.tel
+            setupData.weddingInfo?.groom?.mother?.name
           }
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
@@ -472,11 +470,11 @@ const Step1_WeddingInfo = () => {
                     })
                   }
                   sx={{
-                    width: "65px",
+                    width: "75px",
                     borderRadius: "12px",
                   }}
                 >
-                  <MenuItem value="icon">꽃</MenuItem>
+                  <MenuItem value="🌼">🌼</MenuItem>
                   <MenuItem value="故">故</MenuItem>
                 </Select>
               </Box>
@@ -582,11 +580,11 @@ const Step1_WeddingInfo = () => {
                     })
                   }
                   sx={{
-                    width: "65px",
+                    width: "75px",
                     borderRadius: "12px",
                   }}
                 >
-                  <MenuItem value="icon">꽃</MenuItem>
+                  <MenuItem value="🌼">🌼</MenuItem>
                   <MenuItem value="故">故</MenuItem>
                 </Select>
               </Box>
@@ -597,9 +595,7 @@ const Step1_WeddingInfo = () => {
         <AppAccordion
           success={
             setupData.weddingInfo?.bride?.father?.name &&
-            setupData.weddingInfo?.bride?.father?.tel &&
-            setupData.weddingInfo?.bride?.mother?.name &&
-            setupData.weddingInfo?.bride?.mother?.tel
+            setupData.weddingInfo?.bride?.mother?.name
           }
         >
           <AccordionSummary expandIcon={<ExpandMore />}>
@@ -720,11 +716,11 @@ const Step1_WeddingInfo = () => {
                     })
                   }
                   sx={{
-                    width: "65px",
+                    width: "75px",
                     borderRadius: "12px",
                   }}
                 >
-                  <MenuItem value="icon">꽃</MenuItem>
+                  <MenuItem value="🌼">🌼</MenuItem>
                   <MenuItem value="故">故</MenuItem>
                 </Select>
               </Box>
@@ -830,11 +826,11 @@ const Step1_WeddingInfo = () => {
                     })
                   }
                   sx={{
-                    width: "65px",
+                    width: "75px",
                     borderRadius: "12px",
                   }}
                 >
-                  <MenuItem value="icon">꽃</MenuItem>
+                  <MenuItem value="🌼">🌼</MenuItem>
                   <MenuItem value="故">故</MenuItem>
                 </Select>
               </Box>

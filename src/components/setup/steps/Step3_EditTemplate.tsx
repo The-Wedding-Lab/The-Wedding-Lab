@@ -46,6 +46,9 @@ import { CSS } from "@dnd-kit/utilities";
 import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
 import UploadForm from "@/components/uploadForm/UploadForm";
 import ImageGallery from "@/components/uploadForm/ImageGallery";
+import StackedGallery from "@/components/gallery/StackedGallery";
+import GridGallery from "@/components/gallery/GridGallery";
+import SwipeGallery from "@/components/gallery/SwipeGallery";
 
 // 공통 FileData 인터페이스
 interface FileData {
@@ -381,6 +384,20 @@ const FamilyInfoAccordion = ({
       onSelect={() => updateFamilyInfo({ enabled: !familyInfo.enabled })}
       isDragOverlay={isDragOverlay}
     >
+      <Box className="info-box">
+        <Typography
+          sx={{ fontSize: 18, color: "#666", mb: 1, fontWeight: 600 }}
+        >
+          안내사항
+        </Typography>
+        <Typography
+          sx={{ fontSize: 14, color: "#aaa", mb: 2, fontWeight: 500 }}
+        >
+          예식 정보 입력에서 <b>혼주님 전화 번호</b>를 입력해주세요.
+          <br />
+          입력 란을 비워두시면 표시되지 않습니다.
+        </Typography>
+      </Box>
       <FormGroup>
         <FormControlLabel
           {...FormControlLabelProps}
@@ -393,20 +410,6 @@ const FamilyInfoAccordion = ({
             />
           }
           label="전화번호 표시"
-        />
-      </FormGroup>
-      <FormGroup>
-        <FormControlLabel
-          {...FormControlLabelProps}
-          control={
-            <Switch
-              checked={familyInfo?.accountEnabled}
-              onChange={(e) =>
-                updateFamilyInfo({ accountEnabled: e.target.checked })
-              }
-            />
-          }
-          label="계좌번호 표시"
         />
       </FormGroup>
 
@@ -518,7 +521,9 @@ const MapAccordion = ({
               placeholder="'더컨벤션 영등포' 검색"
               value={mapDirections.naviInfo.text}
               onChange={(e) =>
-                updateMapDirections({ naviInfo: { text: e.target.value } })
+                updateMapDirections({
+                  naviInfo: { ...mapDirections.naviInfo, text: e.target.value },
+                })
               }
             />
           </SelectableAccordion>
@@ -540,7 +545,9 @@ const MapAccordion = ({
               placeholder="11번 하차 후 버거킹쪽으로 도보 100m"
               value={mapDirections.busInfo.text}
               onChange={(e) =>
-                updateMapDirections({ busInfo: { text: e.target.value } })
+                updateMapDirections({
+                  busInfo: { ...mapDirections.busInfo, text: e.target.value },
+                })
               }
             />
           </SelectableAccordion>
@@ -562,7 +569,12 @@ const MapAccordion = ({
               placeholder="2호선 영등포구청역 1번 출구 도보 100m"
               value={mapDirections.subwayInfo.text}
               onChange={(e) =>
-                updateMapDirections({ subwayInfo: { text: e.target.value } })
+                updateMapDirections({
+                  subwayInfo: {
+                    ...mapDirections.subwayInfo,
+                    text: e.target.value,
+                  },
+                })
               }
             />
           </SelectableAccordion>
@@ -584,7 +596,12 @@ const MapAccordion = ({
               placeholder="상가 지하주차장 이용 가능"
               value={mapDirections.parkingInfo.text}
               onChange={(e) =>
-                updateMapDirections({ parkingInfo: { text: e.target.value } })
+                updateMapDirections({
+                  parkingInfo: {
+                    ...mapDirections.parkingInfo,
+                    text: e.target.value,
+                  },
+                })
               }
             />
           </SelectableAccordion>
@@ -606,7 +623,9 @@ const MapAccordion = ({
               placeholder="셔틀 운행 A역 - 웨딩홀 12시 30분 출발"
               value={mapDirections.etcInfo.text}
               onChange={(e) =>
-                updateMapDirections({ etcInfo: { text: e.target.value } })
+                updateMapDirections({
+                  etcInfo: { ...mapDirections.etcInfo, text: e.target.value },
+                })
               }
             />
           </SelectableAccordion>
@@ -626,6 +645,7 @@ const GalleryAccordion = ({
   id: string;
   isDragOverlay?: boolean;
 }) => {
+  const [previewOpen, setPreviewOpen] = useState(true);
   const { setupData, actions } = useWeddingDataStore();
   const gallery = setupData.weddingInfo?.pages?.gallery;
 
@@ -648,8 +668,20 @@ const GalleryAccordion = ({
   const [uploadedImages, setUploadedImages] = useState<FileData[]>([]);
 
   const handleUpload = async (filesData: FileData[]) => {
-    console.log("업로드 시작 추후에 API 연동:", filesData);
-    setUploadedImages(filesData);
+    actions.setSetupData({
+      weddingInfo: {
+        ...setupData.weddingInfo,
+        pages: {
+          ...setupData.weddingInfo.pages,
+          gallery: {
+            ...gallery,
+            images: [...filesData],
+          },
+        },
+      },
+    });
+
+    console.log(setupData.weddingInfo.pages.gallery.images);
   };
 
   return (
@@ -668,17 +700,7 @@ const GalleryAccordion = ({
         multiple={true}
         maxFiles={10}
       />
-      {uploadedImages.length > 0 && (
-        <ImageGallery
-          images={uploadedImages.map((fileData) => fileData.file)}
-          onImageRemove={(index: number) => {
-            const newImages = uploadedImages.filter((_, i) => i !== index);
-            setUploadedImages(newImages);
-          }}
-          mode="grid"
-          imageHeight={100}
-        />
-      )}
+      {uploadedImages.length > 0 && <></>}
 
       {!isDragOverlay && (
         <>
@@ -692,13 +714,13 @@ const GalleryAccordion = ({
             }}
           >
             <AppChipCheckBox
-              label="페이징"
-              checked={gallery.displayType === "paging"}
-              onCheckedChange={() => updateGallery({ displayType: "paging" })}
+              label="스택형"
+              checked={gallery.displayType === "stacked"}
+              onCheckedChange={() => updateGallery({ displayType: "stacked" })}
               radioMode={true}
             />
             <AppChipCheckBox
-              label="스와이프"
+              label="무한 스와이프"
               checked={gallery.displayType === "swipe"}
               onCheckedChange={() => updateGallery({ displayType: "swipe" })}
               radioMode={true}
@@ -710,21 +732,43 @@ const GalleryAccordion = ({
               radioMode={true}
             />
           </Box>
+          <Box sx={{ mt: 2 }}>
+            <FormGroup>
+              <FormControlLabel
+                {...FormControlLabelProps}
+                control={
+                  <Switch
+                    checked={previewOpen}
+                    onChange={(e) => setPreviewOpen(e.target.checked)}
+                  />
+                }
+                label="미리보기 표시"
+              />
+            </FormGroup>
+          </Box>
 
-          <FormGroup>
-            <FormControlLabel
-              {...FormControlLabelProps}
-              control={
-                <Switch
-                  checked={gallery.zoomOnClick}
-                  onChange={(e) =>
-                    updateGallery({ zoomOnClick: e.target.checked })
-                  }
-                />
-              }
-              label="이미지 클릭 시 크게보기"
-            />
-          </FormGroup>
+          <Box py={2} sx={{ display: previewOpen ? "block" : "none" }}>
+            <Typography variant="h6" mb={2}>
+              미리보기
+            </Typography>
+            <Box
+              key={gallery.images.length}
+              sx={{
+                maxHeight: "100vh",
+                overflow: "hidden",
+              }}
+            >
+              {gallery.displayType === "stacked" && (
+                <StackedGallery images={gallery.images} />
+              )}
+              {gallery.displayType === "swipe" && (
+                <SwipeGallery images={gallery.images} />
+              )}
+              {gallery.displayType === "grid" && (
+                <GridGallery images={gallery.images} />
+              )}
+            </Box>
+          </Box>
         </>
       )}
     </SelectableAccordion>
@@ -1047,8 +1091,24 @@ const AccountInfoAccordion = ({
         onSelect={() => updateAccountInfo({ enabled: !accountInfo?.enabled })}
         isDragOverlay={isDragOverlay}
       >
+        <Box className="info-box">
+          <Typography
+            sx={{ fontSize: 18, color: "#666", mb: 1, fontWeight: 600 }}
+          >
+            안내사항
+          </Typography>
+          <Typography
+            sx={{ fontSize: 14, color: "#aaa", mb: 2, fontWeight: 500 }}
+          >
+            예식 정보 입력에서 <b>혼주님 계좌 정보</b>를 입력해주세요.
+            <br />
+            입력 란을 비워두시면 표시되지 않습니다.
+          </Typography>
+        </Box>
+
         <AppTextField
           fullWidth
+          labelText="카카오페이 QR 코드 사용시"
           placeholder="카카오페이 링크를 입력하세요"
           value={accountInfo?.kakaopayLink || ""}
           onChange={(e) => updateAccountInfo({ kakaopayLink: e.target.value })}

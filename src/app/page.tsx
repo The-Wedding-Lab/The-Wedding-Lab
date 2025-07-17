@@ -104,6 +104,10 @@ export default function Home() {
     return new Date(timestamp * 1000).toLocaleString("ko-KR");
   };
 
+  if (tokenInfo?.exp && tokenInfo.exp * 1000 < Date.now()) {
+    handleLogout();
+  }
+
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
       {/* 사용자 정보 카드 */}

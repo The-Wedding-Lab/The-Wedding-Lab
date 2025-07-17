@@ -55,6 +55,7 @@ const WeddingCalendar = ({ weddingDate }: WeddingCalendarProps) => {
         padding: 24px;
         border-radius: 16px;
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        max-height: 350px;
         animation: ${fadeIn} 0.6s ease;
 
         .MuiPickersCalendarHeader-label {
@@ -83,6 +84,14 @@ const WeddingCalendar = ({ weddingDate }: WeddingCalendarProps) => {
         결혼 날짜 캘린더
       </Typography> */}
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+        <Typography
+          fontSize={20}
+          fontWeight={600}
+          color="#333333"
+          sx={{ my: 2 }}
+        >
+          {weddingDay.format("YYYY년 MM월 DD일")}
+        </Typography>
         <DateCalendar
           defaultValue={weddingDay}
           readOnly
@@ -91,6 +100,13 @@ const WeddingCalendar = ({ weddingDate }: WeddingCalendarProps) => {
           maxDate={weddingDay}
           slots={{
             day: CustomPickersDay,
+          }}
+          slotProps={{
+            calendarHeader: {
+              sx: {
+                display: "none",
+              },
+            },
           }}
         />
       </LocalizationProvider>
