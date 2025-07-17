@@ -130,7 +130,7 @@ export default function KakaoMap({ position, addressName }: KakaoMapProps) {
       ref={mapRef}
       style={{
         width: "100%",
-        height: "400px",
+        height: "350px",
         borderRadius: "5px",
         overflow: "hidden",
       }}

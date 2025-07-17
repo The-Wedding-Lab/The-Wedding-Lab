@@ -4,6 +4,7 @@ import React, { useRef, useState } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { CloudUpload, Delete, AttachFile } from "@mui/icons-material";
 import AppButton from "../ui/AppButton";
+import { useSnackbarStore } from "@/store/useSnackbarStore";
 
 interface FileData {
   file: File;
@@ -32,6 +33,7 @@ const UploadForm: React.FC<UploadFormProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFiles, setUploadedFiles] = useState<FileData[]>([]);
+  const { showStackSnackbar } = useSnackbarStore();
 
   const handleFileSelect = () => {
     fileInputRef.current?.click();
@@ -65,7 +67,9 @@ const UploadForm: React.FC<UploadFormProps> = ({
     // 최대 파일 수 제한
     const totalFiles = uploadedFiles.length + files.length;
     if (totalFiles > maxFiles) {
-      alert(`최대 ${maxFiles}개까지만 업로드 가능합니다.`);
+      showStackSnackbar(`최대 ${maxFiles}개까지만 업로드 가능합니다.`, {
+        variant: "error",
+      });
       return;
     }
 
@@ -92,7 +96,9 @@ const UploadForm: React.FC<UploadFormProps> = ({
       onFilesChange?.(newFiles);
     } catch (error) {
       console.error("파일 읽기 실패:", error);
-      alert("파일을 읽는데 실패했습니다.");
+      showStackSnackbar(`파일을 읽는데 실패했습니다.`, {
+        variant: "error",
+      });
     }
 
     // input 초기화

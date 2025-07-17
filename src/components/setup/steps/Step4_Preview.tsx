@@ -1,10 +1,11 @@
-import MapPage from "@/app/map/page";
-import AppButton from "@/components/ui/AppButton";
+import { ParentsInfo } from "@/components/family/ParentsInfo";
+import GridGallery from "@/components/gallery/GridGallery";
+import StackedGallery from "@/components/gallery/StackedGallery";
+import SwipeGallery from "@/components/gallery/SwipeGallery";
+import { InvitationCover } from "@/components/main/InvitationCover";
 import AccountPage from "@/page/account/AccountPage";
 import EndingPage from "@/page/ending/EndingPage";
-import FamilyInfoPage from "@/page/family/FamilyInfoPage";
-import GalleryPage from "@/page/gallery/GalleryPage";
-import MainCoverPage from "@/page/main/MainCoverPage";
+import MapPage from "@/page/map/mapPage";
 import NotificationPage from "@/page/notification/NotificationPage";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
@@ -33,6 +34,7 @@ const PreviewBox = ({ children }: { children: React.ReactNode }) => {
 const Step4_Preview = ({ data, setData }: StepProps) => {
   const { setupData } = useWeddingDataStore();
   const [enabledPages, setEnabledPages] = useState<any>({});
+  const { gallery } = setupData.weddingInfo.pages;
 
   useEffect(() => {
     const pages = setupData.weddingInfo?.pages;
@@ -74,7 +76,7 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
       <Typography fontSize={24} fontWeight={700} gutterBottom>
         미리보기
       </Typography>
-      <Box
+      {/* <Box
         sx={{
           backgroundColor: "#1e1e1e",
           border: "1px solid #333",
@@ -118,10 +120,11 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
         >
           console.log(setupData)
         </AppButton>
-      </Box>
+      </Box> */}
 
       <Box
         sx={{
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           gap: 2,
@@ -131,11 +134,23 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
       >
         {Object.keys(enabledPages).map((page) => (
           <>
-            {page === "coverDesign" && <MainCoverPage />}
+            {page === "coverDesign" && <InvitationCover />}
             {page === "calendar" && <NotificationPage />}
             {page === "introMessage" && <>인트로메세지</>}
-            {page === "familyInfo" && <FamilyInfoPage />}
-            {page === "gallery" && <GalleryPage />}
+            {page === "familyInfo" && <ParentsInfo />}
+            {page === "gallery" && (
+              <>
+                {gallery?.displayType === "stacked" && (
+                  <StackedGallery images={gallery.images} />
+                )}
+                {gallery?.displayType === "scroll" && (
+                  <SwipeGallery images={gallery.images} />
+                )}
+                {gallery?.displayType === "grid" && (
+                  <GridGallery images={gallery.images} />
+                )}
+              </>
+            )}
             {page === "mapDirections" && <MapPage />}
             {page === "accountInfo" && <AccountPage />}
             {page === "endingMessage" && <EndingPage />}
