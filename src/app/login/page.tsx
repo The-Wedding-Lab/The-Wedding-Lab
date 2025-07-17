@@ -1,7 +1,8 @@
 "use client";
+
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import exampleImg from "../../../public/imageExample.jpg";
+import loginBg from "../../../public/loginBg-1.png";
 import AppButton from "@/components/ui/AppButton";
 import AppTextField from "@/components/ui/AppTextField";
 import styled from "@emotion/styled";
@@ -14,13 +15,15 @@ import { useSnackbarStore } from "@/store/useSnackbarStore";
 import { useLogin } from "@/hooks/useAuth";
 
 const RepresentativeImage = styled.div`
-  height: 200px;
+  height: 40vh;
   text-align: center;
   img {
     width: 100%;
     height: 100%;
     display: inline-block;
     margin: 0 auto;
+    object-fit: cover;
+    object-position: top center;
   }
 `;
 
@@ -127,7 +130,7 @@ export default function Login() {
       }}
     >
       <RepresentativeImage>
-        <Image src={exampleImg} alt="이미지 예시" width={500} height={200} />
+        <Image src={loginBg} alt="이미지 예시" width={500} height={1000} />
       </RepresentativeImage>
       <Section>
         <Title>로그인</Title>
