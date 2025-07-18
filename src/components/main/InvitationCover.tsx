@@ -22,10 +22,24 @@ export const InvitationCover: React.FC = () => {
         box-sizing: border-box;
       `}
     >
-      {coverDesign?.image?.url && (
+      {coverDesign?.image?.url ? (
         <Box
           component="img"
           src={coverDesign.image.url}
+          alt="청첩장 커버 이미지"
+          css={css`
+            width: 100%;
+            height: 65vh;
+            object-fit: cover;
+            border-radius: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+          `}
+        />
+      ) : (
+        <Box
+          component="img"
+          src={`https://picsum.photos/400/600?random=1`}
           alt="청첩장 커버 이미지"
           css={css`
             width: 100%;
@@ -58,7 +72,9 @@ export const InvitationCover: React.FC = () => {
             letter-spacing: 0.03em;
           `}
         >
-          {displayMessage}
+          {displayMessage
+            ? displayMessage
+            : "커버 디자인 텍스트를 입력해주세요."}
         </Typography>
       </Box>
     </Box>

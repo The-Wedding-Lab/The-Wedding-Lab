@@ -99,6 +99,38 @@ export default function MapPage() {
         >
           오시는 길
         </Typography>
+        <Box className="venue">
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: 18,
+              color: "#333",
+              textAlign: "center",
+            }}
+          >
+            {location.venueName}
+          </Typography>
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: 16,
+              color: "#333",
+              textAlign: "center",
+              mb: 1,
+            }}
+          >
+            {location.hall}
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: 12,
+              color: "#777",
+              textAlign: "center",
+            }}
+          >
+            {location.searchAddress}
+          </Typography>
+        </Box>
         <KakaoMap
           position={{
             lat: location.lat,

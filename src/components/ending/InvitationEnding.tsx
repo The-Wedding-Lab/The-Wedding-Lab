@@ -3,7 +3,7 @@ import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import { css } from "@emotion/react";
 import { Box, Typography } from "@mui/material";
 
-const DEFAULT_IMAGE = "/ending-img.jpg";
+const DEFAULT_IMAGE = "https://picsum.photos/400/600?random=2";
 
 export const InvitationEnding: React.FC = () => {
   const { setupData } = useWeddingDataStore();
@@ -32,7 +32,7 @@ export const InvitationEnding: React.FC = () => {
         css={css`
           position: absolute;
           inset: 0;
-          background-image: url(${imageUrl});
+          background-image: url(${imageUrl ? imageUrl : DEFAULT_IMAGE});
           background-size: cover;
           background-position: center;
           filter: grayscale(100%);
@@ -61,7 +61,7 @@ export const InvitationEnding: React.FC = () => {
           z-index: 2;
         `}
       >
-        {message}
+        {message ? message : "마지막 글을 입력해주세요."}
       </Typography>
     </Box>
   );
