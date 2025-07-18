@@ -1,11 +1,13 @@
 "use client"; // Next.js App Router일 경우 필요
 
 import { Box, Typography, Avatar, Divider } from "@mui/material";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
-const DEFAULT_IMAGE = "/ending-img.jpg";
+const DEFAULT_IMAGE = "https://picsum.photos/400/600?random=3";
 
 export default function WeddingInvite() {
-  const message = `서로에게 가장 편안한 사람이 되어\n함께 살아가기로 했습니다.\n새롭게 시작하는\n저희 두 사람의 앞날을\n함께 축복해주시면\n더없이 감사하겠습니다.`;
+  const { setupData } = useWeddingDataStore();
+  const introMessage = setupData.weddingInfo.pages.introMessage;
 
   return (
     <Box
@@ -44,12 +46,12 @@ export default function WeddingInvite() {
             letterSpacing: "0.05em",
           }}
         >
-          신랑 신부 결혼합니다.
+          저희 결혼합니다.
         </Typography>
         {/* 사진 */}
         <Avatar
           variant="rounded"
-          src={DEFAULT_IMAGE}
+          src={introMessage.image.url ? introMessage.image.url : DEFAULT_IMAGE}
           alt="결혼 사진"
           sx={{
             width: "100%",
@@ -72,7 +74,7 @@ export default function WeddingInvite() {
             mb: 4,
           }}
         >
-          {message}
+          {introMessage.text}
         </Typography>
       </Box>
     </Box>

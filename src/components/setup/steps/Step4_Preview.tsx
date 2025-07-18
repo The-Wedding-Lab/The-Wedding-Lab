@@ -6,6 +6,7 @@ import SwipeGallery from "@/components/gallery/SwipeGallery";
 import { InvitationCover } from "@/components/main/InvitationCover";
 import AccountPage from "@/page/account/AccountPage";
 import EndingPage from "@/page/ending/EndingPage";
+import InvitationPage from "@/page/invitation/InvitationPage";
 import MapPage from "@/page/map/mapPage";
 import NotificationPage from "@/page/notification/NotificationPage";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
@@ -128,7 +129,6 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
           width: "100%",
           display: "flex",
           flexDirection: "column",
-          gap: 2,
           flexWrap: "wrap",
           justifyContent: "center",
           my: 4,
@@ -138,7 +138,7 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
           <>
             {page === "coverDesign" && <InvitationCover />}
             {page === "calendar" && <NotificationPage />}
-            {page === "introMessage" && <>인트로메세지</>}
+            {page === "introMessage" && <InvitationPage />}
             {page === "familyInfo" && <ParentsInfo />}
             {page === "gallery" && (
               <>

@@ -878,8 +878,15 @@ const IntroMessageAccordion = ({
   const [uploadedImages, setUploadedImages] = useState<FileData[]>([]);
 
   const handleUpload = async (filesData: FileData[]) => {
-    console.log("업로드 시작 추후에 API 연동:", filesData);
-    setUploadedImages(filesData);
+    actions.setSetupData({
+      weddingInfo: {
+        ...setupData.weddingInfo,
+        pages: {
+          ...setupData.weddingInfo.pages,
+          introMessage: { ...introMessage, image: filesData[0] },
+        },
+      },
+    });
   };
 
   return (
@@ -898,12 +905,13 @@ const IntroMessageAccordion = ({
         multiple={false}
         maxFiles={1}
       />
-      {uploadedImages.length > 0 && (
+      {introMessage?.image?.url && (
         <ImageGallery
-          images={uploadedImages.map((fileData) => fileData.file)}
-          onImageRemove={(index: number) => {
-            const newImages = uploadedImages.filter((_, i) => i !== index);
-            setUploadedImages(newImages);
+          images={[introMessage.image.file]}
+          onImageRemove={() => {
+            updateIntroMessage({
+              image: { ...introMessage?.image, url: "" },
+            });
           }}
           mode="single"
           imageHeight={200}
