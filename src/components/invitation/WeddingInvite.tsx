@@ -76,21 +76,6 @@ export default function WeddingInvite() {
         >
           {introMessage.text}
         </Typography>
-        {/* 구분선 */}
-        <Divider sx={{ width: "100%", my: 3, borderColor: "#e0e0e0" }} />
-        {/* 이름 부분 */}
-        <Box
-          sx={{
-            color: "#111",
-            fontWeight: 700,
-            fontSize: "1.35rem",
-            textAlign: "center",
-            letterSpacing: "0.04em",
-            lineHeight: 1.8,
-            mt: 1,
-            mb: 1,
-          }}
-        ></Box>
       </Box>
     </Box>
   );
