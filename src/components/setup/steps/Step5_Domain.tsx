@@ -154,10 +154,8 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
               도메인 설정
             </Typography>
             <Typography fontSize={12} color="#64748b" lineHeight={1.4}>
-              • 신랑신부 이름이나 결혼일자 조합을 추천해요
-              <br />
-              • 예시: kimjihoon, 2024wedding, happyday 등<br />• 영어, 숫자
-              조합으로 10자 이하로 입력하세요
+              • 나만의 도메인을 만들어보세요.
+              <br />• 영어, 숫자 조합으로 10자 이하로 사용 가능합니다.
             </Typography>
           </Box>
         </Box>

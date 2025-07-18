@@ -13,7 +13,7 @@ gsap.registerPlugin(Draggable);
 const GalleryContainer = styled(Box)`
   position: relative;
   width: 100%;
-  height: 100dvh;
+  height: 500px;
   background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
   overflow: hidden;
 `;
@@ -38,8 +38,8 @@ const CardsList = styled(Box)`
 
 const Card = styled(Box)`
   position: absolute;
-  width: 300px;
-  height: 400px;
+  width: 200px;
+  height: 300px;
   border-radius: 25px;
   overflow: hidden;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
