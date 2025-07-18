@@ -5,11 +5,6 @@ import { Box, Typography, Avatar, Divider } from "@mui/material";
 const DEFAULT_IMAGE = "/ending-img.jpg";
 
 export default function WeddingInvite() {
-  // 실제 데이터가 있다면 props로 받아서 처리 가능
-  const groom = "이철수";
-  const bride = "김영희";
-  const groomParents = "이아빠 · 홍엄마의 아들";
-  const brideParents = "김아빠 · 최엄마의 딸";
   const message = `서로에게 가장 편안한 사람이 되어\n함께 살아가기로 했습니다.\n새롭게 시작하는\n저희 두 사람의 앞날을\n함께 축복해주시면\n더없이 감사하겠습니다.`;
 
   return (
@@ -79,66 +74,6 @@ export default function WeddingInvite() {
         >
           {message}
         </Typography>
-        {/* 구분선 */}
-        <Divider sx={{ width: "100%", my: 3, borderColor: "#e0e0e0" }} />
-        {/* 이름 부분 */}
-        <Box
-          sx={{
-            color: "#111",
-            fontWeight: 700,
-            fontSize: "1.35rem",
-            textAlign: "center",
-            letterSpacing: "0.04em",
-            lineHeight: 1.8,
-            mt: 1,
-            mb: 1,
-          }}
-        >
-          <Box sx={{ mb: 1.5 }}>
-            <span
-              style={{
-                fontWeight: 400,
-                color: "#666",
-                fontSize: "1.05rem",
-                letterSpacing: "0.01em",
-              }}
-            >
-              {groomParents}
-            </span>
-            <span
-              style={{
-                marginLeft: 12,
-                fontWeight: 700,
-                color: "#111",
-                fontSize: "1.35rem",
-              }}
-            >
-              {groom}
-            </span>
-          </Box>
-          <Box>
-            <span
-              style={{
-                fontWeight: 400,
-                color: "#666",
-                fontSize: "1.05rem",
-                letterSpacing: "0.01em",
-              }}
-            >
-              {brideParents}
-            </span>
-            <span
-              style={{
-                marginLeft: 12,
-                fontWeight: 700,
-                color: "#111",
-                fontSize: "1.35rem",
-              }}
-            >
-              {bride}
-            </span>
-          </Box>
-        </Box>
       </Box>
     </Box>
   );
