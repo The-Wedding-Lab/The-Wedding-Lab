@@ -13,6 +13,9 @@ const NotificationPage = () => {
   const calendar = setupData.weddingInfo.pages.calendar;
   return (
     <Box sx={{ width: "100%" }}>
+      {calendar?.view?.calendar && (
+        <WeddingCalendar weddingDate={setupData.weddingInfo.weddingDateTime} />
+      )}
       {calendar?.view?.dDay && (
         <WeddingDday weddingDate={setupData.weddingInfo.weddingDateTime} />
       )}
@@ -20,9 +23,6 @@ const NotificationPage = () => {
         <WeddingCountdown
           weddingDateTime={setupData.weddingInfo.weddingDateTime}
         />
-      )}
-      {calendar?.view?.calendar && (
-        <WeddingCalendar weddingDate={setupData.weddingInfo.weddingDateTime} />
       )}
     </Box>
   );

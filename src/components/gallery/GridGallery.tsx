@@ -20,9 +20,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 const GalleryContainer = styled(Box)`
   width: 100%;
-  min-height: 100dvh;
+  min-height: 500px;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  padding: 40px 20px;
+  padding: 20px;
 `;
 
 const HeaderSection = styled(Box)`
@@ -200,7 +200,7 @@ const CloseButton = styled(IconButton)`
 
 const LoadMoreButton = styled(Button)`
   display: block;
-  margin: 40px auto;
+  margin: 40px auto 0 auto;
   background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
   padding: 15px 40px;
