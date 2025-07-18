@@ -1,3 +1,5 @@
+"use client";
+
 import EndingPage from "@/page/ending/EndingPage";
 
 export default function Ending() {
