@@ -34,6 +34,7 @@ interface AccountData {
 
 const AccountPage = () => {
   const { setupData } = useWeddingDataStore();
+  const accountInfo = setupData.weddingInfo?.pages?.accountInfo;
   const [selectedTab, setSelectedTab] = useState(0);
   const showStackSnackbar = useSnackbarStore(
     (state) => state.showStackSnackbar
@@ -206,7 +207,7 @@ const AccountPage = () => {
       sx={{
         py: 4,
         px: 2,
-        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+        background: `linear-gradient(135deg, ${accountInfo?.backgroundColor} 0%, ${accountInfo?.backgroundColor2} 100%)`,
       }}
     >
       <Box
