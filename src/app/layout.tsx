@@ -73,7 +73,7 @@ export default function RootLayout({
               <Box
                 sx={{
                   width: "100%",
-                  minWidth: "375px",
+                  minWidth: "320px",
                   maxWidth: "768px",
                   minHeight: "100vh",
                   overflow: "hidden",

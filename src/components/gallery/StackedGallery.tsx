@@ -1,12 +1,13 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
-import { Box, Typography, IconButton, Chip } from "@mui/material";
+import { Box, Typography, IconButton, Chip, Modal } from "@mui/material";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/Draggable";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
 
 gsap.registerPlugin(Draggable);
@@ -14,7 +15,7 @@ gsap.registerPlugin(Draggable);
 const GalleryContainer = styled(Box)`
   position: relative;
   width: 100%;
-  height: 100dvh;
+  height: 500px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
@@ -24,8 +25,8 @@ const GalleryContainer = styled(Box)`
 
 const StackContainer = styled(Box)`
   position: relative;
-  width: 350px;
-  height: 500px;
+  width: 220px;
+  height: 350px;
   margin: 0 auto;
 `;
 
@@ -45,7 +46,7 @@ const Card = styled(Box)`
 
   img {
     width: 100%;
-    height: 70%;
+    height: 80%;
     object-fit: cover;
   }
 `;
@@ -55,9 +56,9 @@ const CardContent = styled(Box)`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 30%;
+  height: 20%;
   background: white;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -67,10 +68,15 @@ const ActionButtons = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  height: 100%;
+  margin-bottom: 5px;
 `;
 
-const LikeButton = styled(IconButton)<{ liked: boolean }>`
+const LikeButton = styled(Box)<{ liked: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 5px;
   color: ${(props) => (props.liked ? "#e91e63" : "#ccc")};
   transition: all 0.3s ease;
 
@@ -82,12 +88,12 @@ const LikeButton = styled(IconButton)<{ liked: boolean }>`
 
 const ControlPanel = styled(Box)`
   position: absolute;
-  bottom: 50px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-50%);
   display: flex;
   gap: 20px;
-  z-index: 1000;
+  z-index: 0;
 `;
 
 const ControlButton = styled(IconButton)`
@@ -116,6 +122,53 @@ const Counter = styled(Typography)`
   z-index: 1000;
 `;
 
+const ModalContainer = styled(Modal)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ModalContent = styled(Box)`
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+  outline: none;
+
+  img {
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+    object-fit: contain;
+  }
+`;
+
+const ModalHeader = styled(Box)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), transparent);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  z-index: 10;
+`;
+
+const CloseButton = styled(IconButton)`
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: white;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+`;
+
 interface CardData {
   id: number;
   url: string;
@@ -126,6 +179,7 @@ const StackedGallery = ({ images }: { images: any[] }) => {
   const stackRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [resetKey, setResetKey] = useState(0); // 강제 리렌더링용
+  const [selectedImage, setSelectedImage] = useState<any>(null);
   const imagesSample = [
     {
       id: 1,
@@ -175,36 +229,7 @@ const StackedGallery = ({ images }: { images: any[] }) => {
 
   const [cards, setCards] = useState<CardData[]>(images);
 
-  const randomTitle = [
-    "우리의 결혼식",
-    "사랑의 시작",
-    "영원히 함께",
-    "행복한 동행",
-    "두 사람의 약속",
-    "우리의 특별한 날",
-    "함께 걷는 길",
-    "사랑이 피어나는 순간",
-    "축복의 시간",
-    "우리 둘만의 이야기",
-  ];
-
-  const randomDescription = [
-    "운명의 그 순간",
-    "설레는 마음으로",
-    "영원을 약속하며",
-    "당신과 함께",
-    "아름다운 추억",
-    "행복한 출발",
-    "달콤한 시간",
-    "함께 걸어갈 길",
-    "새로운 모험의 첫 걸음",
-    "하루의 마지막 순간",
-    "반짝이는 네온사인들",
-    "순수한 아름다움",
-    "따뜻한 오후의 기억",
-    "무한한 우주의 신비",
-    "파도가 들려주는 이야기",
-  ];
+  console.log(cards);
 
   useEffect(() => {
     if (!stackRef.current) return;
@@ -376,6 +401,34 @@ const StackedGallery = ({ images }: { images: any[] }) => {
     setResetKey((prev) => prev + 1); // 컴포넌트 강제 리렌더링
   };
 
+  const handleImageClick = (image: any) => {
+    setSelectedImage(image);
+
+    // 모달 오픈 애니메이션
+    gsap.fromTo(
+      ".modal-content",
+      { scale: 0.5, opacity: 0, rotationY: 180 },
+      {
+        scale: 1,
+        opacity: 1,
+        rotationY: 0,
+        duration: 0.6,
+        ease: "back.out(1.7)",
+      }
+    );
+  };
+
+  const handleCloseModal = () => {
+    gsap.to(".modal-content", {
+      scale: 0.5,
+      opacity: 0,
+      rotationY: -180,
+      duration: 0.4,
+      ease: "power2.in",
+      onComplete: () => setSelectedImage(null),
+    });
+  };
+
   const nextCard = () => {
     if (currentIndex < cards.length - 1) {
       setCurrentIndex((prev) => prev + 1);
@@ -413,33 +466,61 @@ const StackedGallery = ({ images }: { images: any[] }) => {
               display: index >= currentIndex ? "block" : "none",
             }}
           >
-            <img src={card.url} alt={`image${index}`} />
+            <img
+              src={card.url}
+              alt={`image${index}`}
+              onClick={() => handleImageClick(card)}
+              onTouchStart={(e) => {
+                // 터치 시작 좌표 저장
+                e.currentTarget.dataset.touchStartX =
+                  e.touches[0].clientX.toString();
+                e.currentTarget.dataset.touchStartY =
+                  e.touches[0].clientY.toString();
+                // 카드에 터치 중임을 표시
+                e.currentTarget.dataset.touching = "true";
+              }}
+              onTouchEnd={(e) => {
+                const startX = Number(e.currentTarget.dataset.touchStartX || 0);
+                const startY = Number(e.currentTarget.dataset.touchStartY || 0);
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const dx = Math.abs(endX - startX);
+                const dy = Math.abs(endY - startY);
+                // 스와이프가 아니라면(거의 움직이지 않았다면) 확대 애니메이션 실행
+                if (
+                  dx < 10 &&
+                  dy < 10 &&
+                  e.currentTarget.dataset.touching === "true"
+                ) {
+                  // 카드 확대
+                  gsap.to(e.currentTarget, {
+                    scale: 1.12,
+                    duration: 0.18,
+                    ease: "power2.out",
+                    onComplete: () => {
+                      gsap.to(e.currentTarget, {
+                        scale: 1,
+                        duration: 0.18,
+                        ease: "power2.in",
+                      });
+                    },
+                  });
+                  handleImageClick(card);
+                }
+                e.currentTarget.dataset.touching = "false";
+              }}
+              style={{ cursor: "pointer" }}
+            />
             <CardContent>
-              <Box>
-                <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                  {randomTitle[Math.floor(Math.random() * randomTitle.length)]}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {
-                    randomDescription[
-                      Math.floor(Math.random() * randomDescription.length)
-                    ]
-                  }
-                </Typography>
-              </Box>
               <ActionButtons>
-                <Box>
-                  <LikeButton
-                    liked={card.liked}
-                    onClick={() => toggleLike(card.id)}
-                    className="heart-icon"
-                  >
-                    {card.liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                  </LikeButton>
-                  <IconButton color="primary">
-                    <ShareIcon />
-                  </IconButton>
-                </Box>
+                <LikeButton
+                  liked={card.liked}
+                  onClick={() => toggleLike(card.id)}
+                  onTouchStart={() => toggleLike(card.id)}
+                  className="heart-icon"
+                >
+                  {card.liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </LikeButton>
                 <Chip
                   label={`${index + 1}/${cards.length}`}
                   size="small"
@@ -451,11 +532,45 @@ const StackedGallery = ({ images }: { images: any[] }) => {
         ))}
       </StackContainer>
 
-      <ControlPanel>
-        <ControlButton onClick={resetGallery}>
-          <RestartAltIcon />
-        </ControlButton>
-      </ControlPanel>
+      {currentIndex === cards.length - 1 && (
+        <ControlPanel>
+          <ControlButton onClick={resetGallery}>
+            <RestartAltIcon />
+          </ControlButton>
+        </ControlPanel>
+      )}
+
+      {/* 이미지 확대 모달 */}
+      <ModalContainer
+        open={!!selectedImage}
+        onClose={handleCloseModal}
+        BackdropProps={{
+          style: {
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            backdropFilter: "blur(20px)",
+          },
+        }}
+      >
+        <ModalContent className="modal-content">
+          {selectedImage && (
+            <>
+              <ModalHeader>
+                <Box></Box>
+                <CloseButton onClick={handleCloseModal}>
+                  <CloseIcon />
+                </CloseButton>
+              </ModalHeader>
+              <img
+                src={selectedImage.url}
+                alt={`확대된 이미지`}
+                style={{
+                  borderRadius: "25px",
+                }}
+              />
+            </>
+          )}
+        </ModalContent>
+      </ModalContainer>
     </GalleryContainer>
   );
 };

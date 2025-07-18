@@ -16,7 +16,7 @@ const Icon = ({
   style?: React.CSSProperties;
 }) => {
   return (
-    <img src={src} alt={alt} style={{ width: 24, height: 24, ...style }} />
+    <img src={src} alt={alt} style={{ width: 18, height: 18, ...style }} />
   );
 };
 
@@ -83,7 +83,7 @@ export default function MapPage() {
       <Box
         sx={{
           width: "100%",
-          backgroundColor: "#fffff",
+          backgroundColor: "#ffffff",
           p: 2,
           borderRadius: 2,
         }}
@@ -112,17 +112,14 @@ export default function MapPage() {
               color="highlight"
               fullWidth
               onClick={() => {
-                window.open(
-                  `https://www.google.com/maps/@${location.lat},${location.lng},18z`,
-                  "_blank"
-                );
+                window.location.href = `https://www.google.com/maps/@${location.lat},${location.lng},18z`;
               }}
               sx={{
-                px: 2,
+                px: 1,
               }}
               startIcon={<Icon src="/google.png" alt="구글맵" style={{}} />}
             >
-              구글맵
+              구글
             </AppButton>
           )}
           {mapDirections?.naverMap && (
@@ -131,17 +128,14 @@ export default function MapPage() {
               color="highlight"
               fullWidth
               onClick={() => {
-                window.open(
-                  `https://map.naver.com/?lat=${location.lat}&lng=${location.lng}&dlevel=14`,
-                  "_blank"
-                );
+                window.location.href = `https://map.naver.com/?lat=${location.lat}&lng=${location.lng}&dlevel=14`;
               }}
               sx={{
-                px: 2,
+                px: 1,
               }}
               startIcon={<Icon src="/naver.png" alt="네이버맵" style={{}} />}
             >
-              네이버맵
+              네이버
             </AppButton>
           )}
           {mapDirections?.tmap && (
@@ -150,13 +144,10 @@ export default function MapPage() {
               color="highlight"
               fullWidth
               onClick={() => {
-                window.open(
-                  `tmap://route?goalname=&goalx=${setupData.weddingInfo.location.lng}&goaly=${setupData.weddingInfo.location.lat}`,
-                  "_blank"
-                );
+                window.location.href = `tmap://route?goalname=&goalx=${setupData.weddingInfo.location.lng}&goaly=${setupData.weddingInfo.location.lat}`;
               }}
               sx={{
-                px: 2,
+                px: 1,
               }}
               startIcon={<Icon src="/tmap.svg" alt="티맵" style={{}} />}
             >

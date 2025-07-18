@@ -751,13 +751,7 @@ const GalleryAccordion = ({
             <Typography variant="h6" mb={2}>
               미리보기
             </Typography>
-            <Box
-              key={gallery.images.length}
-              sx={{
-                maxHeight: "100vh",
-                overflow: "hidden",
-              }}
-            >
+            <Box key={gallery.images.length}>
               {gallery.displayType === "stacked" && (
                 <StackedGallery images={gallery.images} />
               )}

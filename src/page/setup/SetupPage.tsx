@@ -178,6 +178,10 @@ const SetupPage = () => {
     return null;
   };
 
+  const handleCreate = () => {
+    console.log("생성하기");
+  };
+
   // 시작 화면 (방법 선택)
   if (step === -1) {
     return (
@@ -221,13 +225,31 @@ const SetupPage = () => {
   return (
     <Box
       sx={{
-        p: 3,
+        p:
+          setupData.type === "ai" && step === 3
+            ? 0
+            : setupData.type === "template" && step === 2
+            ? 0
+            : 3,
         display: "flex",
         flexDirection: "column",
         height: "100%",
       }}
     >
-      <Box display="flex" alignItems="center" gap={2} mb={2}>
+      <Box
+        display="flex"
+        alignItems="center"
+        gap={2}
+        mb={2}
+        p={
+          setupData.type === "ai" && step === 3
+            ? 3
+            : setupData.type === "template" && step === 2
+            ? 3
+            : 0
+        }
+        pb={0}
+      >
         <AppProgressBar value={progressValue} />
       </Box>
 
@@ -267,7 +289,7 @@ const SetupPage = () => {
           }
           onClick={() => {
             if (step === TOTAL_STEPS - 1) {
-              console.log("생성하기");
+              handleCreate();
             } else {
               scrollToTop();
               nextStep();

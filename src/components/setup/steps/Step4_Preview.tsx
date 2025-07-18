@@ -1,3 +1,4 @@
+import { InvitationEnding } from "@/components/ending/InvitationEnding";
 import { ParentsInfo } from "@/components/family/ParentsInfo";
 import GridGallery from "@/components/gallery/GridGallery";
 import StackedGallery from "@/components/gallery/StackedGallery";
@@ -73,7 +74,7 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
   };
   return (
     <Box>
-      <Typography fontSize={24} fontWeight={700} gutterBottom>
+      <Typography fontSize={24} fontWeight={700} gutterBottom px={3}>
         미리보기
       </Typography>
       {/* <Box
@@ -130,6 +131,7 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
           gap: 2,
           flexWrap: "wrap",
           justifyContent: "center",
+          my: 4,
         }}
       >
         {Object.keys(enabledPages).map((page) => (
@@ -153,7 +155,7 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
             )}
             {page === "mapDirections" && <MapPage />}
             {page === "accountInfo" && <AccountPage />}
-            {page === "endingMessage" && <EndingPage />}
+            {page === "endingMessage" && <InvitationEnding />}
           </>
         ))}
       </Box>
