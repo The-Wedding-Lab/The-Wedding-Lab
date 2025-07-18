@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     description: "AI로 간편하게 만드는 개성 있는 모바일 청첩장",
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/loginBg-1.png`,
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`,
         width: 1200,
         height: 630,
         alt: "더 웨딩 랩 :: AI 모바일 청첩장 생성 앱",
