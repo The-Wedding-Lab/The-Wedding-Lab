@@ -83,7 +83,7 @@ export default function MapPage() {
       <Box
         sx={{
           width: "100%",
-          backgroundColor: "#ffffff",
+          background: `linear-gradient(135deg, ${mapDirections?.backgroundColor} 0%, ${mapDirections?.backgroundColor2} 100%)`,
           p: 2,
           borderRadius: 2,
         }}
@@ -192,8 +192,7 @@ export default function MapPage() {
             mt: 3,
             px: 3,
             py: 3,
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
-            backdropFilter: "blur(10px)",
+
             borderRadius: "16px",
           }}
         >

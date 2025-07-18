@@ -128,14 +128,13 @@ export const ParentsInfo: React.FC = () => {
 
   return (
     <Box
-      css={css`
-        background-color: #f4f0ea;
-        padding: 48px 24px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-family: "Nanum Myeongjo", serif;
-      `}
+      sx={{
+        background: `linear-gradient(135deg, ${familyInfo?.backgroundColor} 0%, ${familyInfo?.backgroundColor2} 100%)`,
+        padding: "48px 24px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
     >
       <Box
         css={css`

@@ -11,16 +11,15 @@ export const InvitationCover: React.FC = () => {
 
   return (
     <Box
-      css={css`
-        width: 100%;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        background: linear-gradient(180deg, #faf6f2 0%, #fdfdfd 100%);
-        font-family: "Nanum Myeongjo", serif;
-        padding: 32px;
-        box-sizing: border-box;
-      `}
+      sx={{
+        width: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        background: `linear-gradient(180deg, ${coverDesign?.backgroundColor} 0%, ${coverDesign?.backgroundColor2} 100%)`,
+        padding: "32px",
+        boxSizing: "border-box",
+      }}
     >
       {coverDesign?.image?.url ? (
         <Box

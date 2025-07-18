@@ -50,7 +50,6 @@ const WeddingCalendar = ({ weddingDate }: WeddingCalendarProps) => {
     <div
       css={css`
         text-align: center;
-        margin-top: 24px;
         background-color: #fdf6ec; // 따뜻한 배경색
         padding: 24px;
         border-radius: 16px;

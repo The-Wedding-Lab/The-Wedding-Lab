@@ -116,12 +116,17 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           order: 0, // 순서
           image: "", // 이미지
           text: "", // 이미지 아래 텍스트
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#e6e6fa", // 배경색
         },
         // 모시는 글
         introMessage: {
           enabled: true,
           order: 1, // 순서
+          title: "", // 제목
           text: "", // 글
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#e6e6fa", // 배경색
           image: {
             // 이미지
             position: "top", // "top" or "bottom"
@@ -134,7 +139,8 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           order: 2, // 순서
           telEnabled: true, // 전화번호 표시 여부
           accountEnabled: true, // 계좌번호 표시 여부 (미사용)
-          backgroundColor: "#f4f0ea", // 배경색
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#e6e6fa", // 배경색
           fontColor: "#000000", // 텍스트 색상
         },
         // 캘린더
@@ -162,6 +168,8 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           naverMap: true, // 네이버맵 표시 여부
           tmap: true, // T맵 표시 여부
           googleMap: true, // 구글맵 표시 여부
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#e6e6fa", // 배경색
           naviInfo: {
             enabled: false, // 기본값 false
             text: "", // 글
@@ -190,6 +198,8 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           title: "", // 제목
           description: "", // 설명
           kakaopayLink: "", // 카카오페이 링크
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#e6e6fa", // 배경색
         },
         // 마지막 글
         endingMessage: {

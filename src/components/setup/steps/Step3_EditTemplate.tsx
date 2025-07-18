@@ -185,9 +185,11 @@ const SelectableAccordion = ({
 const ColorPickerSection = ({
   selectedColor,
   onColorChange,
+  title = "배경색 선택",
 }: {
   selectedColor: string;
   onColorChange: (color: string) => void;
+  title?: string;
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -211,7 +213,7 @@ const ColorPickerSection = ({
     <>
       <Box sx={{ mt: 2 }}>
         <Typography fontSize={14} fontWeight={500} mb={1} color="#333">
-          배경색 선택
+          {title}
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Box
@@ -413,14 +415,14 @@ const FamilyInfoAccordion = ({
         />
       </FormGroup>
 
-      {!isDragOverlay && (
-        <ColorPickerSection
-          selectedColor={familyInfo?.backgroundColor || "#f4f0ea"}
-          onColorChange={(color) =>
-            updateFamilyInfo({ backgroundColor: color })
-          }
-        />
-      )}
+      <ColorPickerSection
+        selectedColor={familyInfo?.backgroundColor || "#ffffff"}
+        onColorChange={(color) => updateFamilyInfo({ backgroundColor: color })}
+      />
+      <ColorPickerSection
+        selectedColor={familyInfo?.backgroundColor2 || "#e6e6fa"}
+        onColorChange={(color) => updateFamilyInfo({ backgroundColor2: color })}
+      />
     </SelectableAccordion>
   );
 };
@@ -629,6 +631,18 @@ const MapAccordion = ({
               }
             />
           </SelectableAccordion>
+          <ColorPickerSection
+            selectedColor={mapDirections.backgroundColor || "#ffffff"}
+            onColorChange={(color) =>
+              updateMapDirections({ backgroundColor: color })
+            }
+          />
+          <ColorPickerSection
+            selectedColor={mapDirections.backgroundColor2 || "#e6e6fa"}
+            onColorChange={(color) =>
+              updateMapDirections({ backgroundColor2: color })
+            }
+          />
         </>
       )}
     </SelectableAccordion>
@@ -833,15 +847,23 @@ const CoverDesignAccordion = ({
           imageHeight={200}
         />
       )}
-      {!isDragOverlay && (
-        <AppTextField
-          sx={{ mt: 2 }}
-          fullWidth
-          placeholder="텍스트를 입력하세요"
-          value={coverDesign?.text || ""}
-          onChange={(e) => updateCoverDesign({ text: e.target.value })}
-        />
-      )}
+      <AppTextField
+        sx={{ mt: 2 }}
+        fullWidth
+        placeholder="텍스트를 입력하세요"
+        value={coverDesign?.text || ""}
+        onChange={(e) => updateCoverDesign({ text: e.target.value })}
+      />
+      <ColorPickerSection
+        selectedColor={coverDesign?.backgroundColor || "#ffffff"}
+        onColorChange={(color) => updateCoverDesign({ backgroundColor: color })}
+      />
+      <ColorPickerSection
+        selectedColor={coverDesign?.backgroundColor2 || "#e6e6fa"}
+        onColorChange={(color) =>
+          updateCoverDesign({ backgroundColor2: color })
+        }
+      />
     </SelectableAccordion>
   );
 };
@@ -889,79 +911,172 @@ const IntroMessageAccordion = ({
     });
   };
 
-  return (
-    <SelectableAccordion
-      id={id}
-      title="모시는 글"
-      selected={introMessage?.enabled}
-      onSelect={() => updateIntroMessage({ enabled: !introMessage?.enabled })}
-      isDragOverlay={isDragOverlay}
-    >
-      <UploadForm
-        title="모시는 글 이미지 업로드"
-        description="모시는 글 이미지를 업로드하세요"
-        onFilesChange={handleUpload}
-        accept="image/*"
-        multiple={false}
-        maxFiles={1}
-      />
-      {introMessage?.image?.url && (
-        <ImageGallery
-          images={[introMessage.image.file]}
-          onImageRemove={() => {
-            updateIntroMessage({
-              image: { ...introMessage?.image, url: "" },
-            });
-          }}
-          mode="single"
-          imageHeight={200}
-        />
-      )}
-      <AppTextField
-        sx={{ mt: 2 }}
-        multiline
-        rows={4}
-        fullWidth
-        placeholder="모시는 글을 입력하세요"
-        value={introMessage?.text || ""}
-        onChange={(e) => updateIntroMessage({ text: e.target.value })}
-      />
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-      {!isDragOverlay && (
-        <>
+  return (
+    <>
+      <SelectableAccordion
+        id={id}
+        title="모시는 글"
+        selected={introMessage?.enabled}
+        onSelect={() => updateIntroMessage({ enabled: !introMessage?.enabled })}
+        isDragOverlay={isDragOverlay}
+      >
+        <UploadForm
+          title="모시는 글 이미지 업로드"
+          description="모시는 글 이미지를 업로드하세요"
+          onFilesChange={handleUpload}
+          accept="image/*"
+          multiple={false}
+          maxFiles={1}
+        />
+        {introMessage?.image?.url && (
+          <ImageGallery
+            images={[introMessage.image.file]}
+            onImageRemove={() => {
+              updateIntroMessage({
+                image: { ...introMessage?.image, url: "" },
+              });
+            }}
+            mode="single"
+            imageHeight={200}
+          />
+        )}
+        <AppTextField
+          sx={{ mt: 2 }}
+          fullWidth
+          placeholder="제목을 입력하세요"
+          value={introMessage?.title || ""}
+          onChange={(e) => updateIntroMessage({ title: e.target.value })}
+        />
+        <AppTextField
+          sx={{ mt: 2 }}
+          multiline
+          rows={4}
+          fullWidth
+          placeholder="모시는 글을 입력하세요"
+          value={introMessage?.text || ""}
+          onChange={(e) => updateIntroMessage({ text: e.target.value })}
+        />
+        <AppButton
+          variant="contained"
+          sx={{ mt: 2 }}
+          onClick={() => setDrawerOpen(true)}
+        >
+          예시 텍스트
+        </AppButton>
+        <ColorPickerSection
+          selectedColor={introMessage?.backgroundColor || "#ffffff"}
+          onColorChange={(color) =>
+            updateIntroMessage({ backgroundColor: color })
+          }
+        />
+        <ColorPickerSection
+          selectedColor={introMessage?.backgroundColor2 || "#e6e6fa"}
+          onColorChange={(color) =>
+            updateIntroMessage({ backgroundColor2: color })
+          }
+        />
+      </SelectableAccordion>
+      <AppSwipeableDrawer
+        open={drawerOpen}
+        onOpen={() => setDrawerOpen(true)}
+        onClose={() => setDrawerOpen(false)}
+        title="예시 텍스트"
+      >
+        <Box
+          sx={{
+            height: "70vh",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            p: 2,
+          }}
+        >
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            원하는 문구를 선택하면 자동으로 입력됩니다.
+          </Typography>
+
+          {/* 예시 문구 카드들 */}
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
-              gap: 1,
-              flexWrap: "wrap",
-              mt: 2,
+              flexDirection: "column",
+              gap: 1.5,
+              overflowY: "auto",
             }}
           >
-            <AppChipCheckBox
-              label="이미지 위"
-              checked={introMessage?.image?.position === "top"}
-              onCheckedChange={() =>
-                updateIntroMessage({
-                  image: { ...introMessage?.image, position: "top" },
-                })
-              }
-              radioMode={true}
-            />
-            <AppChipCheckBox
-              label="이미지 아래"
-              checked={introMessage?.image?.position === "bottom"}
-              onCheckedChange={() =>
-                updateIntroMessage({
-                  image: { ...introMessage?.image, position: "bottom" },
-                })
-              }
-              radioMode={true}
-            />
+            {[
+              {
+                title: "편안한 동반자",
+                text: "서로에게 가장 편안한 사람이 되어\n함께 살아가기로 했습니다.\n새롭게 시작하는\n저희 두 사람의 앞날을\n함께 축복해주시면\n더없이 감사하겠습니다.",
+              },
+              {
+                title: "평생의 약속",
+                text: "평생을 함께하고 싶은\n사람을 만났습니다.\n서로를 아끼고 사랑하며\n행복한 가정을 이루어\n살아가겠습니다.\n저희의 새로운 시작을\n축복해 주세요.",
+              },
+              {
+                title: "따뜻한 인연",
+                text: "따뜻한 봄날\n꽃이 피어나듯\n저희도 아름다운 사랑을\n꽃피우게 되었습니다.\n소중한 분들과 함께\n이 기쁨을 나누고 싶어\n모시게 되었습니다.",
+              },
+              {
+                title: "운명적 만남",
+                text: "오래도록 기다려온\n소중한 인연을 만나\n하나가 되려 합니다.\n저희의 결혼을\n진심으로 축하해 주시고\n앞날을 응원해 주시면\n감사하겠습니다.",
+              },
+              {
+                title: "사랑의 결실",
+                text: "사랑하는 사람과\n인생을 함께 하기로\n약속했습니다.\n서로를 믿고 의지하며\n행복한 가정을 꾸려\n가겠습니다.\n축복해 주세요.",
+              },
+              {
+                title: "새로운 출발",
+                text: "두 사람이 만나\n하나의 꿈을 꾸게 되었습니다.\n서로를 아끼고 존중하며\n사랑이 가득한 가정을\n만들어 가겠습니다.\n여러분의 축복 속에서\n새로운 출발을 하겠습니다.",
+              },
+            ].map((sample, index) => (
+              <Box
+                key={index}
+                onClick={() => {
+                  updateIntroMessage({
+                    text: sample.text,
+                    title: sample.title,
+                  });
+                  setDrawerOpen(false);
+                }}
+                sx={{
+                  p: 2,
+                  border: 1,
+                  borderColor: "divider",
+                  borderRadius: 2,
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                    borderColor: "primary.main",
+                  },
+                }}
+              >
+                <Typography
+                  variant="subtitle2"
+                  fontWeight="bold"
+                  sx={{ mb: 1 }}
+                >
+                  {sample.title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    lineHeight: 1.6,
+                    whiteSpace: "pre-line",
+                  }}
+                >
+                  {sample.text}
+                </Typography>
+              </Box>
+            ))}
           </Box>
-        </>
-      )}
-    </SelectableAccordion>
+        </Box>
+      </AppSwipeableDrawer>
+    </>
   );
 };
 
@@ -1107,8 +1222,20 @@ const AccountInfoAccordion = ({
             입력 란을 비워두시면 표시되지 않습니다.
           </Typography>
         </Box>
+        <ColorPickerSection
+          selectedColor={accountInfo?.backgroundColor || "#f5f7fa"}
+          onColorChange={(color) =>
+            updateAccountInfo({ backgroundColor: color })
+          }
+        />
+        <ColorPickerSection
+          selectedColor={accountInfo?.backgroundColor2 || "#c3cfe2"}
+          onColorChange={(color) =>
+            updateAccountInfo({ backgroundColor2: color })
+          }
+        />
 
-        <AppTextField
+        {/* <AppTextField
           fullWidth
           labelText="카카오페이 QR 코드 사용시"
           placeholder="카카오페이 링크를 입력하세요"
@@ -1123,7 +1250,7 @@ const AccountInfoAccordion = ({
           onClick={() => setDrawerOpen(true)}
         >
           카카오페이 링크 확인하는 방법
-        </AppButton>
+        </AppButton> */}
       </SelectableAccordion>
       <AppSwipeableDrawer
         open={drawerOpen}

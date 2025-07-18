@@ -18,8 +18,6 @@ export default function WeddingInvite() {
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
-        fontFamily: "Nanum Myeongjo, serif",
-        padding: "32px 0",
         boxSizing: "border-box",
       }}
     >
@@ -29,7 +27,7 @@ export default function WeddingInvite() {
           width: "100%",
           maxWidth: 770,
           margin: "0 auto",
-          background: "rgba(255,255,255,0.95)",
+          background: `linear-gradient(135deg, ${introMessage.backgroundColor} 0%, ${introMessage.backgroundColor2} 100%)`,
           padding: "40px 24px 32px 24px",
           display: "flex",
           flexDirection: "column",
@@ -46,7 +44,7 @@ export default function WeddingInvite() {
             letterSpacing: "0.05em",
           }}
         >
-          저희 결혼합니다.
+          {introMessage.title ? introMessage.title : "제목을 입력해주세요."}
         </Typography>
         {/* 사진 */}
         <Avatar
@@ -55,7 +53,7 @@ export default function WeddingInvite() {
           alt="결혼 사진"
           sx={{
             width: "100%",
-            height: 200,
+            height: 400,
             mb: 3.5,
             border: "4px solid #fff",
             boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
@@ -74,7 +72,7 @@ export default function WeddingInvite() {
             mb: 4,
           }}
         >
-          {introMessage.text}
+          {introMessage.text ? introMessage.text : "내용을 입력해주세요."}
         </Typography>
       </Box>
     </Box>
