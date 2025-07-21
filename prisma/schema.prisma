@@ -8,43 +8,44 @@ datasource db {
 }
 
 model users {
-  user_id    String   @id
-  user_email String   @unique(map: "users_email_key")
-  user_pw    String?
-  user_name  String
-  created_at DateTime @default(now()) @map("created_at")
-  updated_at DateTime @updatedAt @map("updated_at")
+  user_id       String         @id
+  user_email    String         @unique(map: "users_email_key")
+  user_pw       String?
+  user_name     String
+  created_at    DateTime       @default(now()) @map("created_at")
+  updated_at    DateTime       @updatedAt @map("updated_at")
+  native_token  String?        @db.VarChar(100)
+  communities   community[]    @relation("UserCommunities")
+  wedding_datas wedding_data[] @relation("UserWeddingData")
 
   @@map("users")
 }
 
-model upload_files {
-  file_key           String    @id @db.VarChar(20)
-  file_original_name String?   @db.VarChar(255)
-  file_real_path     String?   @db.VarChar(255)
-  file_relative_path String?   @db.VarChar(255)
-  file_size          BigInt?
-  file_mime_type     String?   @db.VarChar(100)
-  file_uploaded_at   DateTime? @db.DateTime(0)
-  user_id            String?   @db.VarChar(100)
-}
-
 model community {
-  id           String   @id
+  id           String        @id
   user_id      String
   title        String
-  wedding_data String?  @db.LongText
-  likes        Int      @default(0)
-  liked        Boolean  @default(false)
-  created_at   DateTime @default(now())
+  wedding_id   String?       @db.VarChar(20)
+  likes        Int           @default(0)
+  liked        Boolean       @default(false)
+  created_at   DateTime      @default(now())
   updated_at   DateTime
+  user         users         @relation("UserCommunities", fields: [user_id], references: [user_id], onDelete: Cascade)
+  wedding_data wedding_data? @relation("CommunityWeddingData", fields: [wedding_id], references: [wedding_id], onDelete: NoAction, onUpdate: NoAction, map: "community_wedding_data_FK")
+
+  @@index([user_id], map: "community_users_FK")
+  @@index([wedding_id], map: "community_wedding_FK")
 }
 
 model wedding_data {
-  wedding_id     String    @id @db.VarChar(20)
+  wedding_id     String      @id @db.VarChar(20)
   user_id        String
-  wedding_domain String    @unique(map: "wedding_data_unique") @db.VarChar(10)
-  wedding_data   String    @db.LongText
+  wedding_domain String      @unique(map: "wedding_data_unique") @db.VarChar(10)
+  wedding_data   String      @db.LongText
   created_at     DateTime?
   updated_at     DateTime?
+  communities    community[] @relation("CommunityWeddingData")
+  user           users       @relation("UserWeddingData", fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([user_id], map: "wedding_data_users_FK")
 }

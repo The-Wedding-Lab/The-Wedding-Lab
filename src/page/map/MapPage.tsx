@@ -6,7 +6,7 @@ import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import KakaoMap from "@/components/map/KakaoMap";
 import AppTwemoji from "@/components/ui/AppTwemoji";
 
-const Icon = ({
+export const Icon = ({
   src,
   alt,
   style,

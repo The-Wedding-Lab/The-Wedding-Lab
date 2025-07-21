@@ -60,7 +60,7 @@ export default function Home() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "100svh",
+          minHeight: "100vh",
         }}
       >
         <CircularProgress />
@@ -212,6 +212,33 @@ export default function Home() {
           fullWidth
         >
           {logoutMutation.isPending ? "로그아웃 중..." : "로그아웃"}
+        </Button>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={async () => {
+            try {
+              const response = await fetch("/api/push", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  to: "ExponentPushToken[uMO07XIe1FN6rZUvwC-aGF]",
+                  title: "Hello",
+                  body: "World",
+                  badge: 1,
+                }),
+              });
+              const data = await response.json();
+              console.log(data);
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+          fullWidth
+        >
+          푸쉬알림 테스트
         </Button>
       </Box>
     </Box>
