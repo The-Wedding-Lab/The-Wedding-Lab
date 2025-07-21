@@ -81,8 +81,8 @@ const WeddingCardView = ({
   return (
     <Box
       sx={{
-        width: "100%",
-        minHeight: "100vh",
+        width: "100dvw",
+        minHeight: "100dvh",
         backgroundColor: "#fff",
         opacity: 0,
         animation: "fadeIn 1s ease-in-out forwards",
@@ -101,7 +101,7 @@ const WeddingCardView = ({
       {/* 웨딩 카드 컨텐츠 */}
       <Box
         sx={{
-          width: "100%",
+          width: "100dvw",
           display: "flex",
           flexDirection: "column",
           flexWrap: "wrap",
@@ -112,6 +112,7 @@ const WeddingCardView = ({
           <Box
             key={`${page}-${index}`}
             sx={{
+              width: "100dvw",
               opacity: 0,
               animation: `slideIn 0.8s ease-out forwards`,
               animationDelay: `${index * 0.2}s`,

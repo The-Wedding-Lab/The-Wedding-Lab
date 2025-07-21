@@ -227,10 +227,10 @@ const initialState: Omit<WeddingDataState, "actions"> = {
       og: {
         title: "",
         description: "",
-        image: "", // 800x400 이상, 5MB 이내
+        image: `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`, // 800x400 이상, 5MB 이내
         imageWidth: 800,
         imageHeight: 400,
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`,
+        url: "",
         siteName: "",
         locale: "ko-KR",
       },
