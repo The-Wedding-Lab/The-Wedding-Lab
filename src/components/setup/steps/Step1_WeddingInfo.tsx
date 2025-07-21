@@ -34,6 +34,7 @@ import AppTwemoji from "@/components/ui/AppTwemoji";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import { formatPhoneNumber } from "@/hooks/utils";
 import AppDropBox from "@/components/ui/AppDropBox";
+import Twemoji from "react-twemoji";
 
 // 카카오맵 타입 선언
 declare global {
@@ -397,6 +398,9 @@ const Step1_WeddingInfo = () => {
                   })
                 }
                 type="tel"
+                disabled={
+                  setupData.weddingInfo?.groom?.father?.deceased || false
+                }
               />
               <AppDropBox
                 labelText="아버님 계좌번호"
@@ -414,6 +418,9 @@ const Step1_WeddingInfo = () => {
                 customInputPlaceholder="은행명을 직접 입력해주세요"
                 placeholder="은행을 선택해주세요"
                 options={bankList}
+                disabled={
+                  setupData.weddingInfo?.groom?.father?.deceased || false
+                }
               />
               <AppTextField
                 placeholder="계좌번호"
@@ -426,6 +433,9 @@ const Step1_WeddingInfo = () => {
                       account: e.target.value,
                     },
                   })
+                }
+                disabled={
+                  setupData.weddingInfo?.groom?.father?.deceased || false
                 }
               />
               <Box
@@ -453,9 +463,10 @@ const Step1_WeddingInfo = () => {
                         }
                       />
                     }
-                    label="고인표시"
+                    label="고인여부"
                   />
                 </FormGroup>
+
                 <Select
                   size="small"
                   value={
@@ -474,8 +485,12 @@ const Step1_WeddingInfo = () => {
                     borderRadius: "12px",
                   }}
                 >
-                  <MenuItem value="🌼">🌼</MenuItem>
-                  <MenuItem value="故">故</MenuItem>
+                  <MenuItem value="🌼">
+                    <AppTwemoji>🌼</AppTwemoji>
+                  </MenuItem>
+                  <MenuItem value="故">
+                    <AppTwemoji>故</AppTwemoji>
+                  </MenuItem>
                 </Select>
               </Box>
               <Divider />
@@ -507,6 +522,9 @@ const Step1_WeddingInfo = () => {
                   })
                 }
                 type="tel"
+                disabled={
+                  setupData.weddingInfo?.groom?.mother?.deceased || false
+                }
               />
               <AppDropBox
                 labelText="어머님 계좌번호"
@@ -524,6 +542,9 @@ const Step1_WeddingInfo = () => {
                 customInputPlaceholder="은행명을 직접 입력해주세요"
                 placeholder="은행을 선택해주세요"
                 options={bankList}
+                disabled={
+                  setupData.weddingInfo?.groom?.mother?.deceased || false
+                }
               />
               <AppTextField
                 placeholder="계좌번호"
@@ -536,6 +557,9 @@ const Step1_WeddingInfo = () => {
                       account: e.target.value,
                     },
                   })
+                }
+                disabled={
+                  setupData.weddingInfo?.groom?.mother?.deceased || false
                 }
               />
               <Box
@@ -563,30 +587,37 @@ const Step1_WeddingInfo = () => {
                         }
                       />
                     }
-                    label="고인표시"
+                    label="고인여부"
                   />
                 </FormGroup>
-                <Select
-                  size="small"
-                  value={
-                    setupData.weddingInfo?.groom?.mother?.deceasedIcon || "icon"
-                  }
-                  onChange={(e) =>
-                    actions.setGroomInfo({
-                      mother: {
-                        ...setupData.weddingInfo.groom.mother,
-                        deceasedIcon: e.target.value,
-                      },
-                    })
-                  }
-                  sx={{
-                    width: "75px",
-                    borderRadius: "12px",
-                  }}
-                >
-                  <MenuItem value="🌼">🌼</MenuItem>
-                  <MenuItem value="故">故</MenuItem>
-                </Select>
+                <AppTwemoji>
+                  <Select
+                    size="small"
+                    value={
+                      setupData.weddingInfo?.groom?.mother?.deceasedIcon ||
+                      "icon"
+                    }
+                    onChange={(e) =>
+                      actions.setGroomInfo({
+                        mother: {
+                          ...setupData.weddingInfo.groom.mother,
+                          deceasedIcon: e.target.value,
+                        },
+                      })
+                    }
+                    sx={{
+                      width: "75px",
+                      borderRadius: "12px",
+                    }}
+                  >
+                    <MenuItem value="🌼">
+                      <AppTwemoji>🌼</AppTwemoji>
+                    </MenuItem>
+                    <MenuItem value="故">
+                      <AppTwemoji>故</AppTwemoji>
+                    </MenuItem>
+                  </Select>
+                </AppTwemoji>
               </Box>
             </Box>
           </AccordionDetails>
@@ -643,6 +674,9 @@ const Step1_WeddingInfo = () => {
                   })
                 }
                 type="tel"
+                disabled={
+                  setupData.weddingInfo?.bride?.father?.deceased || false
+                }
               />
               <AppDropBox
                 labelText="아버님 계좌번호"
@@ -660,6 +694,9 @@ const Step1_WeddingInfo = () => {
                 customInputPlaceholder="은행명을 직접 입력해주세요"
                 placeholder="은행을 선택해주세요"
                 options={bankList}
+                disabled={
+                  setupData.weddingInfo?.bride?.father?.deceased || false
+                }
               />
               <AppTextField
                 placeholder="계좌번호"
@@ -672,6 +709,9 @@ const Step1_WeddingInfo = () => {
                       account: e.target.value,
                     },
                   })
+                }
+                disabled={
+                  setupData.weddingInfo?.bride?.father?.deceased || false
                 }
               />
               <Box
@@ -699,7 +739,7 @@ const Step1_WeddingInfo = () => {
                         }
                       />
                     }
-                    label="고인표시"
+                    label="고인여부"
                   />
                 </FormGroup>
                 <Select
@@ -720,8 +760,12 @@ const Step1_WeddingInfo = () => {
                     borderRadius: "12px",
                   }}
                 >
-                  <MenuItem value="🌼">🌼</MenuItem>
-                  <MenuItem value="故">故</MenuItem>
+                  <MenuItem value="🌼">
+                    <AppTwemoji>🌼</AppTwemoji>
+                  </MenuItem>
+                  <MenuItem value="故">
+                    <AppTwemoji>故</AppTwemoji>
+                  </MenuItem>
                 </Select>
               </Box>
               <Divider />
@@ -753,6 +797,9 @@ const Step1_WeddingInfo = () => {
                   })
                 }
                 type="tel"
+                disabled={
+                  setupData.weddingInfo?.bride?.mother?.deceased || false
+                }
               />
               <AppDropBox
                 labelText="어머님 계좌번호"
@@ -770,6 +817,9 @@ const Step1_WeddingInfo = () => {
                 customInputPlaceholder="은행명을 직접 입력해주세요"
                 placeholder="은행을 선택해주세요"
                 options={bankList}
+                disabled={
+                  setupData.weddingInfo?.bride?.mother?.deceased || false
+                }
               />
               <AppTextField
                 placeholder="계좌번호"
@@ -782,6 +832,9 @@ const Step1_WeddingInfo = () => {
                       account: e.target.value,
                     },
                   })
+                }
+                disabled={
+                  setupData.weddingInfo?.bride?.mother?.deceased || false
                 }
               />
               <Box
@@ -809,7 +862,7 @@ const Step1_WeddingInfo = () => {
                         }
                       />
                     }
-                    label="고인표시"
+                    label="고인여부"
                   />
                 </FormGroup>
                 <Select
@@ -830,8 +883,12 @@ const Step1_WeddingInfo = () => {
                     borderRadius: "12px",
                   }}
                 >
-                  <MenuItem value="🌼">🌼</MenuItem>
-                  <MenuItem value="故">故</MenuItem>
+                  <MenuItem value="🌼">
+                    <AppTwemoji>🌼</AppTwemoji>
+                  </MenuItem>
+                  <MenuItem value="故">
+                    <AppTwemoji>故</AppTwemoji>
+                  </MenuItem>
                 </Select>
               </Box>
             </Box>

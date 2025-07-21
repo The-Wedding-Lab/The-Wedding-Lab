@@ -220,8 +220,8 @@ const AccountPage = () => {
           <Typography fontSize={28} fontWeight={700} gutterBottom color="#333">
             마음 전하실 곳
           </Typography>
-          <Typography fontSize={16} color="#666" mb={4}>
-            소중한 마음을 담아 축하해 주세요
+          <Typography fontSize={16} color="#666" mb={4} width="80%" mx="auto">
+            {accountInfo?.description}
           </Typography>
         </Box>
 

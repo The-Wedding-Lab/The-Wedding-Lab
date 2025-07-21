@@ -18,21 +18,25 @@ import Step3_EditTemplate from "@/components/setup/steps/Step3_EditTemplate";
 import Step4_Preview from "@/components/setup/steps/Step4_Preview";
 import Step5_Domain from "@/components/setup/steps/Step5_Domain";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
+import { useSnackbarStore } from "@/store/useSnackbarStore";
 import AppProgressBar from "@/components/ui/AppProgressBar";
 import { gsap } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { useUserStore } from "@/store/useUserStore";
 
 // GSAP 플러그인 등록
 gsap.registerPlugin(ScrollToPlugin);
 
 const SetupPage = () => {
-  const { step, setupData } = useWeddingDataStore();
+  const { step, setupData, domainCheck } = useWeddingDataStore();
   const { setTypeAndStart, nextStep, prevStep, setSetupData } =
     useWeddingDataStore((state) => state.actions);
-
+  const { showStackSnackbar } = useSnackbarStore();
+  const { user } = useUserStore();
   const shouldScrollRef = useRef(false);
   const stepContainerRef = useRef<HTMLDivElement>(null);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const TOTAL_STEPS = setupData.type === "ai" ? 5 : 4;
   const progressValue = step >= 0 ? ((step + 1) / TOTAL_STEPS) * 100 : 0;
@@ -178,8 +182,51 @@ const SetupPage = () => {
     return null;
   };
 
-  const handleCreate = () => {
-    console.log("생성하기");
+  const handleCreate = async () => {
+    // 도메인 검증 확인
+    if (!setupData.weddingInfo?.domain) {
+      showStackSnackbar("먼저 도메인 중복 확인을 해주세요.", {
+        variant: "info",
+      });
+      return;
+    }
+
+    setIsCreating(true);
+
+    try {
+      const response = await fetch("/api/wedding", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          domain: setupData.weddingInfo.domain,
+          userId: user?.id,
+          weddingInfo: setupData.weddingInfo,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        showStackSnackbar("모바일 청첩장이 성공적으로 생성되었습니다!", {
+          variant: "success",
+        });
+        // 성공 후 처리 (예: 완료 페이지로 이동)
+        console.log("저장 성공:", result);
+        // 추후 완료 페이지로 라우팅 추가 가능
+        // router.push(`/complete?domain=${result.domain}`);
+      } else {
+        showStackSnackbar(result.error || "저장 중 오류가 발생했습니다.", {
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error("웨딩 데이터 저장 오류:", error);
+      showStackSnackbar("네트워크 오류가 발생했습니다.", { variant: "error" });
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   // 시작 화면 (방법 선택)
@@ -270,6 +317,13 @@ const SetupPage = () => {
         gap={2}
         mt={3}
         sx={{ position: "sticky", bottom: 24 }}
+        p={
+          setupData.type === "ai" && step === 3
+            ? 3
+            : setupData.type === "template" && step === 2
+            ? 3
+            : 0
+        }
       >
         <AppButton
           variant="outlined"
@@ -285,7 +339,10 @@ const SetupPage = () => {
           fullWidth
           disabled={
             (step === 0 && !setupData.step1Valid) ||
-            (step === 4 && !setupData.step5Valid)
+            (step === 4 && !setupData.step5Valid) ||
+            isCreating ||
+            (setupData.type === "ai" && step === 4 && !domainCheck) ||
+            (setupData.type === "template" && step === 3 && !domainCheck)
           }
           onClick={() => {
             if (step === TOTAL_STEPS - 1) {
@@ -296,7 +353,11 @@ const SetupPage = () => {
             }
           }}
         >
-          {step === TOTAL_STEPS - 1 ? "생성하기" : "다음"}
+          {step === TOTAL_STEPS - 1
+            ? isCreating
+              ? "생성 중..."
+              : "생성하기"
+            : "다음"}
         </AppButton>
       </Box>
 

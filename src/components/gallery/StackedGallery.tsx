@@ -9,19 +9,9 @@ import ShareIcon from "@mui/icons-material/Share";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
 gsap.registerPlugin(Draggable);
-
-const GalleryContainer = styled(Box)`
-  position: relative;
-  width: 100%;
-  height: 500px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
 
 const StackContainer = styled(Box)`
   position: relative;
@@ -97,7 +87,7 @@ const ControlPanel = styled(Box)`
 `;
 
 const ControlButton = styled(IconButton)`
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   color: white;
   width: 60px;
@@ -180,6 +170,9 @@ const StackedGallery = ({ images }: { images: any[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [resetKey, setResetKey] = useState(0); // 강제 리렌더링용
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  const { setupData } = useWeddingDataStore();
+  const backgroundColor2 =
+    setupData?.weddingInfo?.pages?.gallery?.backgroundColor2;
   const imagesSample = [
     {
       id: 1,
@@ -222,6 +215,17 @@ const StackedGallery = ({ images }: { images: any[] }) => {
       liked: true,
     },
   ];
+
+  const GalleryContainer = styled(Box)`
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(135deg, #ffffff 0%, ${backgroundColor2} 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  `;
 
   if (!images || images.length === 0) {
     images = imagesSample;
@@ -451,10 +455,6 @@ const StackedGallery = ({ images }: { images: any[] }) => {
 
   return (
     <GalleryContainer key={resetKey}>
-      <Counter>
-        {currentIndex + 1} / {cards.length}
-      </Counter>
-
       <StackContainer ref={stackRef}>
         {cards.map((card, index) => (
           <Card

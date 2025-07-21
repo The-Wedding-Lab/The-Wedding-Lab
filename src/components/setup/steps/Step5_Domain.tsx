@@ -7,8 +7,15 @@ import {
   CheckCircle,
   CheckRounded,
 } from "@mui/icons-material";
-import { Box, IconButton, InputAdornment, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useSnackbarStore } from "@/store/useSnackbarStore";
 
 interface StepProps {
   data: any;
@@ -19,12 +26,67 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
   const [myDomain, setMyDomain] = useState("");
   const [myDomainError, setMyDomainError] = useState(""); // 에러 메세지
   const [isDomainChecked, setIsDomainChecked] = useState(false); // 중복 체크 여부
+  const [isCheckingDomain, setIsCheckingDomain] = useState(false); // 중복 확인 로딩
+  const [successMessage, setSuccessMessage] = useState(""); // 성공 메시지
   const { setupData, actions } = useWeddingDataStore();
+  const { showStackSnackbar } = useSnackbarStore();
 
   // 유효성 상태를 스토어에 업데이트
   useEffect(() => {
-    setData({ step5Valid: isDomainChecked });
+    setData({ step5Valid: isDomainChecked && !myDomainError });
   }, [myDomain, isDomainChecked, myDomainError, setData]);
+
+  // 도메인을 스토어에 저장
+  useEffect(() => {
+    if (isDomainChecked && myDomain) {
+      actions.setWeddingDomain(myDomain);
+    }
+  }, [isDomainChecked, myDomain, actions]);
+
+  // 도메인 중복 확인 API 호출
+  const checkDomainAvailability = async () => {
+    if (!myDomain) {
+      setMyDomainError("도메인을 입력해주세요.");
+      return;
+    }
+
+    setIsCheckingDomain(true);
+    setMyDomainError("");
+    setSuccessMessage("");
+
+    try {
+      const response = await fetch(
+        `/api/wedding?domain=${encodeURIComponent(myDomain)}`
+      );
+      const result = await response.json();
+
+      if (response.ok && result.available) {
+        setIsDomainChecked(true);
+        actions.setDomainCheck(true);
+        setSuccessMessage(result.message);
+        showStackSnackbar("도메인 사용이 가능합니다!", { variant: "success" });
+      } else {
+        setIsDomainChecked(false);
+        actions.setDomainCheck(false);
+        setMyDomainError(
+          result.error ||
+            result.message ||
+            "도메인 확인 중 오류가 발생했습니다."
+        );
+        showStackSnackbar(result.error || "이미 사용중인 도메인입니다.", {
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error("도메인 확인 오류:", error);
+      setIsDomainChecked(false);
+      actions.setDomainCheck(false);
+      setMyDomainError("네트워크 오류가 발생했습니다.");
+      showStackSnackbar("네트워크 오류가 발생했습니다.", { variant: "error" });
+    } finally {
+      setIsCheckingDomain(false);
+    }
+  };
 
   return (
     <Box>
@@ -81,15 +143,21 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
                     setMyDomainError("");
                     setMyDomain(value);
                     setIsDomainChecked(false);
+                    actions.setDomainCheck(false);
+                    setSuccessMessage("");
                   }
                 }}
                 slotProps={{
                   input: {
                     endAdornment: (
                       <InputAdornment position="end">
-                        <CheckCircle
-                          color={isDomainChecked ? "primary" : "disabled"}
-                        />
+                        {isCheckingDomain ? (
+                          <CircularProgress size={20} />
+                        ) : (
+                          <CheckCircle
+                            color={isDomainChecked ? "primary" : "disabled"}
+                          />
+                        )}
                       </InputAdornment>
                     ),
                   },
@@ -98,6 +166,7 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
             </Box>
             <AppButton
               variant="outlined"
+              disabled={isCheckingDomain || !myDomain}
               sx={{
                 height: "56px",
                 width: "100px",
@@ -106,23 +175,21 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
                 paddingX: "8px",
                 flexShrink: 0,
               }}
-              onClick={() => {
-                if (myDomain) {
-                  setIsDomainChecked(true);
-                  setMyDomainError("");
-                } else {
-                  setMyDomainError("도메인을 입력해주세요.");
-                }
-              }}
+              onClick={checkDomainAvailability}
             >
-              중복확인
+              {isCheckingDomain ? (
+                <CircularProgress size={16} color="inherit" />
+              ) : (
+                "중복확인"
+              )}
             </AppButton>
           </Box>
           <Typography fontSize={14} color="#b1b1b1" pl={1}>
-            https://wedding.com/{myDomain}
+            https://wedding.com/card/{myDomain}
           </Typography>
+
           {/* 도메인 사용 가능 상태 표시 */}
-          {isDomainChecked && myDomain && (
+          {isDomainChecked && myDomain && successMessage && (
             <Box
               sx={{
                 backgroundColor: "#f0f9ff",
@@ -136,7 +203,7 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
             >
               <CheckCircle sx={{ color: "#0ea5e9", fontSize: "20px" }} />
               <Typography fontSize={14} color="#0369a1" fontWeight={500}>
-                '{myDomain}' 도메인을 사용할 수 있습니다!
+                {successMessage}
               </Typography>
             </Box>
           )}
