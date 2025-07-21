@@ -205,7 +205,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: fullScreen ? "100vh" : "60vh",
+            minHeight: fullScreen ? "100svh" : "60vh",
             backgroundColor: "black",
           }}
         >
@@ -298,7 +298,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
                         alignItems: "center",
                         justifyContent: "center",
                         position: "relative",
-                        minHeight: fullScreen ? "100vh" : "60vh",
+                        minHeight: fullScreen ? "100svh" : "60vh",
                       }}
                     >
                       <Box

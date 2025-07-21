@@ -82,7 +82,7 @@ const WeddingCardView = ({
     <Box
       sx={{
         width: "100dvw",
-        minHeight: "100dvh",
+        minHeight: "100svh",
         backgroundColor: "#fff",
         opacity: 0,
         animation: "fadeIn 1s ease-in-out forwards",

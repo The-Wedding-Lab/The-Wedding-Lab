@@ -13,7 +13,7 @@ export const InvitationCover: React.FC = () => {
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
+        minHeight: "100svh",
         display: "flex",
         flexDirection: "column",
         background: `linear-gradient(180deg, ${coverDesign?.backgroundColor} 0%, ${coverDesign?.backgroundColor2} 100%)`,
