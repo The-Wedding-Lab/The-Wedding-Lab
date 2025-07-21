@@ -15,15 +15,9 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import styled from "@emotion/styled";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const GalleryContainer = styled(Box)`
-  width: 100%;
-  min-height: 500px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  padding: 20px;
-`;
 
 const HeaderSection = styled(Box)`
   text-align: center;
@@ -227,6 +221,21 @@ const GridGallery = ({ images }: { images: any[] }) => {
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
   const [filter, setFilter] = useState("all");
   const [visibleCount, setVisibleCount] = useState(4);
+  const { setupData } = useWeddingDataStore();
+  const backgroundColor =
+    setupData?.weddingInfo?.pages?.gallery?.backgroundColor;
+  const backgroundColor2 =
+    setupData?.weddingInfo?.pages?.gallery?.backgroundColor2;
+  const GalleryContainer = styled(Box)`
+    width: 100%;
+    min-height: 500px;
+    background: linear-gradient(
+      135deg,
+      ${backgroundColor} 0%,
+      ${backgroundColor2} 100%
+    );
+    padding: 20px;
+  `;
   const imagesSample = [
     {
       id: 1,

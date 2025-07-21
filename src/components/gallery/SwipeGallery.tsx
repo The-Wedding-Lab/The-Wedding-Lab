@@ -7,16 +7,9 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "@emotion/styled";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
 gsap.registerPlugin(Draggable);
-
-const GalleryContainer = styled(Box)`
-  position: relative;
-  width: 100%;
-  height: 500px;
-  background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
-  overflow: hidden;
-`;
 
 const CardsContainer = styled(Box)`
   position: relative;
@@ -160,6 +153,23 @@ const SwipeGallery = ({ images }: { images: any[] }) => {
   const cardsListRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  const { setupData } = useWeddingDataStore();
+  const backgroundColor =
+    setupData?.weddingInfo?.pages?.gallery?.backgroundColor;
+  const backgroundColor2 =
+    setupData?.weddingInfo?.pages?.gallery?.backgroundColor2;
+
+  const GalleryContainer = styled(Box)`
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(
+      135deg,
+      ${backgroundColor} 0%,
+      ${backgroundColor2} 100%
+    );
+    overflow: hidden;
+  `;
 
   const imagesSample = [
     {
@@ -412,7 +422,7 @@ const SwipeGallery = ({ images }: { images: any[] }) => {
           left: "50%",
           width: "100%",
           transform: "translateX(-50%)",
-          color: "white",
+          color: "#777",
           textAlign: "center",
           opacity: 0.8,
           fontSize: "1.1rem",

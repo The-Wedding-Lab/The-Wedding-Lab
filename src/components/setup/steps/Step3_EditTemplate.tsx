@@ -203,7 +203,7 @@ const ColorPickerSection = ({
     "#f0fff0", // 연한 민트
     "#fff8dc", // 연한 노랑
     "#f5f5dc", // 베이지
-    "#e6e6fa", // 라벤더
+    "#f0f8ff", // 라벤더
     "#ffe4e1", // 미스티로즈
     "#f0ffff", // 아주어
     "#fafad2", // 라이트골든로드
@@ -416,11 +416,7 @@ const FamilyInfoAccordion = ({
       </FormGroup>
 
       <ColorPickerSection
-        selectedColor={familyInfo?.backgroundColor || "#ffffff"}
-        onColorChange={(color) => updateFamilyInfo({ backgroundColor: color })}
-      />
-      <ColorPickerSection
-        selectedColor={familyInfo?.backgroundColor2 || "#e6e6fa"}
+        selectedColor={familyInfo?.backgroundColor2 || "#f0f8ff"}
         onColorChange={(color) => updateFamilyInfo({ backgroundColor2: color })}
       />
     </SelectableAccordion>
@@ -631,14 +627,9 @@ const MapAccordion = ({
               }
             />
           </SelectableAccordion>
+
           <ColorPickerSection
-            selectedColor={mapDirections.backgroundColor || "#ffffff"}
-            onColorChange={(color) =>
-              updateMapDirections({ backgroundColor: color })
-            }
-          />
-          <ColorPickerSection
-            selectedColor={mapDirections.backgroundColor2 || "#e6e6fa"}
+            selectedColor={mapDirections.backgroundColor2 || "#f0f8ff"}
             onColorChange={(color) =>
               updateMapDirections({ backgroundColor2: color })
             }
@@ -759,6 +750,12 @@ const GalleryAccordion = ({
                 label="미리보기 표시"
               />
             </FormGroup>
+            <ColorPickerSection
+              selectedColor={gallery.backgroundColor2 || "#f0f8ff"}
+              onColorChange={(color) =>
+                updateGallery({ backgroundColor2: color })
+              }
+            />
           </Box>
 
           <Box py={2} sx={{ display: previewOpen ? "block" : "none" }}>
@@ -854,12 +851,9 @@ const CoverDesignAccordion = ({
         value={coverDesign?.text || ""}
         onChange={(e) => updateCoverDesign({ text: e.target.value })}
       />
+
       <ColorPickerSection
-        selectedColor={coverDesign?.backgroundColor || "#ffffff"}
-        onColorChange={(color) => updateCoverDesign({ backgroundColor: color })}
-      />
-      <ColorPickerSection
-        selectedColor={coverDesign?.backgroundColor2 || "#e6e6fa"}
+        selectedColor={coverDesign?.backgroundColor2 || "#f0f8ff"}
         onColorChange={(color) =>
           updateCoverDesign({ backgroundColor2: color })
         }
@@ -965,14 +959,9 @@ const IntroMessageAccordion = ({
         >
           예시 텍스트
         </AppButton>
+
         <ColorPickerSection
-          selectedColor={introMessage?.backgroundColor || "#ffffff"}
-          onColorChange={(color) =>
-            updateIntroMessage({ backgroundColor: color })
-          }
-        />
-        <ColorPickerSection
-          selectedColor={introMessage?.backgroundColor2 || "#e6e6fa"}
+          selectedColor={introMessage?.backgroundColor2 || "#f0f8ff"}
           onColorChange={(color) =>
             updateIntroMessage({ backgroundColor2: color })
           }
@@ -1164,6 +1153,10 @@ const CalendarAccordion = ({
           label="D-Day 표시"
         />
       </FormGroup>
+      <ColorPickerSection
+        selectedColor={calendar?.backgroundColor2 || "#f0f8ff"}
+        onColorChange={(color) => updateCalendar({ backgroundColor2: color })}
+      />
     </SelectableAccordion>
   );
 };
@@ -1198,6 +1191,7 @@ const AccountInfoAccordion = ({
 
   //dialog
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [exampleTextDrawerOpen, setExampleTextDrawerOpen] = useState(false);
 
   return (
     <>
@@ -1222,12 +1216,24 @@ const AccountInfoAccordion = ({
             입력 란을 비워두시면 표시되지 않습니다.
           </Typography>
         </Box>
-        <ColorPickerSection
-          selectedColor={accountInfo?.backgroundColor || "#f5f7fa"}
-          onColorChange={(color) =>
-            updateAccountInfo({ backgroundColor: color })
-          }
+        <AppTextField
+          fullWidth
+          labelText="안내 문구"
+          placeholder="안내 문구를 입력하세요"
+          value={accountInfo?.description || ""}
+          onChange={(e) => updateAccountInfo({ description: e.target.value })}
+          multiline
+          rows={3}
         />
+
+        <AppButton
+          variant="contained"
+          sx={{ mt: 2 }}
+          onClick={() => setExampleTextDrawerOpen(true)}
+        >
+          예시 텍스트
+        </AppButton>
+
         <ColorPickerSection
           selectedColor={accountInfo?.backgroundColor2 || "#c3cfe2"}
           onColorChange={(color) =>
@@ -1265,6 +1271,95 @@ const AccountInfoAccordion = ({
           <Typography>4. 카카오페이 앱을 실행합니다.</Typography>
           <Typography>5. 카카오페이 앱을 실행합니다.</Typography>
           <Typography>6. 카카오페이 앱을 실행합니다.</Typography>
+        </Box>
+      </AppSwipeableDrawer>
+
+      {/* 예시 텍스트 drawer */}
+      <AppSwipeableDrawer
+        open={exampleTextDrawerOpen}
+        onOpen={() => setExampleTextDrawerOpen(true)}
+        onClose={() => setExampleTextDrawerOpen(false)}
+        title="예시 텍스트"
+      >
+        <Box
+          sx={{
+            height: "70vh",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            p: 2,
+          }}
+        >
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            원하는 문구를 선택하면 자동으로 입력됩니다.
+          </Typography>
+
+          {/* 예시 문구 카드들 */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1.5,
+              overflowY: "auto",
+            }}
+          >
+            {[
+              {
+                title: "정중하고 일반적인 표현",
+                text: "축하해주시는 따뜻한 마음만으로도 충분히 감사합니다. 멀리서 마음을 전하고 싶으신 분들을 위해 조심스럽게 안내해 드립니다.",
+              },
+              {
+                title: "감사를 강조하는 부드러운 표현",
+                text: "저희 두 사람의 시작을 축복해주시는 마음에 진심으로 감사합니다. 혹시 마음을 전하고 싶으신 분들을 위해 준비했습니다.",
+              },
+              {
+                title: "간결하고 직접적인 표현",
+                text: "참석이 어려워 마음을 전하고 싶어 하시는 분들을 위해 준비했습니다. 따뜻한 마음 감사히 받겠습니다",
+              },
+              {
+                title: "참석에 대한 감사를 강조하는 표현",
+                text: "귀한 걸음으로 축하해주시는 마음, 소중히 간직하겠습니다. 혹시 멀리서 응원해주실 분들을 위해 안내해 드립니다.",
+              },
+            ].map((sample, index) => (
+              <Box
+                key={index}
+                onClick={() => {
+                  updateAccountInfo({ description: sample.text });
+                  setExampleTextDrawerOpen(false);
+                }}
+                sx={{
+                  p: 2,
+                  border: 1,
+                  borderColor: "divider",
+                  borderRadius: 2,
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    bgcolor: "action.hover",
+                    borderColor: "primary.main",
+                  },
+                }}
+              >
+                <Typography
+                  variant="subtitle2"
+                  fontWeight="bold"
+                  sx={{ mb: 1 }}
+                >
+                  {sample.title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    lineHeight: 1.6,
+                    whiteSpace: "pre-line",
+                  }}
+                >
+                  {sample.text}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
         </Box>
       </AppSwipeableDrawer>
     </>

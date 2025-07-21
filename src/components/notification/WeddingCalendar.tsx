@@ -30,14 +30,9 @@ const WeddingCalendar = ({ weddingDate }: WeddingCalendarProps) => {
         disabled
         sx={{
           ...(isWeddingDay && {
-            backgroundColor: "#2e7d32", // 진한 그린
             color: "#ffffff",
             fontWeight: "bold",
-            border: "2px solid #1b5e20",
             borderRadius: "50%",
-            "&:hover": {
-              backgroundColor: "#1b5e20",
-            },
           }),
           opacity: 1,
           color: "#444", // 기본 날짜 글자색

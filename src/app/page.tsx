@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,66 +10,49 @@ import {
   Chip,
   CircularProgress,
 } from "@mui/material";
-import { TokenStorage } from "@/lib/tokenStorage";
-import { decodeToken, JWTPayload } from "@/lib/jwt";
 import { useLogout } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-
-interface User {
-  id: number;
-  email: string;
-  name: string;
-}
+import { useUserStore } from "@/store/useUserStore";
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
-  const [tokenInfo, setTokenInfo] = useState<JWTPayload | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, tokenInfo, isLoggedIn, isLoading, actions } = useUserStore();
   const logoutMutation = useLogout();
   const router = useRouter();
 
+  // 모든 hooks를 early return 이전에 배치
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        // 저장된 사용자 정보 가져오기
-        const savedUser = await TokenStorage.getUser();
+    // 컴포넌트 마운트 시 유저 데이터 로드
+    actions.loadUserData();
+  }, [actions]);
 
-        // 토큰 가져오기
-        const token = await TokenStorage.getToken();
+  useEffect(() => {
+    // 로그인 상태가 false이고 로딩이 끝났으면 로그인 페이지로 이동
+    if (!isLoading && !isLoggedIn) {
+      router.push("/login");
+    }
+  }, [isLoading, isLoggedIn, router]);
 
-        if (savedUser) {
-          setUser(savedUser);
-        }
-
-        if (token) {
-          // JWT 토큰 디코딩하여 토큰 정보 가져오기
-          const decoded = decodeToken(token);
-          setTokenInfo(decoded);
-        }
-
-        // 둘 다 없으면 로그인 페이지로 이동
-        if (!savedUser && !token) {
-          router.push("/login");
-        }
-      } catch (error) {
-        console.error("사용자 데이터 로드 실패:", error);
-        router.push("/login");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadUserData();
-  }, [router]);
+  // 토큰 유효성 검사 (이미 store에서 자동으로 처리됨)
+  useEffect(() => {
+    if (tokenInfo) {
+      actions.validateToken();
+    }
+  }, [tokenInfo, actions]);
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        await actions.logout();
         router.push("/login");
       },
     });
   };
 
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp * 1000).toLocaleString("ko-KR");
+  };
+
+  // 로딩 중인 경우
   if (isLoading) {
     return (
       <Box
@@ -85,7 +68,8 @@ export default function Home() {
     );
   }
 
-  if (!user && !tokenInfo) {
+  // 로그인되지 않은 경우
+  if (!isLoggedIn) {
     return (
       <Box
         sx={{
@@ -98,14 +82,6 @@ export default function Home() {
         <Typography>사용자 정보를 찾을 수 없습니다.</Typography>
       </Box>
     );
-  }
-
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleString("ko-KR");
-  };
-
-  if (tokenInfo?.exp && tokenInfo.exp * 1000 < Date.now()) {
-    handleLogout();
   }
 
   return (

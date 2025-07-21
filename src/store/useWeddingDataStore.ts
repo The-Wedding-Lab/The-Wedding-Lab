@@ -11,9 +11,11 @@ interface SetupData {
 interface WeddingDataState {
   setupData: SetupData;
   step: number;
+  domainCheck: boolean;
   actions: {
     setStep: (step: number) => void;
     setSetupData: (data: Partial<SetupData>) => void;
+    setWeddingInfo: (data: Partial<SetupData["weddingInfo"]>) => void;
     setTypeAndStart: (type: "ai" | "template") => void;
     nextStep: () => void;
     prevStep: () => void;
@@ -35,6 +37,7 @@ interface WeddingDataState {
     setOpenGraphInfo: (og: Partial<SetupData["weddingInfo"]["og"]>) => void;
     // 폰트 설정 액션
     setWeddingFont: (font: string) => void;
+    setDomainCheck: (check: boolean) => void;
   };
 }
 
@@ -42,6 +45,7 @@ interface WeddingDataState {
 const initialState: Omit<WeddingDataState, "actions"> = {
   // Setup Step
   step: -1,
+  domainCheck: false,
   setupData: {
     // 모청 정보
     weddingInfo: {
@@ -117,7 +121,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           image: "", // 이미지
           text: "", // 이미지 아래 텍스트
           backgroundColor: "#ffffff", // 배경색
-          backgroundColor2: "#e6e6fa", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
         },
         // 모시는 글
         introMessage: {
@@ -126,7 +130,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           title: "", // 제목
           text: "", // 글
           backgroundColor: "#ffffff", // 배경색
-          backgroundColor2: "#e6e6fa", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
           image: {
             // 이미지
             position: "top", // "top" or "bottom"
@@ -140,7 +144,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           telEnabled: true, // 전화번호 표시 여부
           accountEnabled: true, // 계좌번호 표시 여부 (미사용)
           backgroundColor: "#ffffff", // 배경색
-          backgroundColor2: "#e6e6fa", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
           fontColor: "#000000", // 텍스트 색상
         },
         // 캘린더
@@ -152,6 +156,8 @@ const initialState: Omit<WeddingDataState, "actions"> = {
             countdown: true, // 카운트다운 표시 여부
             dDay: true, // D-Day 표시 여부
           },
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
         },
         // 갤러리
         gallery: {
@@ -159,6 +165,8 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           order: 4, // 순서
           images: [], // 이미지 배열
           displayType: "stacked", // 표시 타입 (stacked, scroll, grid)
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
         },
         // 오시는 길
         mapDirections: {
@@ -169,7 +177,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           tmap: true, // T맵 표시 여부
           googleMap: true, // 구글맵 표시 여부
           backgroundColor: "#ffffff", // 배경색
-          backgroundColor2: "#e6e6fa", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
           naviInfo: {
             enabled: false, // 기본값 false
             text: "", // 글
@@ -196,10 +204,11 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           enabled: false, // 기본값 false
           order: 6, // 순서
           title: "", // 제목
-          description: "", // 설명
+          description:
+            "축하해주시는 따뜻한 마음만으로도 충분히 감사합니다. 멀리서 마음을 전하고 싶으신 분들을 위해 조심스럽게 안내해 드립니다.", // 설명
           kakaopayLink: "", // 카카오페이 링크
           backgroundColor: "#ffffff", // 배경색
-          backgroundColor2: "#e6e6fa", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
         },
         // 마지막 글
         endingMessage: {
@@ -221,7 +230,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         image: "", // 800x400 이상, 5MB 이내
         imageWidth: 800,
         imageHeight: 400,
-        url: "",
+        url: `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`,
         siteName: "",
         locale: "ko-KR",
       },
@@ -239,6 +248,14 @@ export const useWeddingDataStore = create<WeddingDataState>((set, get) => ({
     setSetupData: (data) =>
       set((state) => ({
         setupData: { ...state.setupData, ...data },
+      })),
+
+    setWeddingInfo: (data) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: { ...data },
+        },
       })),
 
     // 청첩장 타입 선택 및 설정 시작
@@ -386,5 +403,6 @@ export const useWeddingDataStore = create<WeddingDataState>((set, get) => ({
           },
         },
       })),
+    setDomainCheck: (check) => set({ domainCheck: check }),
   },
 }));

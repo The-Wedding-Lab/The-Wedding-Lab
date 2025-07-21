@@ -12,48 +12,10 @@ model users {
   user_email String   @unique(map: "users_email_key")
   user_pw    String?
   user_name  String
-  created_at  DateTime @default(now()) @map("created_at")
-  updated_at  DateTime @updatedAt @map("updated_at")
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
 
   @@map("users")
-}
-
-model wedding {
-  id                     String   @id @default(uuid())
-  userId                 String   @map("user_id")
-  groomName              String   @map("groom_name")
-  groomContact           String?  @map("groom_contact")
-  groomBankAccount       String?  @map("groom_bank_account")
-  brideName              String   @map("bride_name")
-  brideContact           String?  @map("bride_contact")
-  brideBankAccount       String?  @map("bride_bank_account")
-  groomFatherName        String?  @map("groom_father_name")
-  groomMotherName        String?  @map("groom_mother_name")
-  groomFatherContact     String?  @map("groom_father_contact")
-  groomMotherContact     String?  @map("groom_mother_contact")
-  groomFatherBankAccount String?  @map("groom_father_bank_account")
-  groomMotherBankAccount String?  @map("groom_mother_bank_account")
-  groomFatherYN          Boolean? @map("groom_father_yn")
-  groomMotherYN          Boolean? @map("groom_mother_yn")
-  brideFatherName        String?  @map("bride_father_name")
-  brideMotherName        String?  @map("bride_mother_name")
-  brideFatherContact     String?  @map("bride_father_contact")
-  brideMotherContact     String?  @map("bride_mother_contact")
-  brideFatherBankAccount String?  @map("bride_father_bank_account")
-  brideMotherBankAccount String?  @map("bride_mother_bank_account")
-  brideFatherYN          Boolean? @map("bride_father_yn")
-  brideMotherYN          Boolean? @map("bride_mother_yn")
-  weddingDate            DateTime @map("wedding_date")
-  venueName              String   @map("venue_name")
-  venueAddress           String   @map("venue_address")
-  venueLocationX         String?  @map("venue_location_x")
-  venueLocationY         String?  @map("venue_location_y")
-  invitationUrl          String   @unique @map("invitation_url")
-  weddingData            String?  @map("wedding_data") @db.LongText
-  createdAt              DateTime @default(now()) @map("created_at")
-  updatedAt              DateTime @updatedAt @map("updated_at")
-
-  @@map("wedding")
 }
 
 model upload_files {
@@ -65,4 +27,24 @@ model upload_files {
   file_mime_type     String?   @db.VarChar(100)
   file_uploaded_at   DateTime? @db.DateTime(0)
   user_id            String?   @db.VarChar(100)
+}
+
+model community {
+  id           String   @id
+  user_id      String
+  title        String
+  wedding_data String?  @db.LongText
+  likes        Int      @default(0)
+  liked        Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime
+}
+
+model wedding_data {
+  wedding_id     String    @id @db.VarChar(20)
+  user_id        String
+  wedding_domain String    @unique(map: "wedding_data_unique") @db.VarChar(10)
+  wedding_data   String    @db.LongText
+  created_at     DateTime?
+  updated_at     DateTime?
 }

@@ -64,6 +64,7 @@ const WeddingCountdown = ({ weddingDateTime }: CountdownProps) => {
           box-shadow: 0 4px 12px rgba(255, 192, 203, 0.25);
           text-align: center;
           margin-top: 16px;
+          margin-bottom: 16px;
           animation: ${fadeIn} 0.5s ease-out;
         `}
       >
