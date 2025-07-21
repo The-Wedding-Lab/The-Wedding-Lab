@@ -197,9 +197,9 @@ const SetupPage = () => {
     }
 
     setIsCreating(true);
+    setLoading(true);
 
     try {
-      setLoading(true);
       const response = await fetch("/api/wedding", {
         method: "POST",
         headers: {
@@ -236,18 +236,7 @@ const SetupPage = () => {
 
   //로딩
   if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <CircularProgress size={50} />
-      </Box>
-    );
+    return null;
   }
 
   // 시작 화면 (방법 선택)
@@ -273,7 +262,7 @@ const SetupPage = () => {
             title="생성형 AI로 만들기"
             subTitle="chatGPT 기반 청첩장 생성 서비스"
             description="프롬프트를 직접 입력해서 쉽고, 빠르고, 간편하게 만들어보세요"
-            imageUrl="/images/setup/ai.png"
+            imageUrl="/ai.webp"
             onClick={() => setTypeAndStart("ai")}
             recommended
           />

@@ -85,21 +85,22 @@ const CardButton = ({
         sx={{
           position: "relative",
           width: "100%",
-          height: "45%",
-          background: `linear-gradient(135deg, rgba(0, 111, 253, 0.1) 0%, rgba(221, 234, 255, 0.8) 100%), url(${imageUrl})`,
+          height: "150px",
+          backgroundImage: `url(${imageUrl})`,
           backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
           transform: "translateZ(10px)",
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background:
-              "linear-gradient(180deg, transparent 0%, rgba(0, 111, 253, 0.05) 100%)",
-          },
+          // "&::before": {
+          //   content: '""',
+          //   position: "absolute",
+          //   top: 0,
+          //   left: 0,
+          //   right: 0,
+          //   bottom: 0,
+          //   background:
+          //     "linear-gradient(180deg, transparent 0%, rgba(0, 111, 253, 0.05) 100%)",
+          // },
         }}
       />
 

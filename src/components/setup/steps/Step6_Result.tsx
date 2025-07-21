@@ -14,6 +14,7 @@ import {
 import { useSnackbarStore } from "@/store/useSnackbarStore";
 import AppButton from "@/components/ui/AppButton";
 import { Icon } from "@/page/map/mapPage";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
 interface Step6_ResultProps {
   domain: string;
@@ -29,6 +30,7 @@ const Step6_Result = ({
   weddingDate,
 }: Step6_ResultProps) => {
   const router = useRouter();
+  const { actions } = useWeddingDataStore();
   const { showStackSnackbar } = useSnackbarStore();
   const cardRef = useRef<HTMLDivElement>(null);
   const successIconRef = useRef<HTMLDivElement>(null);
@@ -172,6 +174,7 @@ const Step6_Result = ({
 
   // 새로 만들기
   const handleCreateNew = () => {
+    actions.reset();
     router.push("/setup");
   };
 
