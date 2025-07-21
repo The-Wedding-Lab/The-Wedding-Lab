@@ -86,22 +86,3 @@ export default async function WeddingCardPage({
     notFound();
   }
 }
-
-// 정적 경로 생성 (선택사항 - 많은 도메인이 있을 경우 제거)
-export async function generateStaticParams() {
-  try {
-    const weddingDomains = await prisma.wedding_data.findMany({
-      select: {
-        wedding_domain: true,
-      },
-      take: 100, // 최대 100개만 미리 생성
-    });
-
-    return weddingDomains.map((wedding) => ({
-      domain: wedding.wedding_domain,
-    }));
-  } catch (error) {
-    console.error("정적 경로 생성 오류:", error);
-    return [];
-  }
-}
