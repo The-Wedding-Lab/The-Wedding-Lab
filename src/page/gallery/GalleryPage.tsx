@@ -12,7 +12,7 @@ import GridGallery from "@/components/gallery/GridGallery";
 const GalleryContainer = styled(Box)`
   position: relative;
   width: 100%;
-  min-height: 100svh;
+  min-height: 100vh;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 `;
 
@@ -70,7 +70,7 @@ const WelcomeOverlay = styled(Box)<{ visible: boolean }>`
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100svh;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(20px);
   display: flex;

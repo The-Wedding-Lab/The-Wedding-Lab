@@ -123,7 +123,7 @@ export default function Login() {
   return (
     <main
       style={{
-        minHeight: "100svh",
+        minHeight: "100vh",
         scrollBehavior: "smooth",
         position: "relative",
         overflowAnchor: "none",

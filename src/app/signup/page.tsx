@@ -117,7 +117,7 @@ export default function SignupPage() {
   return (
     <main
       style={{
-        minHeight: "100svh",
+        minHeight: "100vh",
         scrollBehavior: "smooth",
         position: "relative",
         overflowAnchor: "none",

@@ -37,7 +37,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 width: "100dvw",
                 minWidth: "320px",
                 maxWidth: "768px",
-                minHeight: "100svh",
+                minHeight: "100vh",
                 overflow: "hidden",
                 mx: "auto",
                 userSelect: "none",

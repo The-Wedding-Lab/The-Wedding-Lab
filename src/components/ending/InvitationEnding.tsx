@@ -16,7 +16,7 @@ export const InvitationEnding: React.FC = () => {
       css={css`
         position: relative;
         width: 100%;
-        height: 60vh;
+        height: 500px;
         overflow: hidden;
         display: flex;
         align-items: center;

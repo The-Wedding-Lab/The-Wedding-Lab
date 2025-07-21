@@ -41,3 +41,17 @@ export const get_user_by_email = async (user_email: string) => {
   });
   return user;
 };
+
+export const update_user_native_token = async (
+  userId: string,
+  nativeToken: string
+) => {
+  const user = await prisma.users.update({
+    where: {
+      user_id: userId,
+    },
+    data: {
+      native_token: nativeToken,
+    },
+  });
+};

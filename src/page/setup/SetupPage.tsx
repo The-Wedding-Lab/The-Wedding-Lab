@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  CircularProgress,
 } from "@mui/material";
 import React, { useLayoutEffect, useRef, useEffect, useState } from "react";
 import Step1_WeddingInfo from "@/components/setup/steps/Step1_WeddingInfo";
@@ -23,12 +24,13 @@ import AppProgressBar from "@/components/ui/AppProgressBar";
 import { gsap } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { useUserStore } from "@/store/useUserStore";
+import { useRouter } from "next/navigation";
 
 // GSAP 플러그인 등록
 gsap.registerPlugin(ScrollToPlugin);
 
 const SetupPage = () => {
-  const { step, setupData, domainCheck } = useWeddingDataStore();
+  const { step, setupData, domainCheck, actions } = useWeddingDataStore();
   const { setTypeAndStart, nextStep, prevStep, setSetupData } =
     useWeddingDataStore((state) => state.actions);
   const { showStackSnackbar } = useSnackbarStore();
@@ -37,6 +39,8 @@ const SetupPage = () => {
   const stepContainerRef = useRef<HTMLDivElement>(null);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const TOTAL_STEPS = setupData.type === "ai" ? 5 : 4;
   const progressValue = step >= 0 ? ((step + 1) / TOTAL_STEPS) * 100 : 0;
@@ -127,6 +131,7 @@ const SetupPage = () => {
 
   // 초기화 확인 다이얼로그 핸들러
   const handlePrevClick = () => {
+    actions.setDomainCheck(false);
     if (step === 0) {
       setResetDialogOpen(true);
     } else {
@@ -194,6 +199,7 @@ const SetupPage = () => {
     setIsCreating(true);
 
     try {
+      setLoading(true);
       const response = await fetch("/api/wedding", {
         method: "POST",
         headers: {
@@ -212,10 +218,8 @@ const SetupPage = () => {
         showStackSnackbar("모바일 청첩장이 성공적으로 생성되었습니다!", {
           variant: "success",
         });
-        // 성공 후 처리 (예: 완료 페이지로 이동)
-        console.log("저장 성공:", result);
-        // 추후 완료 페이지로 라우팅 추가 가능
-        // router.push(`/complete?domain=${result.domain}`);
+
+        router.push(`/result/${result.domain}`);
       } else {
         showStackSnackbar(result.error || "저장 중 오류가 발생했습니다.", {
           variant: "error",
@@ -226,8 +230,25 @@ const SetupPage = () => {
       showStackSnackbar("네트워크 오류가 발생했습니다.", { variant: "error" });
     } finally {
       setIsCreating(false);
+      setLoading(false);
     }
   };
+
+  //로딩
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress size={50} />
+      </Box>
+    );
+  }
 
   // 시작 화면 (방법 선택)
   if (step === -1) {

@@ -9,7 +9,7 @@ export default function NotFound() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "100svh",
+        minHeight: "100vh",
         textAlign: "center",
         px: 3,
         backgroundColor: "#f8f9fa",

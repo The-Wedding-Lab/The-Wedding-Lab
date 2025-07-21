@@ -13,7 +13,6 @@ export const InvitationCover: React.FC = () => {
     <Box
       sx={{
         width: "100%",
-        minHeight: "100svh",
         display: "flex",
         flexDirection: "column",
         background: `linear-gradient(180deg, ${coverDesign?.backgroundColor} 0%, ${coverDesign?.backgroundColor2} 100%)`,
@@ -28,7 +27,7 @@ export const InvitationCover: React.FC = () => {
           alt="청첩장 커버 이미지"
           css={css`
             width: 100%;
-            height: 65vh;
+            height: 500px;
             object-fit: cover;
             border-radius: 28px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -42,7 +41,7 @@ export const InvitationCover: React.FC = () => {
           alt="청첩장 커버 이미지"
           css={css`
             width: 100%;
-            height: 65vh;
+            height: 500px;
             object-fit: cover;
             border-radius: 28px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
