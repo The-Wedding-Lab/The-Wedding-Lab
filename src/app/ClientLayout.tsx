@@ -34,10 +34,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
           <SnackbarProvider maxSnack={3}>
             <Box
               sx={{
-                width: "100%",
+                width: "100dvw",
                 minWidth: "320px",
                 maxWidth: "768px",
-                minHeight: "100vh",
+                minHeight: "100dvh",
                 overflow: "hidden",
                 mx: "auto",
                 userSelect: "none",
