@@ -60,7 +60,7 @@ export default function Home() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "100vh",
+          minHeight: "100svh",
         }}
       >
         <CircularProgress />
@@ -76,7 +76,7 @@ export default function Home() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "100vh",
+          minHeight: "100svh",
         }}
       >
         <Typography>사용자 정보를 찾을 수 없습니다.</Typography>

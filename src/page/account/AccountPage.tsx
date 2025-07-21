@@ -79,11 +79,53 @@ const AccountPage = () => {
 
   const handleCopy = async (account: string, name: string) => {
     try {
-      await navigator.clipboard.writeText(account);
-      showStackSnackbar(`${name}님의 계좌번호가 복사되었습니다`, {
-        variant: "success",
-      });
-    } catch {
+      // 최신 브라우저 clipboard API 시도
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(account);
+        showStackSnackbar(`${name}님의 계좌번호가 복사되었습니다`, {
+          variant: "success",
+        });
+        return;
+      }
+
+      // 폴백: 임시 input 요소를 사용한 복사 (모바일 호환)
+      const textArea = document.createElement("input");
+      textArea.value = account;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+
+      // 모바일에서 키보드가 나타나지 않도록 readonly 설정
+      textArea.setAttribute("readonly", "");
+      textArea.setAttribute("contenteditable", "true");
+
+      // iOS Safari 호환성을 위한 추가 설정
+      if (navigator.userAgent.match(/ipad|iPhone/i)) {
+        textArea.contentEditable = "true";
+        const range = document.createRange();
+        range.selectNodeContents(textArea);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+      } else {
+        textArea.select();
+        textArea.setSelectionRange(0, 999999);
+      }
+
+      const successful = document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        showStackSnackbar(`${name}님의 계좌번호가 복사되었습니다`, {
+          variant: "success",
+        });
+      } else {
+        throw new Error("복사 실패");
+      }
+    } catch (error) {
+      console.error("복사 에러:", error);
       showStackSnackbar("복사에 실패했습니다", { variant: "error" });
     }
   };
@@ -93,13 +135,15 @@ const AccountPage = () => {
     account,
     name,
     role,
+    deceased = false,
   }: {
     bank: string;
     account: string;
     name: string;
     role: string;
+    deceased?: boolean;
   }) => {
-    if (!name || !account || !bank) {
+    if (!name || !account || !bank || deceased) {
       return null;
     }
 
@@ -291,12 +335,14 @@ const AccountPage = () => {
                 account={accountData.groomFather.account}
                 name={accountData.groomFather.name}
                 role="👫 신랑 아버지"
+                deceased={accountData.groomFather.deceased}
               />
               <AccountSection
                 bank={accountData.groomMother.bank}
                 account={accountData.groomMother.account}
                 name={accountData.groomMother.name}
                 role="👫 신랑 어머니"
+                deceased={accountData.groomMother.deceased}
               />
             </Box>
           ) : (
@@ -313,12 +359,14 @@ const AccountPage = () => {
                 account={accountData.brideFather.account}
                 name={accountData.brideFather.name}
                 role="👫 신부 아버지"
+                deceased={accountData.brideFather.deceased}
               />
               <AccountSection
                 bank={accountData.brideMother.bank}
                 account={accountData.brideMother.account}
                 name={accountData.brideMother.name}
                 role="👫 신부 어머니"
+                deceased={accountData.brideMother.deceased}
               />
             </Box>
           )}

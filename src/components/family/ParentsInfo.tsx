@@ -15,6 +15,7 @@ import {
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 import { useState } from "react";
 import { Close, Message, Phone, Person } from "@mui/icons-material";
+import AppTwemoji from "../ui/AppTwemoji";
 
 export const ParentsInfo: React.FC = () => {
   const { setupData } = useWeddingDataStore();
@@ -72,12 +73,14 @@ export const ParentsInfo: React.FC = () => {
     name,
     phone,
     role,
+    deceased,
   }: {
     name: string;
     phone: string;
     role: string;
+    deceased: boolean;
   }) => {
-    if (!name || !phone) {
+    if (!name || !phone || deceased) {
       return null;
     }
 
@@ -142,16 +145,22 @@ export const ParentsInfo: React.FC = () => {
           text-align: center;
         `}
       >
-        <Typography
-          css={css`
-            font-size: 1.1rem;
-            color: #444;
-            margin-bottom: 4px;
-          `}
-        >
-          {setupData.weddingInfo?.groom?.father?.name} ·{" "}
-          {setupData.weddingInfo?.groom?.mother?.name} 의 아들
-        </Typography>
+        <AppTwemoji>
+          <Typography
+            css={css`
+              font-size: 1.1rem;
+              color: #444;
+              margin-bottom: 4px;
+            `}
+          >
+            {setupData.weddingInfo?.groom?.father?.deceased &&
+              `${setupData.weddingInfo?.groom?.father?.deceasedIcon} `}
+            {setupData.weddingInfo?.groom?.father?.name} ·{" "}
+            {setupData.weddingInfo?.groom?.mother?.deceased &&
+              `${setupData.weddingInfo?.groom?.mother?.deceasedIcon} `}
+            {setupData.weddingInfo?.groom?.mother?.name} 의 아들
+          </Typography>
+        </AppTwemoji>
         <Typography
           css={css`
             font-size: 1.3rem;
@@ -168,16 +177,22 @@ export const ParentsInfo: React.FC = () => {
           text-align: center;
         `}
       >
-        <Typography
-          css={css`
-            font-size: 1.1rem;
-            color: #444;
-            margin-bottom: 4px;
-          `}
-        >
-          {setupData.weddingInfo?.bride?.father?.name} ·{" "}
-          {setupData.weddingInfo?.bride?.mother?.name} 의 딸
-        </Typography>
+        <AppTwemoji>
+          <Typography
+            css={css`
+              font-size: 1.1rem;
+              color: #444;
+              margin-bottom: 4px;
+            `}
+          >
+            {setupData.weddingInfo?.bride?.father?.deceased &&
+              `${setupData.weddingInfo?.bride?.father?.deceasedIcon} `}
+            {setupData.weddingInfo?.bride?.father?.name} ·{" "}
+            {setupData.weddingInfo?.bride?.mother?.deceased &&
+              `${setupData.weddingInfo?.bride?.mother?.deceasedIcon} `}
+            {setupData.weddingInfo?.bride?.mother?.name} 의 딸
+          </Typography>
+        </AppTwemoji>
         <Typography
           css={css`
             font-size: 1.3rem;
@@ -280,16 +295,19 @@ export const ParentsInfo: React.FC = () => {
                 <ContactSection
                   name={setupData.weddingInfo?.groom?.name || ""}
                   phone={setupData.weddingInfo?.groom?.tel || ""}
+                  deceased={setupData.weddingInfo?.groom?.deceased}
                   role="신랑"
                 />
                 <ContactSection
                   name={setupData.weddingInfo?.groom?.father?.name || ""}
                   phone={setupData.weddingInfo?.groom?.father?.tel || ""}
+                  deceased={setupData.weddingInfo?.groom?.father?.deceased}
                   role="신랑 아버님"
                 />
                 <ContactSection
                   name={setupData.weddingInfo?.groom?.mother?.name || ""}
                   phone={setupData.weddingInfo?.groom?.mother?.tel || ""}
+                  deceased={setupData.weddingInfo?.groom?.mother?.deceased}
                   role="신랑 어머님"
                 />
               </Box>
@@ -299,16 +317,19 @@ export const ParentsInfo: React.FC = () => {
                 <ContactSection
                   name={setupData.weddingInfo?.bride?.name || ""}
                   phone={setupData.weddingInfo?.bride?.tel || ""}
+                  deceased={setupData.weddingInfo?.bride?.deceased}
                   role="신부"
                 />
                 <ContactSection
                   name={setupData.weddingInfo?.bride?.father?.name || ""}
                   phone={setupData.weddingInfo?.bride?.father?.tel || ""}
+                  deceased={setupData.weddingInfo?.bride?.father?.deceased}
                   role="신부 아버님"
                 />
                 <ContactSection
                   name={setupData.weddingInfo?.bride?.mother?.name || ""}
                   phone={setupData.weddingInfo?.bride?.mother?.tel || ""}
+                  deceased={setupData.weddingInfo?.bride?.mother?.deceased}
                   role="신부 어머님"
                 />
               </Box>
