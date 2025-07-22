@@ -23,12 +23,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { title, imageUrl } = await request.json();
+    const { title, userId, weddingId } = await request.json();
 
-    // 🔐 실제로는 로그인 사용자 ID를 세션에서 받아야 함
-    const userId = "user123";
-
-    const newPost = await create_community_post({ title, imageUrl, userId });
+    const newPost = await create_community_post({ title, userId, weddingId });
     return NextResponse.json(newPost);
   } catch (err) {
     console.error("청첩장 생성 실패:", err);
