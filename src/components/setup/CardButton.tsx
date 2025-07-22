@@ -164,6 +164,7 @@ const CardButton = ({
             sx={{
               color: "#444",
               lineHeight: 1.4,
+              whiteSpace: "pre-line",
             }}
           >
             {description}

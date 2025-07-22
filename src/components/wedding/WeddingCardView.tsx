@@ -287,7 +287,7 @@ const WeddingCardView = ({
             </AppButton>
           </Box>
 
-          <Box>Made by ♥ The Wedding Lab</Box>
+          <Box>Made by ♥ 모청 :: 모두의 청첩장</Box>
           <Box sx={{ mt: 1, fontSize: "12px" }}>wedding.com/card/{domain}</Box>
         </Box>
       </Box>

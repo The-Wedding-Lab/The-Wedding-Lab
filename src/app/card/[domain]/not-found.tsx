@@ -55,7 +55,7 @@ export default function NotFound() {
 
       <Box sx={{ mt: 6, opacity: 0.6 }}>
         <Typography variant="body2" color="text.secondary">
-          The Wedding Lab
+          모청 :: 모두의 청첩장
         </Typography>
       </Box>
     </Box>

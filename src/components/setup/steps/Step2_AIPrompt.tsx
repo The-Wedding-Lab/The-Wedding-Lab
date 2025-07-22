@@ -156,7 +156,7 @@ const Step2_AIPrompt = ({ data, setData }: StepProps) => {
     <>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Typography fontSize={24} fontWeight={700} gutterBottom>
-          AI 프롬프트를 입력해주세요.
+          AI 프롬프트 입력
         </Typography>
         <Box>
           <Typography

@@ -255,8 +255,8 @@ const SetupPage = () => {
         >
           <CardButton
             title="생성형 AI로 만들기"
-            subTitle="chatGPT 기반 청첩장 생성 서비스"
-            description="프롬프트를 직접 입력해서 쉽고, 빠르고, 간편하게 만들어보세요"
+            subTitle="AI 기반 청첩장 생성 서비스"
+            description={`프롬프트를 직접 입력해서\n빠르고, 간편하게 만들어보세요!`}
             imageUrl="/ai.webp"
             onClick={() => setTypeAndStart("ai")}
             recommended
@@ -264,7 +264,7 @@ const SetupPage = () => {
           <CardButton
             title="템플릿 직접 꾸미기"
             subTitle="A to Z 나만의 청첩장 만들기"
-            description="템플릿을 직접 배치하여 나만의 모바일 청첩장을 만들어보세요"
+            description={`AI 도움 없이 하나부터 열 까지\n원하는 대로 직접 만들고 싶어요!`}
             imageUrl="/template.avif"
             onClick={() => setTypeAndStart("template")}
           />

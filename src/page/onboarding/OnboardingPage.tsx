@@ -214,10 +214,10 @@ export const OnboardingPage = () => {
       <Box sx={{ px: 3, py: 1 }}>
         <Box className="TextContainer">
           <Typography fontSize={24} fontWeight={700} gutterBottom>
-            모바일 청첩장 튜토리얼
+            모청 튜토리얼
           </Typography>
           <Typography fontSize={12} fontWeight={500} color="#888888">
-            모바일 청첩장을 만드는 방법을 알려드립니다.
+            <b>모두의 청첩장</b>을 사용 방법을 알려드릴게요!
           </Typography>
         </Box>
         <Box className="ButtonContainer" my={4}>
