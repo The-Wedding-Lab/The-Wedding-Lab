@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   Container,
   Typography,
@@ -10,6 +10,7 @@ import {
   IconButton,
   Chip,
   Box,
+  Button,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
@@ -22,37 +23,76 @@ interface InviteCard {
   author: "me" | "others";
 }
 
+const LIMIT = 10;
+
 const CommunityPage = () => {
   const [invites, setInvites] = useState<InviteCard[]>([]);
-  const [page, setPage] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  // const [page, setPage] = useState(0);
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
-  // 더미 데이터 생성 함수
-  const generateInvites = (page: number): InviteCard[] => {
-    const startId = page * 4 + 1;
-    return Array.from({ length: 4 }, (_, idx) => ({
-      id: startId + idx,
-      title: `청첩장 ${startId + idx}`,
-      imageUrl: `/invites/invite${((startId + idx) % 4) + 1}.png`,
-      liked: false,
-      likes: Math.floor(Math.random() * 100),
-      author: Math.random() > 0.5 ? "me" : "others",
-    }));
+  // API 호출 함수
+  const fetchInvites = useCallback(async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(`/api/community?offset=${offset}&limit=${LIMIT}`);
+      const data = await res.json();
+
+      //: 서버에서 불러온 데이터의 길이가 limit보다 작으면 그 이후의 데이터는 더이상 없다는 의미
+      //: 마지막 페이지인지 판단하는 기준
+      //: 무한 스크롤을 멈추는 트리거 역할
+      if (data.length < LIMIT) {
+        setHasMore(false);
+      }
+
+      setInvites((prev) => [...prev, ...data]);
+      //: offset은 +10씩 계속 누적
+      setOffset((prev) => prev + LIMIT);
+    } catch (error) {
+      console.error("데이터 불러오기 실패:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [offset, loading, hasMore]);
+
+  const handleCreateInvite = async () => {
+    try {
+      const res = await fetch("/api/community", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: "새로운 청첩장",
+          imageUrl: "/default.jpg", // 원하는 기본 이미지 경로
+        }),
+      });
+
+      if (!res.ok) throw new Error("생성 실패");
+
+      const newInvite = await res.json();
+      setInvites((prev) => [newInvite, ...prev]);
+    } catch (err) {
+      console.error("청첩장 생성 실패:", err);
+    }
   };
 
+  // 초기 로딩
   useEffect(() => {
-    // 초기 데이터 로딩
-    setInvites(generateInvites(0));
+    fetchInvites();
   }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      // 콜백함수
+      //: 콜백함수
       (entries) => {
         if (entries[0].isIntersecting) {
-          // 다음 페이지 데이터 추가
-          setInvites((prev) => [...prev, ...generateInvites(page + 1)]);
-          setPage((prev) => prev + 1);
+          fetchInvites();
         }
       },
       {
@@ -61,10 +101,11 @@ const CommunityPage = () => {
     );
 
     if (loaderRef.current) observer.observe(loaderRef.current);
+
     return () => {
       if (loaderRef.current) observer.unobserve(loaderRef.current);
     };
-  }, [page]);
+  }, [fetchInvites]);
 
   const handleLike = (id: number) => {
     setInvites((prev) =>
@@ -82,8 +123,16 @@ const CommunityPage = () => {
 
   return (
     <Container>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ my: 2 }}
+        onClick={handleCreateInvite}
+      >
+        청첩장 공유하기
+      </Button>
       <Typography variant="h4" sx={{ mt: 4, mb: 3, textAlign: "center" }}>
-        Commnuity
+        Community
       </Typography>
 
       <Box
@@ -92,7 +141,6 @@ const CommunityPage = () => {
           gridTemplateColumns: {
             xs: "1fr",
             sm: "1fr 1fr",
-            // md: "1fr 1fr 1fr",
           },
           gap: 3,
           mt: 1,
@@ -141,7 +189,12 @@ const CommunityPage = () => {
       </Box>
 
       {/* 무한 스크롤 감지용 요소 */}
-      <div ref={loaderRef} style={{ height: 50 }} />
+      {hasMore && <div ref={loaderRef} style={{ height: 50 }} />}
+      {loading && (
+        <Typography align="center" sx={{ my: 2 }}>
+          불러오는 중...
+        </Typography>
+      )}
     </Container>
   );
 };
