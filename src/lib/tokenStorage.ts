@@ -2,20 +2,35 @@
  * React Native WebView와 웹 환경에서 호환되는 토큰 저장소
  */
 
-// React Native WebView 환경인지 확인
-const isReactNativeWebView =
-  typeof window !== "undefined" && window.ReactNativeWebView;
+// 전역 콜백 함수들을 위한 타입 확장
+declare global {
+  interface Window {
+    ReactNativeWebView?: {
+      postMessage: (message: string) => void;
+    };
+  }
+}
 
 export class TokenStorage {
   private static readonly TOKEN_KEY = "auth_token";
   private static readonly USER_KEY = "auth_user";
 
   /**
+   * React Native WebView 환경인지 동적으로 확인
+   */
+  private static isReactNativeWebView(): boolean {
+    if (typeof window === "undefined") return false;
+    return !!window.ReactNativeWebView;
+  }
+
+  /**
    * 토큰 저장
    */
   static async setToken(token: string): Promise<void> {
     try {
-      if (isReactNativeWebView) {
+      console.log("TokenStorage.setToken 호출:", { token });
+
+      if (this.isReactNativeWebView()) {
         // React Native에 토큰 저장 요청
         window.ReactNativeWebView?.postMessage(
           JSON.stringify({
@@ -37,39 +52,26 @@ export class TokenStorage {
    */
   static async getToken(): Promise<string | null> {
     try {
-      if (isReactNativeWebView) {
-        // React Native에서 토큰 요청
-        return new Promise((resolve) => {
-          window.ReactNativeWebView?.postMessage(
-            JSON.stringify({
-              type: "GET_TOKEN",
-            })
-          );
+      console.log("TokenStorage.getToken 호출");
 
-          // React Native에서 응답을 받기 위한 이벤트 리스너
-          const handleMessage = (event: MessageEvent) => {
-            try {
-              const data = JSON.parse(event.data);
-              if (data.type === "TOKEN_RESPONSE") {
-                resolve(data.token || null);
-                window.removeEventListener("message", handleMessage);
-              }
-            } catch (error) {
-              resolve(null);
-            }
-          };
+      if (this.isReactNativeWebView()) {
+        // React Native에서 토큰 요청 (응답은 localStorage로 받음)
+        window.ReactNativeWebView?.postMessage(
+          JSON.stringify({
+            type: "GET_TOKEN",
+          })
+        );
 
-          window.addEventListener("message", handleMessage);
-
-          // 타임아웃 설정 (3초)
-          setTimeout(() => {
-            window.removeEventListener("message", handleMessage);
-            resolve(null);
-          }, 3000);
-        });
+        // 잠시 대기 후 localStorage에서 읽기
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        const token = localStorage.getItem(this.TOKEN_KEY);
+        console.log("React Native 환경에서 토큰 조회:", token);
+        return token;
       } else {
         // 웹 환경에서는 localStorage 사용
-        return localStorage.getItem(this.TOKEN_KEY);
+        const token = localStorage.getItem(this.TOKEN_KEY);
+        console.log("웹 환경에서 토큰 조회:", token);
+        return token;
       }
     } catch (error) {
       console.error("토큰 조회 실패:", error);
@@ -82,7 +84,9 @@ export class TokenStorage {
    */
   static async setUser(user: any): Promise<void> {
     try {
-      if (isReactNativeWebView) {
+      console.log("TokenStorage.setUser 호출:", { user });
+
+      if (this.isReactNativeWebView()) {
         // React Native에 사용자 정보 저장 요청
         window.ReactNativeWebView?.postMessage(
           JSON.stringify({
@@ -104,38 +108,28 @@ export class TokenStorage {
    */
   static async getUser(): Promise<any | null> {
     try {
-      if (isReactNativeWebView) {
-        // React Native에서 사용자 정보 요청
-        return new Promise((resolve) => {
-          window.ReactNativeWebView?.postMessage(
-            JSON.stringify({
-              type: "GET_USER",
-            })
-          );
+      console.log("TokenStorage.getUser 호출");
 
-          const handleMessage = (event: MessageEvent) => {
-            try {
-              const data = JSON.parse(event.data);
-              if (data.type === "USER_RESPONSE") {
-                resolve(data.user || null);
-                window.removeEventListener("message", handleMessage);
-              }
-            } catch (error) {
-              resolve(null);
-            }
-          };
+      if (this.isReactNativeWebView()) {
+        // React Native에서 사용자 정보 요청 (응답은 localStorage로 받음)
+        window.ReactNativeWebView?.postMessage(
+          JSON.stringify({
+            type: "GET_USER",
+          })
+        );
 
-          window.addEventListener("message", handleMessage);
-
-          setTimeout(() => {
-            window.removeEventListener("message", handleMessage);
-            resolve(null);
-          }, 3000);
-        });
+        // 잠시 대기 후 localStorage에서 읽기
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        const userStr = localStorage.getItem(this.USER_KEY);
+        const user = userStr ? JSON.parse(userStr) : null;
+        console.log("React Native 환경에서 사용자 정보 조회:", user);
+        return user;
       } else {
         // 웹 환경에서는 localStorage 사용
         const userStr = localStorage.getItem(this.USER_KEY);
-        return userStr ? JSON.parse(userStr) : null;
+        const user = userStr ? JSON.parse(userStr) : null;
+        console.log("웹 환경에서 사용자 정보 조회:", user);
+        return user;
       }
     } catch (error) {
       console.error("사용자 정보 조회 실패:", error);
@@ -148,7 +142,9 @@ export class TokenStorage {
    */
   static async clearAuth(): Promise<void> {
     try {
-      if (isReactNativeWebView) {
+      console.log("TokenStorage.clearAuth 호출");
+
+      if (this.isReactNativeWebView()) {
         // React Native에 로그아웃 요청
         window.ReactNativeWebView?.postMessage(
           JSON.stringify({
@@ -163,14 +159,5 @@ export class TokenStorage {
     } catch (error) {
       console.error("인증 정보 삭제 실패:", error);
     }
-  }
-}
-
-// React Native WebView 타입 확장
-declare global {
-  interface Window {
-    ReactNativeWebView?: {
-      postMessage: (message: string) => void;
-    };
   }
 }

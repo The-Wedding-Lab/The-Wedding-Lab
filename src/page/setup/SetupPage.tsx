@@ -38,13 +38,17 @@ const SetupPage = () => {
   const { setTypeAndStart, nextStep, prevStep, setSetupData } =
     useWeddingDataStore((state) => state.actions);
   const { showStackSnackbar } = useSnackbarStore();
-  const { user } = useUserStore();
+  const { user, actions: userActions } = useUserStore();
   const shouldScrollRef = useRef(false);
   const stepContainerRef = useRef<HTMLDivElement>(null);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    userActions.loadUserData();
+  }, [userActions]);
 
   const TOTAL_STEPS = setupData.type === "ai" ? 5 : 4;
   const progressValue = step >= 0 ? ((step + 1) / TOTAL_STEPS) * 100 : 0;

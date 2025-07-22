@@ -22,6 +22,7 @@ import {
   Logout,
   CalendarToday,
   Language,
+  Refresh,
 } from "@mui/icons-material";
 import { useUserStore } from "@/store/useUserStore";
 import { useSnackbarStore } from "@/store/useSnackbarStore";
@@ -78,6 +79,10 @@ const MypagePage = () => {
     msUserSelect: "none",
     MozUserSelect: "none",
   };
+
+  useEffect(() => {
+    actions.loadUserData();
+  }, [actions]);
 
   // 최초 1회 전체 데이터 불러오기
   const fetchUserWeddings = useCallback(async () => {
@@ -266,9 +271,20 @@ const MypagePage = () => {
             ...touchStyle,
           }}
         >
-          <Typography fontSize={18} fontWeight={700} mb={1} color="#333">
-            내 청첩장 목록 ({userData?.totalCount || 0})
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Typography fontSize={18} fontWeight={700} color="#333">
+              내 청첩장 목록 ({userData?.totalCount || 0})
+            </Typography>
+            <IconButton onClick={fetchUserWeddings}>
+              <Refresh />
+            </IconButton>
+          </Box>
         </Box>
 
         {/* 카드 목록 maxHeight + 스크롤 */}
