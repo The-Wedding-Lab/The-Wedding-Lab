@@ -28,7 +28,7 @@ export default function Home() {
   useEffect(() => {
     // 로그인 상태가 false이고 로딩이 끝났으면 로그인 페이지로 이동
     if (!isLoading && !isLoggedIn) {
-      router.push("/login");
+      // router.push("/login");
     }
   }, [isLoading, isLoggedIn, router]);
 
@@ -77,9 +77,18 @@ export default function Home() {
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100svh",
+          flexDirection: "column",
+          gap: 2,
         }}
       >
         <Typography>사용자 정보를 찾을 수 없습니다.</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => router.push("/login")}
+        >
+          로그인 하러가기
+        </Button>
       </Box>
     );
   }
