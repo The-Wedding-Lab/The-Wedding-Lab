@@ -50,7 +50,12 @@ const CommunityPage = () => {
         setHasMore(false);
       }
 
-      setInvites((prev) => [...prev, ...data]);
+      if (offset === 0) {
+        setInvites(data);
+      } else {
+        setInvites((prev) => [...prev, ...data]);
+      }
+
       //: offset은 +10씩 계속 누적
       setOffset((prev) => prev + LIMIT);
     } catch (error) {
