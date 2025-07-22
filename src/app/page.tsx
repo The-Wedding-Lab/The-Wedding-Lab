@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -18,6 +18,7 @@ export default function Home() {
   const { user, tokenInfo, isLoggedIn, isLoading, actions } = useUserStore();
   const logoutMutation = useLogout();
   const router = useRouter();
+  const [debugInfo, setDebugInfo] = useState<any>({});
 
   // 모든 hooks를 early return 이전에 배치
   useEffect(() => {
@@ -38,6 +39,34 @@ export default function Home() {
       actions.validateToken();
     }
   }, [tokenInfo, actions]);
+
+  // 디버깅용: localStorage 직접 확인
+  useEffect(() => {
+    const checkLocalStorage = () => {
+      if (typeof window !== "undefined") {
+        const directToken = localStorage.getItem("auth_token");
+        const directUser = localStorage.getItem("auth_user");
+        const isReactNative = !!window.ReactNativeWebView;
+
+        setDebugInfo({
+          directToken,
+          directUser,
+          isReactNative,
+          storeUser: user,
+          storeToken: tokenInfo,
+          isLoggedIn,
+          isLoading,
+        });
+      }
+    };
+
+    checkLocalStorage();
+
+    // 1초마다 체크 (디버깅용)
+    const interval = setInterval(checkLocalStorage, 1000);
+
+    return () => clearInterval(interval);
+  }, [user, tokenInfo, isLoggedIn, isLoading]);
 
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
@@ -69,32 +98,53 @@ export default function Home() {
   }
 
   // 로그인되지 않은 경우
-  if (!isLoggedIn) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100svh",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
-        <Typography>사용자 정보를 찾을 수 없습니다.</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => router.push("/login")}
-        >
-          로그인 하러가기
-        </Button>
-      </Box>
-    );
-  }
+  // if (!isLoggedIn) {
+  //   return (
+  //     <Box
+  //       sx={{
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         minHeight: "100svh",
+  //         flexDirection: "column",
+  //         gap: 2,
+  //       }}
+  //     >
+  //       <Typography>사용자 정보를 찾을 수 없습니다.</Typography>
+  //       <Button
+  //         variant="contained"
+  //         color="primary"
+  //         onClick={() => router.push("/login")}
+  //       >
+  //         로그인 하러가기
+  //       </Button>
+  //     </Box>
+  //   );
+  // }
 
   return (
     <Box sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
+      {/* 디버깅 정보 카드 */}
+      <Card sx={{ mb: 3, bgcolor: "#f5f5f5" }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            디버깅 정보
+          </Typography>
+          <Typography variant="body2" component="pre" sx={{ fontSize: 12 }}>
+            {JSON.stringify(debugInfo, null, 2)}
+          </Typography>
+          <Button
+            size="small"
+            onClick={() => {
+              actions.loadUserData();
+            }}
+            sx={{ mt: 1 }}
+          >
+            유저 데이터 다시 로드
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* 사용자 정보 카드 */}
       {user && (
         <Card sx={{ mb: 3 }}>
