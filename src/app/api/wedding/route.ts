@@ -73,6 +73,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!userId) {
+      return NextResponse.json(
+        { error: "사용자 인증이 필요합니다." },
+        { status: 401 }
+      );
+    }
+
+    // 사용자 존재 확인 (외래키 제약 조건 위반 방지)
+    const existingUser = await prisma.users.findUnique({
+      where: { user_id: userId },
+    });
+
+    if (!existingUser) {
+      return NextResponse.json(
+        { error: "존재하지 않는 사용자입니다. 다시 로그인해주세요." },
+        { status: 400 }
+      );
+    }
+
     // 도메인 형식 재검증
     const validChars = /^[a-zA-Z0-9]*$/;
     if (!validChars.test(domain) || domain.length > 10) {

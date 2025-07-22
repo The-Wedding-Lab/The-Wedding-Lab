@@ -85,7 +85,6 @@ export default function MapPage() {
           width: "100%",
           background: `linear-gradient(135deg, ${mapDirections?.backgroundColor} 0%, ${mapDirections?.backgroundColor2} 100%)`,
           p: 2,
-          borderRadius: 2,
         }}
       >
         <Typography
@@ -140,14 +139,24 @@ export default function MapPage() {
         <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
           {mapDirections?.googleMap && (
             <AppButton
-              variant="outlined"
-              color="highlight"
+              variant="contained"
               fullWidth
               onClick={() => {
                 window.location.href = `https://www.google.com/maps/@${location.lat},${location.lng},18z`;
               }}
               sx={{
                 px: 1,
+                backgroundColor: "#FFFFFF",
+                color: "#333",
+                "&:hover": {
+                  backgroundColor: "#f0f0f0",
+                },
+                "&:active": {
+                  backgroundColor: "#f0f0f0",
+                },
+                "&:focus": {
+                  backgroundColor: "#f0f0f0",
+                },
               }}
               startIcon={<Icon src="/google.png" alt="구글맵" style={{}} />}
             >
@@ -156,14 +165,24 @@ export default function MapPage() {
           )}
           {mapDirections?.naverMap && (
             <AppButton
-              variant="outlined"
-              color="highlight"
+              variant="contained"
               fullWidth
               onClick={() => {
                 window.location.href = `https://map.naver.com/?lat=${location.lat}&lng=${location.lng}&dlevel=14`;
               }}
               sx={{
                 px: 1,
+                backgroundColor: "#FFFFFF",
+                color: "#333",
+                "&:hover": {
+                  backgroundColor: "#f0f0f0",
+                },
+                "&:active": {
+                  backgroundColor: "#f0f0f0",
+                },
+                "&:focus": {
+                  backgroundColor: "#f0f0f0",
+                },
               }}
               startIcon={<Icon src="/naver.png" alt="네이버맵" style={{}} />}
             >
@@ -172,14 +191,24 @@ export default function MapPage() {
           )}
           {mapDirections?.tmap && (
             <AppButton
-              variant="outlined"
-              color="highlight"
+              variant="contained"
               fullWidth
               onClick={() => {
                 window.location.href = `tmap://route?goalname=&goalx=${setupData.weddingInfo.location.lng}&goaly=${setupData.weddingInfo.location.lat}`;
               }}
               sx={{
                 px: 1,
+                backgroundColor: "#FFFFFF",
+                color: "#333",
+                "&:hover": {
+                  backgroundColor: "#f0f0f0",
+                },
+                "&:active": {
+                  backgroundColor: "#f0f0f0",
+                },
+                "&:focus": {
+                  backgroundColor: "#f0f0f0",
+                },
               }}
               startIcon={<Icon src="/tmap.svg" alt="티맵" style={{}} />}
             >

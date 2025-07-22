@@ -116,6 +116,7 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
           >
             <Box sx={{ width: "100%" }}>
               <AppTextField
+                id="domain-input"
                 fullWidth
                 value={myDomain}
                 error={!!myDomainError}

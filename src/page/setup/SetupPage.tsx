@@ -25,12 +25,16 @@ import { gsap } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import WeddingCardLoader from "@/components/loading/WeddingCardLoader";
+import { GlobalLoading } from "@/components/loading/GlobalLoading";
 
 // GSAP 플러그인 등록
 gsap.registerPlugin(ScrollToPlugin);
 
 const SetupPage = () => {
-  const { step, setupData, domainCheck, actions } = useWeddingDataStore();
+  const { step, setupData, domainCheck, actions, isLoading } =
+    useWeddingDataStore();
   const { setTypeAndStart, nextStep, prevStep, setSetupData } =
     useWeddingDataStore((state) => state.actions);
   const { showStackSnackbar } = useSnackbarStore();
@@ -200,44 +204,35 @@ const SetupPage = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/wedding", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          domain: setupData.weddingInfo.domain,
-          userId: user?.id,
-          weddingInfo: setupData.weddingInfo,
-        }),
+      const response = await axios.post("/api/wedding", {
+        domain: setupData.weddingInfo.domain,
+        userId: user?.id,
+        weddingInfo: setupData.weddingInfo,
       });
 
-      const result = await response.json();
+      const result = response.data;
 
-      if (response.ok && result.success) {
+      if (response.status === 201 && result.success) {
         showStackSnackbar("모바일 청첩장이 성공적으로 생성되었습니다!", {
           variant: "success",
         });
-
         router.push(`/result/${result.domain}`);
       } else {
         showStackSnackbar(result.error || "저장 중 오류가 발생했습니다.", {
           variant: "error",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("웨딩 데이터 저장 오류:", error);
-      showStackSnackbar("네트워크 오류가 발생했습니다.", { variant: "error" });
+      showStackSnackbar(
+        error.response?.data?.error || "네트워크 오류가 발생했습니다.",
+        { variant: "error" }
+      );
     } finally {
       setIsCreating(false);
       setLoading(false);
     }
   };
-
-  //로딩
-  if (loading) {
-    return null;
-  }
 
   // 시작 화면 (방법 선택)
   if (step === -1) {
@@ -270,7 +265,7 @@ const SetupPage = () => {
             title="템플릿 직접 꾸미기"
             subTitle="A to Z 나만의 청첩장 만들기"
             description="템플릿을 직접 배치하여 나만의 모바일 청첩장을 만들어보세요"
-            imageUrl="/images/setup/template.png"
+            imageUrl="/template.avif"
             onClick={() => setTypeAndStart("template")}
           />
         </Box>
@@ -280,127 +275,132 @@ const SetupPage = () => {
 
   // 각 단계별 화면
   return (
-    <Box
-      sx={{
-        p:
-          setupData.type === "ai" && step === 3
-            ? 0
-            : setupData.type === "template" && step === 2
-            ? 0
-            : 3,
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}
-    >
+    <>
+      {(isCreating || loading) && <GlobalLoading />}
       <Box
-        display="flex"
-        alignItems="center"
-        gap={2}
-        mb={2}
-        p={
-          setupData.type === "ai" && step === 3
-            ? 3
-            : setupData.type === "template" && step === 2
-            ? 3
-            : 0
-        }
-        pb={0}
-      >
-        <AppProgressBar value={progressValue} />
-      </Box>
-
-      <Box
-        ref={stepContainerRef}
         sx={{
-          flex: 1,
-          minHeight: "70vh",
-          opacity: 0, // GSAP 애니메이션을 위한 초기 상태
+          p:
+            setupData.type === "ai" && step === 3
+              ? 0
+              : setupData.type === "template" && step === 2
+              ? 0
+              : 3,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
         }}
       >
-        {renderStepContent()}
-      </Box>
-
-      <Box
-        className="NavigationContainer"
-        display="flex"
-        gap={2}
-        mt={3}
-        sx={{ position: "sticky", bottom: 24 }}
-        p={
-          setupData.type === "ai" && step === 3
-            ? 3
-            : setupData.type === "template" && step === 2
-            ? 3
-            : 0
-        }
-      >
-        <AppButton
-          variant="outlined"
-          color="natural"
-          fullWidth
-          onClick={handlePrevClick}
-        >
-          {step === 0 ? "처음으로" : "이전"}
-        </AppButton>
-        <AppButton
-          variant="contained"
-          color="highlight"
-          fullWidth
-          disabled={
-            (step === 0 && !setupData.step1Valid) ||
-            (step === 4 && !setupData.step5Valid) ||
-            isCreating ||
-            (setupData.type === "ai" && step === 4 && !domainCheck) ||
-            (setupData.type === "template" && step === 3 && !domainCheck)
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={2}
+          mb={2}
+          p={
+            setupData.type === "ai" && step === 3
+              ? 3
+              : setupData.type === "template" && step === 2
+              ? 3
+              : 0
           }
-          onClick={() => {
-            if (step === TOTAL_STEPS - 1) {
-              handleCreate();
-            } else {
-              scrollToTop();
-              nextStep();
-            }
+          pb={0}
+        >
+          <AppProgressBar value={progressValue} />
+        </Box>
+
+        <Box
+          ref={stepContainerRef}
+          sx={{
+            flex: 1,
+            minHeight: "70vh",
+            opacity: 0, // GSAP 애니메이션을 위한 초기 상태
           }}
         >
-          {step === TOTAL_STEPS - 1
-            ? isCreating
-              ? "생성 중..."
-              : "생성하기"
-            : "다음"}
-        </AppButton>
-      </Box>
+          {renderStepContent()}
+        </Box>
 
-      {/* 초기화 확인 다이얼로그 */}
-      <Dialog open={resetDialogOpen} onClose={handleResetCancel}>
-        <DialogTitle>입력 정보 초기화</DialogTitle>
-        <DialogContent>
-          <DialogContentText
-            sx={{ fontSize: 16, fontWeight: 500, color: "#777" }}
-          >
-            입력한 모든 정보가 초기화됩니다.
-            <br />
-            정말로 처음으로 돌아가시겠습니까?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
+        <Box
+          className="NavigationContainer"
+          display="flex"
+          gap={2}
+          mt={3}
+          sx={{ position: "sticky", bottom: 24 }}
+          p={
+            setupData.type === "ai" && step === 3
+              ? 3
+              : setupData.type === "template" && step === 2
+              ? 3
+              : 0
+          }
+        >
           <AppButton
-            onClick={handleResetCancel}
             variant="outlined"
             color="natural"
+            fullWidth
+            onClick={handlePrevClick}
+            loading={isLoading}
           >
-            취소
+            {step === 0 ? "처음으로" : "이전"}
           </AppButton>
           <AppButton
-            onClick={handleResetConfirm}
             variant="contained"
             color="highlight"
+            fullWidth
+            disabled={
+              (step === 0 && !setupData.step1Valid) ||
+              (step === 4 && !setupData.step5Valid) ||
+              isCreating ||
+              (setupData.type === "ai" && step === 4 && !domainCheck) ||
+              (setupData.type === "template" && step === 3 && !domainCheck)
+            }
+            loading={isLoading}
+            onClick={() => {
+              if (step === TOTAL_STEPS - 1) {
+                handleCreate();
+              } else {
+                scrollToTop();
+                nextStep();
+              }
+            }}
           >
-            확인
+            {step === TOTAL_STEPS - 1
+              ? isCreating
+                ? "생성 중..."
+                : "생성하기"
+              : "다음"}
           </AppButton>
-        </DialogActions>
-      </Dialog>
-    </Box>
+        </Box>
+
+        {/* 초기화 확인 다이얼로그 */}
+        <Dialog open={resetDialogOpen} onClose={handleResetCancel}>
+          <DialogTitle>입력 정보 초기화</DialogTitle>
+          <DialogContent>
+            <DialogContentText
+              sx={{ fontSize: 16, fontWeight: 500, color: "#777" }}
+            >
+              입력한 모든 정보가 초기화됩니다.
+              <br />
+              정말로 처음으로 돌아가시겠습니까?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <AppButton
+              onClick={handleResetCancel}
+              variant="outlined"
+              color="natural"
+            >
+              취소
+            </AppButton>
+            <AppButton
+              onClick={handleResetConfirm}
+              variant="contained"
+              color="highlight"
+            >
+              확인
+            </AppButton>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    </>
   );
 };
 

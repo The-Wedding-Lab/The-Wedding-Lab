@@ -95,6 +95,9 @@ const WeddingCalendar = ({ weddingDate }: WeddingCalendarProps) => {
           slots={{
             day: CustomPickersDay,
           }}
+          sx={{
+            width: "100%",
+          }}
           slotProps={{
             calendarHeader: {
               sx: {
