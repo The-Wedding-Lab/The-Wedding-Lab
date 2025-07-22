@@ -9,22 +9,20 @@ interface CreatePostInput {
 
 // 커뮤니티 post 데이터 get
 export const get_wedding_post = async ({ offset = 0, limit = 10 }) => {
-  console.log("여기 들어와?");
   const posts = await prisma.community.findMany({
     skip: offset,
     take: limit,
     orderBy: {
-      //! 에러나는 부분입니다
-      // created_at: "desc", // 최신순 정렬
+      created_at: "desc", // 최신순 정렬
     },
     select: {
       id: true,
-      userId: true,
+      user_id: true,
       title: true,
-      weddingData: true,
+      wedding_data: true,
       likes: true,
       liked: true,
-      createdAt: true,
+      created_at: true,
     },
   });
 
@@ -39,13 +37,13 @@ export const create_community_post = async ({
   const post = await prisma.community.create({
     data: {
       id: nanoid(10),
-      userId: userId,
+      user_id: userId,
       title,
-      // weddingId: null,
+      wedding_id: null,
       likes: 0,
       liked: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   });
 
