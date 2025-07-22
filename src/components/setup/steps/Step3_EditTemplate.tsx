@@ -1693,7 +1693,7 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
     <>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Typography fontSize={24} fontWeight={700} gutterBottom>
-          추가할 템플릿을 선택해주세요.
+          템플릿 추가/수정
         </Typography>
 
         <DndContext

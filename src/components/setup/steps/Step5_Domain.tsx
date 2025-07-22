@@ -91,7 +91,7 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
   return (
     <Box>
       <Typography fontSize={24} fontWeight={700} gutterBottom>
-        모바일 청첩장 생성
+        모청 생성하기
       </Typography>
 
       <Box mt={4}>
@@ -186,7 +186,7 @@ const Step5_Domain = ({ data, setData }: StepProps) => {
             </AppButton>
           </Box>
           <Typography fontSize={14} color="#b1b1b1" pl={1}>
-            https://wedding.com/card/{myDomain}
+            https://mocheong.com/card/{myDomain}
           </Typography>
 
           {/* 도메인 사용 가능 상태 표시 */}

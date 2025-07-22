@@ -25,11 +25,11 @@ const cookierun = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "더 웨딩 랩 :: AI 모바일 청첩장 생성 앱",
+  title: "모청 :: 모두의 청첩장",
   description:
     "AI로 간편하게 만드는 개성 있는 모바일 청첩장. 갤러리, 지도, 계좌정보까지 한 번에!",
   keywords: ["모바일청첩장", "웨딩", "청첩장", "결혼", "AI청첩장"],
-  authors: [{ name: "더 웨딩 랩" }],
+  authors: [{ name: "모청" }],
   viewport: {
     width: "device-width",
     initialScale: 1.0,
@@ -39,14 +39,14 @@ export const metadata: Metadata = {
   },
   robots: "index, follow",
   openGraph: {
-    title: "더 웨딩 랩 :: AI 모바일 청첩장 생성 앱",
+    title: "모청 :: 모두의 청첩장",
     description: "AI로 간편하게 만드는 개성 있는 모바일 청첩장",
     images: [
       {
         url: `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`,
         width: 1200,
         height: 630,
-        alt: "더 웨딩 랩 :: AI 모바일 청첩장 생성 앱",
+        alt: "모청 :: 모두의 청첩장",
       },
     ],
     type: "website",

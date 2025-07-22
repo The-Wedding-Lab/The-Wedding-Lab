@@ -155,10 +155,10 @@ const Step1_WeddingInfo = () => {
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Typography fontSize={24} fontWeight={700} gutterBottom>
-          예식 정보를 입력해주세요.
+          예식 정보 입력
         </Typography>
         {/* 샘플데이터 테스트용 */}
-        <AppButton
+        {/* <AppButton
           onClick={() => {
             actions.setSetupData({
               ...setupData,
@@ -217,7 +217,7 @@ const Step1_WeddingInfo = () => {
           }}
         >
           샘플 데이터 입력
-        </AppButton>
+        </AppButton> */}
         {/* 신랑 정보 */}
         <AppAccordion
           success={

@@ -258,7 +258,7 @@ const Step6_Result = ({
                 fontSize: "12px",
               }}
             >
-              wedding.com/card/{domain}
+              mocheong.com/card/{domain}
             </Typography>
             <IconButton
               onClick={handleCopyUrl}
