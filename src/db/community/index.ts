@@ -3,8 +3,8 @@ import { nanoid } from "nanoid";
 
 interface CreatePostInput {
   title: string;
-  imageUrl: string;
   userId: string; // 로그인 사용자 ID
+  weddingId: string;
 }
 
 // 커뮤니티 post 데이터 get
@@ -31,15 +31,15 @@ export const get_wedding_post = async ({ offset = 0, limit = 10 }) => {
 
 export const create_community_post = async ({
   title,
-  imageUrl,
   userId,
+  weddingId,
 }: CreatePostInput) => {
   const post = await prisma.community.create({
     data: {
       id: nanoid(10),
       user_id: userId,
       title,
-      wedding_id: null,
+      wedding_id: weddingId,
       likes: 0,
       liked: false,
       created_at: new Date(),
@@ -50,9 +50,25 @@ export const create_community_post = async ({
   return {
     id: post.id,
     title: post.title,
-    imageUrl,
     likes: post.likes,
     liked: post.liked,
-    author: "me",
   };
+};
+
+export const toggle_like_post = async ({
+  id,
+  liked,
+}: {
+  id: string;
+  liked: boolean;
+}) => {
+  const updated = await prisma.community.update({
+    where: { id },
+    data: {
+      liked: !liked,
+      likes: liked ? { decrement: 1 } : { increment: 1 },
+    },
+  });
+
+  return updated;
 };
