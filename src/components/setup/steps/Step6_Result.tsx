@@ -255,6 +255,7 @@ const Step6_Result = ({
                 py: 1,
                 backgroundColor: "#ebebeb",
                 borderRadius: 1,
+                fontSize: "12px",
               }}
             >
               wedding.com/card/{domain}

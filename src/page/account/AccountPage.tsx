@@ -264,7 +264,14 @@ const AccountPage = () => {
           <Typography fontSize={28} fontWeight={700} gutterBottom color="#333">
             마음 전하실 곳
           </Typography>
-          <Typography fontSize={16} color="#666" mb={4} width="80%" mx="auto">
+          <Typography
+            fontSize={16}
+            color="#666"
+            mb={4}
+            width="80%"
+            mx="auto"
+            sx={{ whiteSpace: "pre-line" }}
+          >
             {accountInfo?.description}
           </Typography>
         </Box>

@@ -12,6 +12,7 @@ interface WeddingDataState {
   setupData: SetupData;
   step: number;
   domainCheck: boolean;
+  isLoading: boolean;
   actions: {
     setStep: (step: number) => void;
     setSetupData: (data: Partial<SetupData>) => void;
@@ -37,7 +38,10 @@ interface WeddingDataState {
     setOpenGraphInfo: (og: Partial<SetupData["weddingInfo"]["og"]>) => void;
     // 폰트 설정 액션
     setWeddingFont: (font: string) => void;
+
+    //기타 버튼 관련
     setDomainCheck: (check: boolean) => void;
+    setIsLoading: (isLoading: boolean) => void;
   };
 }
 
@@ -46,6 +50,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
   // Setup Step
   step: -1,
   domainCheck: false,
+  isLoading: false,
   setupData: {
     // 모청 정보
     weddingInfo: {
@@ -404,5 +409,6 @@ export const useWeddingDataStore = create<WeddingDataState>((set, get) => ({
         },
       })),
     setDomainCheck: (check) => set({ domainCheck: check }),
+    setIsLoading: (isLoading) => set({ isLoading }),
   },
 }));

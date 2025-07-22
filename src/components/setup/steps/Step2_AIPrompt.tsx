@@ -1,16 +1,12 @@
 import AppChipCheckBox from "@/components/ui/AppChipCheckBox";
+import AppButton from "@/components/ui/AppButton";
 import AppTextField from "@/components/ui/AppTextField";
-import {
-  Box,
-  Typography,
-  Slider,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from "@mui/material";
+import { Box, Typography, Slider, CircularProgress } from "@mui/material";
 import React, { useState } from "react";
+import { SmartToy, Toys } from "@mui/icons-material";
+import axios from "axios";
+import { useWeddingDataStore } from "@/store/useWeddingDataStore";
+import { useSnackbarStore } from "@/store/useSnackbarStore";
 
 interface StepProps {
   data: any;
@@ -23,8 +19,10 @@ const Step2_AIPrompt = ({ data, setData }: StepProps) => {
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [selectedLayout, setSelectedLayout] = useState<string | null>(null);
   const [textLength, setTextLength] = useState<number>(data?.textLength || 2);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const { actions, setupData } = useWeddingDataStore();
+  const { showStackSnackbar } = useSnackbarStore();
 
   const handleMoodChange = (mood: string) => {
     setSelectedMood(mood);
@@ -51,11 +49,6 @@ const Step2_AIPrompt = ({ data, setData }: StepProps) => {
     setData({ ...data, color });
   };
 
-  const handleLayoutChange = (layout: string) => {
-    setSelectedLayout(layout);
-    setData({ ...data, layout });
-  };
-
   const handleTextLengthChange = (
     event: Event,
     newValue: number | number[]
@@ -65,11 +58,105 @@ const Step2_AIPrompt = ({ data, setData }: StepProps) => {
     setData({ ...data, textLength: value });
   };
 
+  const handleGenerateClick = async () => {
+    // 필수 선택 항목 확인
+    if (
+      !selectedMood ||
+      !selectedTarget ||
+      !selectedSeason ||
+      !selectedStyle ||
+      !selectedColor
+    ) {
+      showStackSnackbar("모든 항목을 선택해주세요.");
+      return;
+    }
+
+    actions.setIsLoading(true);
+    setIsGenerating(true);
+
+    try {
+      console.log("AI 생성 요청 시작:", {
+        mood: selectedMood,
+        target: selectedTarget,
+        season: selectedSeason,
+        style: selectedStyle,
+        color: selectedColor,
+        textLength,
+        additionalRequirements: data?.additionalRequirements,
+      });
+
+      const response = await axios.post("/api/ai/chat", {
+        mood: selectedMood,
+        target: selectedTarget,
+        season: selectedSeason,
+        style: selectedStyle,
+        color: selectedColor,
+        textLength,
+        additionalRequirements: data?.additionalRequirements || "",
+      });
+
+      console.log("AI 생성 응답:", response.data);
+
+      if (response.data.success) {
+        console.log("생성된 웨딩 데이터:", response.data.weddingData);
+
+        actions.setSetupData({
+          ...setupData,
+          weddingInfo: {
+            ...setupData.weddingInfo,
+            pages: response.data.weddingData.pages,
+          },
+        });
+
+        console.log("전", {
+          ...setupData,
+        });
+
+        console.log("후", {
+          ...setupData,
+          weddingInfo: {
+            ...setupData.weddingInfo,
+            pages: response.data.weddingData.pages,
+          },
+        });
+
+        showStackSnackbar("AI가 청첩장을 생성했습니다!", {
+          variant: "success",
+        });
+      } else {
+        console.error("AI 생성 실패:", response.data.error);
+        showStackSnackbar("AI 생성에 실패했습니다: " + response.data.error, {
+          variant: "error",
+        });
+      }
+    } catch (error: any) {
+      console.error("AI 생성 중 오류:", error);
+
+      if (error.response) {
+        console.error("서버 응답:", error.response.data);
+        showStackSnackbar(
+          "AI 생성 중 오류가 발생했습니다: " +
+            (error.response.data.error || error.message),
+          {
+            variant: "error",
+          }
+        );
+      } else {
+        showStackSnackbar("네트워크 오류가 발생했습니다: " + error.message, {
+          variant: "error",
+        });
+      }
+    } finally {
+      setIsGenerating(false);
+      actions.setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Typography fontSize={24} fontWeight={700} gutterBottom>
-          생성형 AI 프롬프트를 입력해주세요.
+          AI 프롬프트를 입력해주세요.
         </Typography>
         <Box>
           <Typography
@@ -357,47 +444,6 @@ const Step2_AIPrompt = ({ data, setData }: StepProps) => {
           </Box>
         </Box>
 
-        {/* 레이아웃 구성 */}
-        <Box>
-          <Typography
-            sx={{
-              marginBottom: "6px",
-              fontSize: "15px",
-              fontWeight: 500,
-              color: "#333",
-            }}
-          >
-            레이아웃 구성
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 1,
-              flexWrap: "wrap",
-            }}
-          >
-            <AppChipCheckBox
-              label="사진 중심"
-              checked={selectedLayout === "photo_focused"}
-              onCheckedChange={() => handleLayoutChange("photo_focused")}
-              radioMode={true}
-            />
-            <AppChipCheckBox
-              label="텍스트 중심"
-              checked={selectedLayout === "text_focused"}
-              onCheckedChange={() => handleLayoutChange("text_focused")}
-              radioMode={true}
-            />
-            <AppChipCheckBox
-              label="균형 있는 구성"
-              checked={selectedLayout === "balanced"}
-              onCheckedChange={() => handleLayoutChange("balanced")}
-              radioMode={true}
-            />
-          </Box>
-        </Box>
-
         {/* 텍스트 길이 */}
         <Box>
           <Typography
@@ -438,6 +484,43 @@ const Step2_AIPrompt = ({ data, setData }: StepProps) => {
             setData({ ...data, additionalRequirements: e.target.value })
           }
         />
+        <AppButton
+          variant="contained"
+          color="highlight"
+          startIcon={
+            isGenerating ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : (
+              <SmartToy />
+            )
+          }
+          onClick={handleGenerateClick}
+          disabled={isGenerating}
+        >
+          {isGenerating ? "AI 생성 중..." : "AI로 웨딩 청첩장 생성하기"}
+        </AppButton>
+      </Box>
+      {/* 도메인 가이드 텍스트 */}
+      <Box
+        sx={{
+          mt: 4,
+          backgroundColor: "#f8fafc",
+          borderRadius: "8px",
+          padding: "12px 16px",
+          border: "1px solid #e2e8f0",
+        }}
+      >
+        <Typography fontSize={13} color="#64748b" mb={1} fontWeight={600}>
+          AI 청첩장 생성 가이드
+        </Typography>
+        <Typography fontSize={12} color="#64748b" lineHeight={1.4}>
+          • 상황에 맞는 프롬프트를 입력해주세요.
+          <br />• 생성 버튼을 누르면 AI가 웨딩 청첩장을 생성합니다.
+          <br />• 생성된 청첩장은 자유롭게 수정할 수 있습니다.
+          <br />• 마음에 들지 않으면 다시 생성해보세요.
+          <br />
+          <br />※ 사진은 직접 추가해주세요.
+        </Typography>
       </Box>
     </>
   );
