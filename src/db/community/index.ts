@@ -22,6 +22,7 @@ export const get_wedding_post = async ({ offset = 0, limit = 10 }) => {
       likes: true,
       liked: true,
       created_at: true,
+      wedding_id: true, // wedding_id 추가
       wedding_data: {
         select: {
           wedding_cover_image_url: true,

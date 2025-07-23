@@ -33,6 +33,8 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
+import WeddingCardView from "@/components/wedding/WeddingCardView";
 
 interface InviteCard {
   wedding_data: any;
@@ -42,6 +44,7 @@ interface InviteCard {
   imageUrl: string;
   liked: boolean;
   likes: number;
+  wedding_id: string; // wedding_id 추가
 }
 
 interface WeddingItem {
@@ -76,6 +79,33 @@ const CommunityPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [selectedWeddingId, setSelectedWeddingId] = useState("");
+
+  // 카드 미리보기 drawer 상태
+  const [previewDrawerOpen, setPreviewDrawerOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<InviteCard | null>(null);
+
+  // 선택된 카드의 웨딩 데이터 가져오기
+  const {
+    data: selectedWeddingData,
+    isLoading: isWeddingDataLoading,
+    error: weddingDataError,
+  } = useQuery({
+    queryKey: ["weddingData", selectedCard?.wedding_id],
+    queryFn: async () => {
+      if (!selectedCard?.wedding_id) return null;
+
+      const response = await axios.get(
+        `/api/wedding/${selectedCard.wedding_id}`
+      );
+      if (response.data.success) {
+        return response.data.wedding;
+      } else {
+        throw new Error("웨딩 데이터를 불러오는데 실패했습니다.");
+      }
+    },
+    enabled: !!selectedCard?.wedding_id && previewDrawerOpen,
+    staleTime: 1000 * 60 * 10, // 10분
+  });
 
   // 웨딩 데이터 React Query
   const {
@@ -211,6 +241,12 @@ const CommunityPage = () => {
 
   const handleLike = (id: number, liked: boolean, title: string) => {
     likeMutation.mutate({ id, liked, title });
+  };
+
+  // 카드 클릭 핸들러
+  const handleCardClick = (card: InviteCard) => {
+    setSelectedCard(card);
+    setPreviewDrawerOpen(true);
   };
 
   // 무한스크롤 옵저버
@@ -445,7 +481,11 @@ const CommunityPage = () => {
             item.wedding_data?.wedding_cover_image_url || "/og.png";
 
           return (
-            <Card key={item.id}>
+            <Card
+              key={item.id}
+              onClick={() => handleCardClick(item)}
+              sx={{ cursor: "pointer", "&:hover": { boxShadow: 3 } }}
+            >
               <CardMedia
                 component="img"
                 height="400"
@@ -474,7 +514,10 @@ const CommunityPage = () => {
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <IconButton
-                    onClick={() => handleLike(item.id, item.liked, item.title)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // 카드 클릭 이벤트 전파 방지
+                      handleLike(item.id, item.liked, item.title);
+                    }}
                   >
                     <FavoriteIcon
                       color={item.liked ? "error" : "disabled"}
@@ -505,6 +548,82 @@ const CommunityPage = () => {
           <CircularProgress />
         </Box>
       )}
+
+      {/* 카드 미리보기 Drawer */}
+      <AppSwipeableDrawer
+        open={previewDrawerOpen}
+        onOpen={() => setPreviewDrawerOpen(true)}
+        onClose={() => {
+          setPreviewDrawerOpen(false);
+          // drawer 닫힐 때 선택된 카드 초기화 (쿼리 비활성화)
+          setTimeout(() => setSelectedCard(null), 300);
+        }}
+        title={""}
+      >
+        {selectedCard && (
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              overflow: "auto",
+            }}
+          >
+            {isWeddingDataLoading ? (
+              <Box
+                sx={{
+                  height: "80vh",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+                <CircularProgress size={40} />
+              </Box>
+            ) : weddingDataError ? (
+              <Box
+                sx={{
+                  height: "80vh",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  gap: 2,
+                  p: 3,
+                }}
+              >
+                <Typography variant="h6" color="error">
+                  청첩장을 불러올 수 없습니다
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                >
+                  네트워크 연결을 확인하고 다시 시도해주세요.
+                </Typography>
+                <AppButton
+                  variant="outlined"
+                  onClick={() => {
+                    queryClient.invalidateQueries({
+                      queryKey: ["weddingData", selectedCard.wedding_id],
+                    });
+                  }}
+                >
+                  다시 시도
+                </AppButton>
+              </Box>
+            ) : selectedWeddingData ? (
+              <WeddingCardView
+                weddinginfo={selectedWeddingData.wedding_data}
+                domain={selectedWeddingData.wedding_domain || "preview"}
+                weddingId={selectedWeddingData.wedding_id}
+              />
+            ) : null}
+          </Box>
+        )}
+      </AppSwipeableDrawer>
     </Container>
   );
 };

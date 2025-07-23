@@ -212,15 +212,15 @@ export const OnboardingPage = () => {
         </Swiper>
       </Box>
       <Box sx={{ px: 3, py: 1 }}>
-        <Box className="TextContainer">
+        <Box className="TextContainer" height={"20vh"}>
           <Typography fontSize={24} fontWeight={700} gutterBottom>
             모청 튜토리얼
           </Typography>
-          <Typography fontSize={12} fontWeight={500} color="#888888">
+          <Typography fontSize={16} fontWeight={500} color="#888888">
             <b>모두의 청첩장</b>을 사용 방법을 알려드릴게요!
           </Typography>
         </Box>
-        <Box className="ButtonContainer" my={4}>
+        <Box className="ButtonContainer" my={2}>
           <AppButton
             variant="contained"
             color="highlight"
@@ -229,7 +229,7 @@ export const OnboardingPage = () => {
               router.push("/setup");
             }}
           >
-            다음
+            시작하기
           </AppButton>
         </Box>
       </Box>
