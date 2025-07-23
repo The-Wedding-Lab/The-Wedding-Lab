@@ -26,12 +26,14 @@ interface WeddingCardViewProps {
   weddinginfo: any;
   domain: string;
   weddingId: string;
+  noloading?: boolean;
 }
 
 const WeddingCardView = ({
   weddinginfo,
   domain,
   weddingId,
+  noloading = false,
 }: WeddingCardViewProps) => {
   const [enabledPages, setEnabledPages] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -177,7 +179,7 @@ const WeddingCardView = ({
   };
 
   // 로딩 중일 때 로더 표시
-  if (isLoading) {
+  if (isLoading && !noloading) {
     return <WeddingCardLoader groomName={groomName} brideName={brideName} />;
   }
 

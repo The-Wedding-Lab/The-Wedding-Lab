@@ -159,11 +159,9 @@ const Step1_WeddingInfo = () => {
         </Typography>
         {/* 샘플데이터 테스트용 */}
         <AppButton
-          sx={
-            {
-              // display: "none",
-            }
-          }
+          sx={{
+            display: "none",
+          }}
           onClick={() => {
             actions.setSetupData({
               ...setupData,
