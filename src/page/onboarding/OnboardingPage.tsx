@@ -227,15 +227,17 @@ export const OnboardingPage = () => {
             left: 0,
             bottom: 0,
             width: "100vw",
-            maxWidth: "100vw",
+            maxWidth: "768px", // 원하는 최대 너비로 제한 (예: 480px)
             zIndex: 100,
-            background: "#fff",
             px: 3,
             py: 2,
-
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            margin: "0 auto", // 가운데 정렬
+            right: 0, // 좌우 모두 0으로 두면 가운데 정렬됨
+            // 모바일에서 스크롤바 생기는 것 방지
+            boxSizing: "border-box",
           }}
         >
           <AppButton

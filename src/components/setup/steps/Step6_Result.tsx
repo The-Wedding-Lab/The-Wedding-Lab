@@ -138,7 +138,6 @@ const Step6_Result = ({
   };
 
   // 카카오톡 공유
-  // 카카오톡 공유
   const handleKakaoShare = () => {
     if (!isLoaded || !isInitialized || !kakao) {
       console.log("카카오 SDK가 아직 로드되지 않았습니다.");
@@ -153,8 +152,8 @@ const Step6_Result = ({
           title: `${groomName} ♥ ${brideName}`,
           description: `${formatDate(weddingDate)}\n${venueName} ${hall}`,
           imageUrl: thumbnail
-            ? `${process.env.NEXT_PUBLIC_BASE_URL}${thumbnail}`
-            : `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`,
+            ? `http://1.234.44.179/${thumbnail}`
+            : `http://1.234.44.179/og.png`,
           link: {
             mobileWebUrl: weddingUrl,
             webUrl: weddingUrl,
