@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { nanoid } from "nanoid";
 
-const uploadDir = path.join(process.cwd(), "public", "thumbnails");
+const uploadDir = "/var/www/uploads/thumbnails";
 
 // 업로드 디렉토리가 없으면 생성
 if (!fs.existsSync(uploadDir)) {
