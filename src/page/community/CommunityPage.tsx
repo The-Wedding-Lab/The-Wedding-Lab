@@ -35,6 +35,7 @@ import {
 } from "@tanstack/react-query";
 import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
 import WeddingCardView from "@/components/wedding/WeddingCardView";
+import { touchStyle } from "../mypage/MypagePage";
 
 interface InviteCard {
   wedding_data: any;
@@ -279,7 +280,7 @@ const CommunityPage = () => {
   };
 
   return (
-    <Container>
+    <>
       {/* 다이얼로그 */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
         <DialogTitle>청첩장 공유하기</DialogTitle>
@@ -320,6 +321,7 @@ const CommunityPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   gap: 1,
+                  px: 2,
                 }}
               >
                 {myWeddingList.map((wedding) => (
@@ -330,7 +332,7 @@ const CommunityPage = () => {
                       p: 2,
                       minHeight: "95px ",
                       cursor: "pointer",
-                      transition: "all 0.2s ease",
+
                       border:
                         selectedWeddingId === wedding.wedding_id
                           ? "1px solid #006ffd"
@@ -339,15 +341,32 @@ const CommunityPage = () => {
                         selectedWeddingId === wedding.wedding_id
                           ? "rgba(0,111,253,0.08)"
                           : "white",
+
+                      borderRadius: 2,
+
+                      ...touchStyle,
+                      position: "relative",
+                      transition: "all 0.2s cubic-bezier(0.4,0,0.2,1)",
+                      boxShadow: "0 4px 16px rgba(0,111,253,0.08)",
+                      background:
+                        "linear-gradient(145deg, #fff 0%, #f8fbff 100%)",
                       "&:hover": {
-                        backgroundColor:
-                          selectedWeddingId === wedding.wedding_id
-                            ? "rgba(0,111,253,0.12)"
-                            : "#f5f5f5",
-                        borderColor:
-                          selectedWeddingId === wedding.wedding_id
-                            ? "#006ffd"
-                            : "#ccc",
+                        boxShadow: "0 8px 24px rgba(0,111,253,0.15)",
+                        transform: "translateY(-2px) scale(1.01)",
+                      },
+                      "&:active": {
+                        boxShadow: "0 2px 8px rgba(0,111,253,0.08)",
+                        transform: "translateY(1px) scale(0.99)",
+                      },
+                      "@media (hover: none)": {
+                        "&:hover": {
+                          boxShadow: "0 4px 16px rgba(0,111,253,0.08)",
+                          transform: "none",
+                        },
+                        "&:active": {
+                          boxShadow: "0 8px 24px rgba(0,111,253,0.15)",
+                          transform: "translateY(-2px) scale(1.01)",
+                        },
                       },
                     }}
                   >
@@ -435,16 +454,21 @@ const CommunityPage = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Typography variant="h4" sx={{ mt: 4, mb: 1, textAlign: "center" }}>
-        커뮤니티
-      </Typography>
-      <Typography
-        variant="body2"
-        sx={{ mb: 3, textAlign: "center", color: "text.secondary" }}
+      <Box
+        sx={{
+          borderBottom: "1px solid #e0e0e0;",
+        }}
       >
-        다른 사람의 청첩장을 확인해보세요.
-      </Typography>
+        <Typography variant="h4" sx={{ mt: 4, mb: 1, textAlign: "center" }}>
+          커뮤니티
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ mb: 3, textAlign: "center", color: "text.secondary" }}
+        >
+          다른 사람의 청첩장을 확인해보세요.
+        </Typography>
+      </Box>
 
       <Box
         sx={{
@@ -455,6 +479,7 @@ const CommunityPage = () => {
           },
           gap: 3,
           mt: 1,
+          p: 3,
           maxHeight: "60vh",
           overflowY: "auto",
         }}
@@ -467,7 +492,34 @@ const CommunityPage = () => {
             <Card
               key={item.id}
               onClick={() => handleCardClick(item)}
-              sx={{ cursor: "pointer", "&:hover": { boxShadow: 3 } }}
+              sx={{
+                cursor: "pointer",
+                ...touchStyle,
+                border: "1px solid #e0e0e0",
+                borderRadius: 2,
+                position: "relative",
+                transition: "all 0.2s cubic-bezier(0.4,0,0.2,1)",
+                boxShadow: "0 4px 16px rgba(0,111,253,0.08)",
+                background: "linear-gradient(145deg, #fff 0%, #f8fbff 100%)",
+                "&:hover": {
+                  boxShadow: "0 8px 24px rgba(0,111,253,0.15)",
+                  transform: "translateY(-2px) scale(1.01)",
+                },
+                "&:active": {
+                  boxShadow: "0 2px 8px rgba(0,111,253,0.08)",
+                  transform: "translateY(1px) scale(0.99)",
+                },
+                "@media (hover: none)": {
+                  "&:hover": {
+                    boxShadow: "0 4px 16px rgba(0,111,253,0.08)",
+                    transform: "none",
+                  },
+                  "&:active": {
+                    boxShadow: "0 8px 24px rgba(0,111,253,0.15)",
+                    transform: "translateY(-2px) scale(1.01)",
+                  },
+                },
+              }}
             >
               <CardMedia
                 component="img"
@@ -517,45 +569,6 @@ const CommunityPage = () => {
         })}
       </Box>
 
-      {/* 버튼 박스 */}
-      <Box
-        className="ButtonContainer"
-        sx={{
-          position: "fixed",
-          left: 0,
-          bottom: 0,
-          width: "100vw",
-          maxWidth: "768px", // 원하는 최대 너비로 제한 (예: 480px)
-          zIndex: 100,
-          px: 3,
-          py: 2,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          margin: "0 auto", // 가운데 정렬
-          right: 0, // 좌우 모두 0으로 두면 가운데 정렬됨
-          // 모바일에서 스크롤바 생기는 것 방지
-          boxSizing: "border-box",
-        }}
-      >
-        {/* 공유하기 버튼 */}
-        <AppButton
-          variant="contained"
-          color="highlight"
-          fullWidth
-          sx={{ my: 2 }}
-          onClick={() => {
-            setDialogOpen(true);
-            // 웨딩 데이터 수동 새로고침
-            queryClient.invalidateQueries({
-              queryKey: ["userWeddings", user?.id],
-            });
-          }}
-        >
-          내 청첩장도 공유하기
-        </AppButton>
-      </Box>
-
       {/* 무한 스크롤 감지용 요소 */}
       {hasNextPage && <div ref={loaderRef} style={{ height: 50 }} />}
       {(communityLoading || isFetchingNextPage) && (
@@ -572,6 +585,7 @@ const CommunityPage = () => {
       )}
 
       {/* 카드 미리보기 Drawer */}
+
       <AppSwipeableDrawer
         open={previewDrawerOpen}
         onOpen={() => setPreviewDrawerOpen(true)}
@@ -648,7 +662,45 @@ const CommunityPage = () => {
           </Box>
         )}
       </AppSwipeableDrawer>
-    </Container>
+      {/* 버튼 박스 */}
+      <Box
+        className="ButtonContainer"
+        sx={{
+          position: "fixed",
+          left: 0,
+          bottom: 0,
+          width: "100vw",
+          maxWidth: "768px", // 원하는 최대 너비로 제한 (예: 480px)
+          zIndex: 100,
+          px: 3,
+          pt: 2,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "0 auto", // 가운데 정렬
+          right: 0, // 좌우 모두 0으로 두면 가운데 정렬됨
+          // 모바일에서 스크롤바 생기는 것 방지
+          boxSizing: "border-box",
+        }}
+      >
+        {/* 공유하기 버튼 */}
+        <AppButton
+          variant="contained"
+          color="highlight"
+          fullWidth
+          sx={{ my: 2 }}
+          onClick={() => {
+            setDialogOpen(true);
+            // 웨딩 데이터 수동 새로고침
+            queryClient.invalidateQueries({
+              queryKey: ["userWeddings", user?.id],
+            });
+          }}
+        >
+          내 청첩장도 공유하기
+        </AppButton>
+      </Box>
+    </>
   );
 };
 

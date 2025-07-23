@@ -54,6 +54,15 @@ interface UserWeddingData {
 
 const PAGE_SIZE = 5;
 
+// 모바일 터치 최적화 스타일
+export const touchStyle = {
+  WebkitTapHighlightColor: "transparent",
+  userSelect: "none",
+  WebkitUserSelect: "none",
+  msUserSelect: "none",
+  MozUserSelect: "none",
+};
+
 const MypagePage = () => {
   const { user, actions } = useUserStore();
   const { showStackSnackbar } = useSnackbarStore();
@@ -75,15 +84,6 @@ const MypagePage = () => {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [viewWedding, setViewWedding] = useState<WeddingItem | null>(null);
   const { kakao, isLoaded, isInitialized } = useKakaoSdk();
-
-  // 모바일 터치 최적화 스타일
-  const touchStyle = {
-    WebkitTapHighlightColor: "transparent",
-    userSelect: "none",
-    WebkitUserSelect: "none",
-    msUserSelect: "none",
-    MozUserSelect: "none",
-  };
 
   useEffect(() => {
     actions.loadUserData();
@@ -214,7 +214,6 @@ const MypagePage = () => {
     <Box
       sx={{
         minHeight: "100vh",
-        backgroundColor: "#f5f5f5",
         pb: 4,
         ...touchStyle,
       }}
@@ -223,32 +222,19 @@ const MypagePage = () => {
       <Box
         sx={{
           backgroundColor: "white",
-          p: 3,
           borderBottom: "1px solid #e0e0e0",
           ...touchStyle,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Avatar
-            sx={{
-              width: 60,
-              height: 60,
-              backgroundColor: "#006ffd",
-              fontSize: "1.5rem",
-              ...touchStyle,
-            }}
-          >
-            <Person sx={{ fontSize: "2rem" }} />
-          </Avatar>
-          <Box>
-            <Typography variant="h6" fontWeight={700} color="#333">
-              {userData?.user.user_name || user.name || "사용자"}
-            </Typography>
-            <Typography variant="body2" color="#666">
-              {userData?.user.user_email || user.email}
-            </Typography>
-          </Box>
-        </Box>
+        <Typography variant="h4" sx={{ mt: 4, mb: 1, textAlign: "center" }}>
+          마이페이지
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ mb: 3, textAlign: "center", color: "text.secondary" }}
+        >
+          {userData?.user.user_name}님의 청첩장을 관리해보세요.
+        </Typography>
       </Box>
 
       {/* 웨딩 목록 */}
@@ -259,7 +245,6 @@ const MypagePage = () => {
             position: "sticky",
             top: 0,
             zIndex: 10,
-            background: "#f5f5f5",
             pb: 1,
             ...touchStyle,
           }}
