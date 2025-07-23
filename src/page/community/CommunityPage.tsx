@@ -321,7 +321,7 @@ const CommunityPage = () => {
                   display: "flex",
                   flexDirection: "column",
                   gap: 1,
-                  px: 2,
+                  p: 2,
                 }}
               >
                 {myWeddingList.map((wedding) => (
@@ -567,6 +567,29 @@ const CommunityPage = () => {
             </Card>
           );
         })}
+        {invites.length === 0 && (
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 4,
+              height: "50vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                py: 4,
+                fontSize: "18px",
+                fontWeight: 500,
+                color: "#666",
+              }}
+            >
+              아직 공유된 청첩장이 없습니다!
+            </Typography>
+          </Box>
+        )}
       </Box>
 
       {/* 무한 스크롤 감지용 요소 */}
@@ -574,7 +597,7 @@ const CommunityPage = () => {
       {(communityLoading || isFetchingNextPage) && (
         <Box
           sx={{
-            height: "80vh",
+            height: "50vh",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
