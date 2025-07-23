@@ -158,7 +158,12 @@ const Step1_WeddingInfo = () => {
           예식 정보 입력
         </Typography>
         {/* 샘플데이터 테스트용 */}
-        {/* <AppButton
+        <AppButton
+          sx={
+            {
+              // display: "none",
+            }
+          }
           onClick={() => {
             actions.setSetupData({
               ...setupData,
@@ -217,7 +222,7 @@ const Step1_WeddingInfo = () => {
           }}
         >
           샘플 데이터 입력
-        </AppButton> */}
+        </AppButton>
         {/* 신랑 정보 */}
         <AppAccordion
           success={

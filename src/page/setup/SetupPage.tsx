@@ -212,6 +212,7 @@ const SetupPage = () => {
         domain: setupData.weddingInfo.domain,
         userId: user?.id,
         weddingInfo: setupData.weddingInfo,
+        thumbnail: setupData.weddingInfo.thumbnail,
       });
 
       const result = response.data;

@@ -19,6 +19,8 @@ import WeddingCardLoader from "@/components/loading/WeddingCardLoader";
 import AppButton from "../ui/AppButton";
 import { useSnackbarStore } from "@/store/useSnackbarStore";
 import ClientLayout from "@/app/ClientLayout";
+import { formatDate } from "../setup/steps/Step3_EditTemplate";
+import { useKakaoSdk } from "@/hooks/useKakaoSdk";
 
 interface WeddingCardViewProps {
   weddinginfo: any;
@@ -35,6 +37,7 @@ const WeddingCardView = ({
   const [isLoading, setIsLoading] = useState(true);
   const { actions } = useWeddingDataStore();
   const { showStackSnackbar } = useSnackbarStore();
+  const { kakao, isLoaded, isInitialized } = useKakaoSdk();
 
   // weddinginfo를 스토어에 설정 (useEffect 사용)
   useEffect(() => {
@@ -132,23 +135,24 @@ const WeddingCardView = ({
 
   // 카카오톡 공유
   const handleKakaoShare = () => {
-    // 카카오 SDK 로드 확인
-    if (typeof window !== "undefined" && (window as any).Kakao) {
-      const kakao = (window as any).Kakao;
+    if (!isLoaded || !isInitialized || !kakao) {
+      console.log("카카오 SDK가 아직 로드되지 않았습니다.");
+      showStackSnackbar("잠시 후 다시 시도해주세요.", { variant: "warning" });
+      return;
+    }
 
-      if (!kakao.isInitialized()) {
-        // 카카오톡 앱키 설정 (실제 앱키로 교체 필요)
-        kakao.init(
-          process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY || "YOUR_KAKAO_APP_KEY"
-        );
-      }
-
+    try {
       kakao.Share.sendDefault({
         objectType: "feed",
         content: {
           title: `${groomName} ♥ ${brideName}`,
-          description: `${groomName}와 ${brideName}의 특별한 날에 초대합니다.`,
-          imageUrl: `http://1.234.44.179:3004/og.png`,
+          description: `${formatDate(weddinginfo?.weddingDateTime)}\n${
+            weddinginfo?.location?.venueName
+          } ${weddinginfo?.location?.hall}
+          `,
+          imageUrl: weddinginfo?.thumbnail
+            ? `${process.env.NEXT_PUBLIC_BASE_URL}${weddinginfo.thumbnail}`
+            : `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`,
           link: {
             mobileWebUrl: weddingUrl,
             webUrl: weddingUrl,
@@ -156,7 +160,7 @@ const WeddingCardView = ({
         },
         buttons: [
           {
-            title: "청첩장 보기",
+            title: "모청 보러가기",
             link: {
               mobileWebUrl: weddingUrl,
               webUrl: weddingUrl,
@@ -164,8 +168,10 @@ const WeddingCardView = ({
           },
         ],
       });
-    } else {
-      // 카카오 SDK가 없으면 링크 복사로 대체
+      console.log("카카오톡 공유 성공");
+    } catch (error) {
+      console.error("카카오톡 공유 실패:", error);
+      // 카카오 SDK 에러시 링크 복사로 대체
       handleCopyUrl();
     }
   };
@@ -179,7 +185,7 @@ const WeddingCardView = ({
     <ClientLayout>
       <Box
         sx={{
-          width: "100dvw",
+          width: "100%",
           minHeight: "100vh",
           backgroundColor: "#fff",
           opacity: 0,
@@ -199,7 +205,7 @@ const WeddingCardView = ({
         {/* 웨딩 카드 컨텐츠 */}
         <Box
           sx={{
-            width: "100dvw",
+            width: "100%",
             display: "flex",
             flexDirection: "column",
             flexWrap: "wrap",
@@ -210,7 +216,7 @@ const WeddingCardView = ({
             <Box
               key={`${page}-${index}`}
               sx={{
-                width: "100dvw",
+                width: "100%",
                 opacity: 0,
                 animation: `slideIn 0.8s ease-out forwards`,
                 animationDelay: `${index * 0.2}s`,

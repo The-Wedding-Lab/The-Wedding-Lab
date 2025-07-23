@@ -18,11 +18,23 @@ import {
   TextField,
   Select,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useUserStore } from "@/store/useUserStore";
 import { useSnackbarStore } from "@/store/useSnackbarStore";
 import axios from "axios";
+import AppButton from "@/components/ui/AppButton";
+import Image from "next/image";
+import { CalendarToday, Language } from "@mui/icons-material";
+import {
+  useQuery,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import AppSwipeableDrawer from "@/components/ui/AppSwipeableDrawer";
+import WeddingCardView from "@/components/wedding/WeddingCardView";
 
 interface InviteCard {
   wedding_data: any;
@@ -32,6 +44,7 @@ interface InviteCard {
   imageUrl: string;
   liked: boolean;
   likes: number;
+  wedding_id: string; // wedding_id 추가
 }
 
 interface WeddingItem {
@@ -40,6 +53,7 @@ interface WeddingItem {
   wedding_data: string;
   created_at: string;
   updated_at: string;
+  wedding_cover_image_url?: string | null;
 }
 
 interface UserWeddingData {
@@ -55,11 +69,8 @@ interface UserWeddingData {
 const LIMIT = 10;
 
 const CommunityPage = () => {
-  const [invites, setInvites] = useState<InviteCard[]>([]);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
+  const queryClient = useQueryClient();
 
   const { user } = useUserStore();
   const { showStackSnackbar } = useSnackbarStore();
@@ -68,120 +79,183 @@ const CommunityPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [selectedWeddingId, setSelectedWeddingId] = useState("");
-  const [myWeddingList, setMyWeddingList] = useState<WeddingItem[]>([]);
 
-  // 웨딩 데이터 가져오기
-  const fetchUserWeddings = useCallback(async () => {
-    if (!user?.id) return;
-    try {
-      setLoading(true);
+  // 카드 미리보기 drawer 상태
+  const [previewDrawerOpen, setPreviewDrawerOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<InviteCard | null>(null);
+
+  // 선택된 카드의 웨딩 데이터 가져오기
+  const {
+    data: selectedWeddingData,
+    isLoading: isWeddingDataLoading,
+    error: weddingDataError,
+  } = useQuery({
+    queryKey: ["weddingData", selectedCard?.wedding_id],
+    queryFn: async () => {
+      if (!selectedCard?.wedding_id) return null;
+
+      const response = await axios.get(
+        `/api/wedding/${selectedCard.wedding_id}`
+      );
+      if (response.data.success) {
+        return response.data.wedding;
+      } else {
+        throw new Error("웨딩 데이터를 불러오는데 실패했습니다.");
+      }
+    },
+    enabled: !!selectedCard?.wedding_id && previewDrawerOpen,
+    staleTime: 1000 * 60 * 10, // 10분
+  });
+
+  // 웨딩 데이터 React Query
+  const {
+    data: myWeddingList = [],
+    isLoading: weddingLoading,
+    error: weddingError,
+  } = useQuery({
+    queryKey: ["userWeddings", user?.id],
+    queryFn: async (): Promise<WeddingItem[]> => {
+      if (!user?.id) return [];
+
       const response = await axios.get(`/api/wedding/user?userId=${user.id}`);
       if (response.data.success) {
-        setMyWeddingList(response.data.weddingList);
+        return response.data.weddingList;
       } else {
-        showStackSnackbar("데이터를 불러오는데 실패했습니다.", {
-          variant: "error",
-        });
+        throw new Error("데이터를 불러오는데 실패했습니다.");
       }
-    } catch (error: any) {
-      console.error("웨딩 목록 조회 오류:", error);
-      showStackSnackbar(
-        error.response?.data?.error || "네트워크 오류가 발생했습니다.",
-        { variant: "error" }
+    },
+    enabled: !!user?.id,
+    refetchOnWindowFocus: true, // 웹뷰 포커스시 리패칭
+    staleTime: 1000 * 60 * 5, // 5분
+  });
+
+  // 커뮤니티 데이터 무한스크롤 React Query
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: communityLoading,
+    error: communityError,
+  } = useInfiniteQuery({
+    queryKey: ["communityInvites"],
+    queryFn: async ({ pageParam = 0 }) => {
+      const res = await fetch(
+        `/api/community?offset=${pageParam}&limit=${LIMIT}`
       );
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.id, showStackSnackbar]);
+      if (!res.ok) throw new Error("커뮤니티 데이터 로드 실패");
+      return res.json();
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length < LIMIT) return undefined;
+      return allPages.length * LIMIT;
+    },
+    refetchOnWindowFocus: true, // 웹뷰 포커스시 리패칭
+    staleTime: 1000 * 60 * 2, // 2분
+  });
 
-  const fetchInvites = useCallback(async () => {
-    if (loading || !hasMore) return;
-    setLoading(true);
+  // 평면화된 invites 데이터
+  const invites = data?.pages.flat() || [];
 
-    try {
-      const res = await fetch(`/api/community?offset=${offset}&limit=${LIMIT}`);
-      const data = await res.json();
+  // 글 생성 Mutation
+  const createInviteMutation = useMutation({
+    mutationFn: async (params: {
+      title: string;
+      userId: string;
+      weddingId: string;
+    }) => {
+      const res = await fetch("/api/community", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+      });
 
-      if (data.length < LIMIT) setHasMore(false);
+      if (!res.ok) throw new Error("생성 실패");
+      return res.json();
+    },
+    onSuccess: () => {
+      // 글 생성 성공시 커뮤니티 데이터 리패칭
+      queryClient.invalidateQueries({ queryKey: ["communityInvites"] });
+      setDialogOpen(false);
+      setNewTitle("");
+      setSelectedWeddingId("");
+      showStackSnackbar("청첩장이 공유되었습니다!", { variant: "success" });
+    },
+    onError: (error: any) => {
+      console.error("청첩장 생성 실패:", error);
+      showStackSnackbar("공유에 실패했습니다.", { variant: "error" });
+    },
+  });
 
-      if (offset === 0) {
-        setInvites(data);
-      } else {
-        setInvites((prev) => [...prev, ...data]);
-      }
-
-      setOffset((prev) => prev + LIMIT);
-    } catch (error) {
-      console.error("데이터 불러오기 실패:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [offset, loading, hasMore]);
-
-  const handleCreateInvite = async () => {
-    try {
-      if (user && selectedWeddingId && newTitle) {
-        const res = await fetch("/api/community", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: newTitle,
-            userId: user.id,
-            weddingId: selectedWeddingId,
-          }),
-        });
-
-        if (!res.ok) throw new Error("생성 실패");
-
-        const newInvite = await res.json();
-        setInvites((prev) => [newInvite, ...prev]);
-        setDialogOpen(false);
-        setNewTitle("");
-        setSelectedWeddingId("");
-      }
-    } catch (err) {
-      console.error("청첩장 생성 실패:", err);
+  const handleCreateInvite = () => {
+    if (user && selectedWeddingId && newTitle) {
+      createInviteMutation.mutate({
+        title: newTitle,
+        userId: user.id,
+        weddingId: selectedWeddingId,
+      });
     }
   };
-  const handleLike = async (id: number, liked: boolean) => {
-    try {
+  // 좋아요 Mutation
+  const likeMutation = useMutation({
+    mutationFn: async ({
+      id,
+      liked,
+      title,
+    }: {
+      id: number;
+      liked: boolean;
+      title: string;
+    }) => {
       const res = await fetch(`/api/community/like`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id, liked }),
+        body: JSON.stringify({ id, liked, userId: user?.id, title }),
       });
 
       if (!res.ok) throw new Error("서버 반영 실패");
+      return res.json();
+    },
+    onSuccess: (data) => {
+      if (data.updated.liked) {
+        showStackSnackbar("이 게시글을 추천했습니다.", { variant: "success" });
+      } else {
+        showStackSnackbar("이 게시글의 추천을 취소했습니다.", {
+          variant: "info",
+        });
+      }
 
-      // 서버 반영 성공 후, 클라이언트 상태도 변경
-      setInvites((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                liked: !item.liked,
-                likes: item.liked ? item.likes - 1 : item.likes + 1,
-              }
-            : item
-        )
-      );
-    } catch (error) {
+      // 좋아요 성공시 커뮤니티 데이터 리패칭
+      queryClient.invalidateQueries({ queryKey: ["communityInvites"] });
+    },
+    onError: (error: any) => {
       console.error("좋아요 처리 실패:", error);
-    }
+      showStackSnackbar("좋아요에 실패했습니다.", { variant: "error" });
+    },
+  });
+
+  const handleLike = (id: number, liked: boolean, title: string) => {
+    likeMutation.mutate({ id, liked, title });
   };
 
-  useEffect(() => {
-    fetchInvites();
-  }, []);
+  // 카드 클릭 핸들러
+  const handleCardClick = (card: InviteCard) => {
+    setSelectedCard(card);
+    setPreviewDrawerOpen(true);
+  };
 
+  // 무한스크롤 옵저버
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) fetchInvites();
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
       },
       { rootMargin: "100px" }
     );
@@ -191,7 +265,7 @@ const CommunityPage = () => {
     return () => {
       if (loaderRef.current) observer.unobserve(loaderRef.current);
     };
-  }, [fetchInvites]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const getWeddingNames = (weddingData: string) => {
     try {
@@ -206,19 +280,6 @@ const CommunityPage = () => {
 
   return (
     <Container>
-      {/* 공유하기 버튼 */}
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ my: 2 }}
-        onClick={() => {
-          setDialogOpen(true);
-          fetchUserWeddings();
-        }}
-      >
-        청첩장 공유하기
-      </Button>
-
       {/* 다이얼로그 */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth>
         <DialogTitle>청첩장 공유하기</DialogTitle>
@@ -230,38 +291,179 @@ const CommunityPage = () => {
             onChange={(e) => setNewTitle(e.target.value)}
             margin="normal"
           />
-          <Select
-            fullWidth
-            value={selectedWeddingId}
-            onChange={(e) => setSelectedWeddingId(e.target.value)}
-            displayEmpty
-            sx={{ mt: 2 }}
-          >
-            <MenuItem value="" disabled>
-              청첩장을 선택하세요
-            </MenuItem>
-            {myWeddingList.map((w) => (
-              <MenuItem key={w.wedding_id} value={w.wedding_id}>
-                {getWeddingNames(w.wedding_data)}
-              </MenuItem>
-            ))}
-          </Select>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              공유할 청첩장을 선택하세요
+            </Typography>
+
+            {weddingLoading ? (
+              <Card
+                sx={{ p: 3, textAlign: "center", backgroundColor: "#f5f5f5" }}
+              >
+                <Typography color="text.secondary">
+                  청첩장 목록을 불러오는 중...
+                </Typography>
+              </Card>
+            ) : myWeddingList.length === 0 ? (
+              <Card
+                sx={{ p: 3, textAlign: "center", backgroundColor: "#f5f5f5" }}
+              >
+                <Typography color="text.secondary">
+                  공유할 청첩장이 없습니다
+                </Typography>
+              </Card>
+            ) : (
+              <Box
+                sx={{
+                  maxHeight: "300px",
+                  overflowY: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                }}
+              >
+                {myWeddingList.map((wedding) => (
+                  <Card
+                    key={wedding.wedding_id}
+                    onClick={() => setSelectedWeddingId(wedding.wedding_id)}
+                    sx={{
+                      p: 2,
+                      minHeight: "95px ",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      border:
+                        selectedWeddingId === wedding.wedding_id
+                          ? "1px solid #006ffd"
+                          : "1px solid #e0e0e0",
+                      backgroundColor:
+                        selectedWeddingId === wedding.wedding_id
+                          ? "rgba(0,111,253,0.08)"
+                          : "white",
+                      "&:hover": {
+                        backgroundColor:
+                          selectedWeddingId === wedding.wedding_id
+                            ? "rgba(0,111,253,0.12)"
+                            : "#f5f5f5",
+                        borderColor:
+                          selectedWeddingId === wedding.wedding_id
+                            ? "#006ffd"
+                            : "#ccc",
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      {/* 썸네일 이미지 */}
+                      <Box
+                        sx={{
+                          width: 60,
+                          height: 60,
+                          borderRadius: 1,
+                          overflow: "hidden",
+                          border: "1px solid #ddd",
+                          backgroundColor: "#f0f0f0",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {wedding.wedding_cover_image_url ? (
+                          <img
+                            src={wedding.wedding_cover_image_url}
+                            alt="청첩장 썸네일"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <Typography variant="caption" color="text.secondary">
+                            썸네일
+                          </Typography>
+                        )}
+                      </Box>
+
+                      {/* 청첩장 정보 */}
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <Language sx={{ fontSize: 16, color: "#666" }} />
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            noWrap
+                            sx={{
+                              color:
+                                selectedWeddingId === wedding.wedding_id
+                                  ? "#006ffd"
+                                  : "#333",
+                            }}
+                          >
+                            {wedding.wedding_domain}
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <CalendarToday sx={{ fontSize: 16, color: "#666" }} />
+                          <Typography variant="body2" color="text.secondary">
+                            {new Date(wedding.created_at).toLocaleDateString(
+                              "ko-KR"
+                            )}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Card>
+                ))}
+              </Box>
+            )}
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>취소</Button>
           <Button
             onClick={handleCreateInvite}
             variant="contained"
-            disabled={!newTitle || !selectedWeddingId}
+            disabled={
+              !newTitle || !selectedWeddingId || createInviteMutation.isPending
+            }
           >
-            공유하기
+            {createInviteMutation.isPending ? "공유 중..." : "공유하기"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Typography variant="h4" sx={{ mt: 4, mb: 3, textAlign: "center" }}>
-        Community
+      <Typography variant="h4" sx={{ mt: 4, mb: 1, textAlign: "center" }}>
+        커뮤니티
       </Typography>
+      <Typography
+        variant="body2"
+        sx={{ mb: 3, textAlign: "center", color: "text.secondary" }}
+      >
+        다른 사람의 청첩장을 확인해보세요.
+      </Typography>
+      {/* 버튼 박스 */}
+      <Box>
+        {/* 공유하기 버튼 */}
+        <AppButton
+          variant="contained"
+          color="highlight"
+          fullWidth
+          sx={{ my: 2 }}
+          onClick={() => {
+            setDialogOpen(true);
+            // 웨딩 데이터 수동 새로고침
+            queryClient.invalidateQueries({
+              queryKey: ["userWeddings", user?.id],
+            });
+          }}
+        >
+          내 청첩장도 공유하기
+        </AppButton>
+      </Box>
 
       <Box
         sx={{
@@ -275,23 +477,18 @@ const CommunityPage = () => {
         }}
       >
         {invites.map((item) => {
-          let coverImageUrl;
-
-          try {
-            // wedding_data가 있고 string이면 파싱
-            if (item.wedding_data?.wedding_data) {
-              const parsedData = JSON.parse(item.wedding_data.wedding_data);
-              coverImageUrl = parsedData?.pages?.coverDesign?.image?.url;
-            }
-          } catch (e) {
-            console.error("wedding_data 파싱 오류:", e);
-          }
+          const coverImageUrl =
+            item.wedding_data?.wedding_cover_image_url || "/og.png";
 
           return (
-            <Card key={item.id}>
+            <Card
+              key={item.id}
+              onClick={() => handleCardClick(item)}
+              sx={{ cursor: "pointer", "&:hover": { boxShadow: 3 } }}
+            >
               <CardMedia
                 component="img"
-                height="200"
+                height="400"
                 image={coverImageUrl}
                 alt={item.title}
               />
@@ -316,7 +513,12 @@ const CommunityPage = () => {
                   />
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <IconButton onClick={() => handleLike(item.id, item.liked)}>
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation(); // 카드 클릭 이벤트 전파 방지
+                      handleLike(item.id, item.liked, item.title);
+                    }}
+                  >
                     <FavoriteIcon
                       color={item.liked ? "error" : "disabled"}
                       fontSize="small"
@@ -333,12 +535,95 @@ const CommunityPage = () => {
       </Box>
 
       {/* 무한 스크롤 감지용 요소 */}
-      {hasMore && <div ref={loaderRef} style={{ height: 50 }} />}
-      {loading && (
-        <Typography align="center" sx={{ my: 2 }}>
-          불러오는 중...
-        </Typography>
+      {hasNextPage && <div ref={loaderRef} style={{ height: 50 }} />}
+      {(communityLoading || isFetchingNextPage) && (
+        <Box
+          sx={{
+            height: "80vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
       )}
+
+      {/* 카드 미리보기 Drawer */}
+      <AppSwipeableDrawer
+        open={previewDrawerOpen}
+        onOpen={() => setPreviewDrawerOpen(true)}
+        onClose={() => {
+          setPreviewDrawerOpen(false);
+          // drawer 닫힐 때 선택된 카드 초기화 (쿼리 비활성화)
+          setTimeout(() => setSelectedCard(null), 300);
+        }}
+        title={""}
+      >
+        {selectedCard && (
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              overflow: "auto",
+            }}
+          >
+            {isWeddingDataLoading ? (
+              <Box
+                sx={{
+                  height: "80vh",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+                <CircularProgress size={40} />
+              </Box>
+            ) : weddingDataError ? (
+              <Box
+                sx={{
+                  height: "80vh",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  gap: 2,
+                  p: 3,
+                }}
+              >
+                <Typography variant="h6" color="error">
+                  청첩장을 불러올 수 없습니다
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                >
+                  네트워크 연결을 확인하고 다시 시도해주세요.
+                </Typography>
+                <AppButton
+                  variant="outlined"
+                  onClick={() => {
+                    queryClient.invalidateQueries({
+                      queryKey: ["weddingData", selectedCard.wedding_id],
+                    });
+                  }}
+                >
+                  다시 시도
+                </AppButton>
+              </Box>
+            ) : selectedWeddingData ? (
+              <WeddingCardView
+                weddinginfo={selectedWeddingData.wedding_data}
+                domain={selectedWeddingData.wedding_domain || "preview"}
+                weddingId={selectedWeddingData.wedding_id}
+              />
+            ) : null}
+          </Box>
+        )}
+      </AppSwipeableDrawer>
     </Container>
   );
 };

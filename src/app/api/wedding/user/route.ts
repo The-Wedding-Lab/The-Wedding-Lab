@@ -34,9 +34,10 @@ export async function GET(request: NextRequest) {
       select: {
         wedding_id: true,
         wedding_domain: true,
-        wedding_data: true,
+        wedding_data: false,
         created_at: true,
         updated_at: true,
+        wedding_cover_image_url: true,
       },
       orderBy: { created_at: "desc" },
     });

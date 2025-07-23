@@ -55,6 +55,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
     // 모청 정보
     weddingInfo: {
       domain: "", // 도메인
+      thumbnail: "", // 썸네일 이미지 url
       type: "", // AI 혹은 템플릿
       weddingDateTime: "", // 예식일시
       location: {
