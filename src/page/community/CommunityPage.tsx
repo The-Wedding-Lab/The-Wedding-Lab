@@ -445,25 +445,6 @@ const CommunityPage = () => {
       >
         다른 사람의 청첩장을 확인해보세요.
       </Typography>
-      {/* 버튼 박스 */}
-      <Box>
-        {/* 공유하기 버튼 */}
-        <AppButton
-          variant="contained"
-          color="highlight"
-          fullWidth
-          sx={{ my: 2 }}
-          onClick={() => {
-            setDialogOpen(true);
-            // 웨딩 데이터 수동 새로고침
-            queryClient.invalidateQueries({
-              queryKey: ["userWeddings", user?.id],
-            });
-          }}
-        >
-          내 청첩장도 공유하기
-        </AppButton>
-      </Box>
 
       <Box
         sx={{
@@ -474,6 +455,8 @@ const CommunityPage = () => {
           },
           gap: 3,
           mt: 1,
+          maxHeight: "60vh",
+          overflowY: "auto",
         }}
       >
         {invites.map((item) => {
@@ -534,6 +517,45 @@ const CommunityPage = () => {
         })}
       </Box>
 
+      {/* 버튼 박스 */}
+      <Box
+        className="ButtonContainer"
+        sx={{
+          position: "fixed",
+          left: 0,
+          bottom: 0,
+          width: "100vw",
+          maxWidth: "768px", // 원하는 최대 너비로 제한 (예: 480px)
+          zIndex: 100,
+          px: 3,
+          py: 2,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "0 auto", // 가운데 정렬
+          right: 0, // 좌우 모두 0으로 두면 가운데 정렬됨
+          // 모바일에서 스크롤바 생기는 것 방지
+          boxSizing: "border-box",
+        }}
+      >
+        {/* 공유하기 버튼 */}
+        <AppButton
+          variant="contained"
+          color="highlight"
+          fullWidth
+          sx={{ my: 2 }}
+          onClick={() => {
+            setDialogOpen(true);
+            // 웨딩 데이터 수동 새로고침
+            queryClient.invalidateQueries({
+              queryKey: ["userWeddings", user?.id],
+            });
+          }}
+        >
+          내 청첩장도 공유하기
+        </AppButton>
+      </Box>
+
       {/* 무한 스크롤 감지용 요소 */}
       {hasNextPage && <div ref={loaderRef} style={{ height: 50 }} />}
       {(communityLoading || isFetchingNextPage) && (
@@ -571,6 +593,7 @@ const CommunityPage = () => {
             {isWeddingDataLoading ? (
               <Box
                 sx={{
+                  width: "100%",
                   height: "80vh",
                   display: "flex",
                   justifyContent: "center",
