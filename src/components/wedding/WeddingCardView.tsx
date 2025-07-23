@@ -153,8 +153,8 @@ const WeddingCardView = ({
           } ${weddinginfo?.location?.hall}
           `,
           imageUrl: weddinginfo?.thumbnail
-            ? `${process.env.NEXT_PUBLIC_BASE_URL}${weddinginfo.thumbnail}`
-            : `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`,
+            ? `http://1.234.44.179/${weddinginfo.thumbnail}`
+            : `http://1.234.44.179//og.png`,
           link: {
             mobileWebUrl: weddingUrl,
             webUrl: weddingUrl,
