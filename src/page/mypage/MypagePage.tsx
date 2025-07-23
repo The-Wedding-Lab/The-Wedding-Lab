@@ -249,7 +249,7 @@ const MypagePage = () => {
             ...touchStyle,
           }}
         >
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -262,7 +262,7 @@ const MypagePage = () => {
             <IconButton onClick={fetchUserWeddings}>
               <Refresh />
             </IconButton>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* 카드 목록 maxHeight + 스크롤 */}
@@ -290,11 +290,10 @@ const MypagePage = () => {
               <CircularProgress />
             </Box>
           ) : renderedList.length === 0 ? (
-            <Card
+            <Box
               sx={{
                 textAlign: "center",
                 py: 4,
-                ...touchStyle,
                 height: "50vh",
                 display: "flex",
                 justifyContent: "center",
@@ -307,12 +306,11 @@ const MypagePage = () => {
                   fontSize: "18px",
                   fontWeight: 500,
                   color: "#666",
-                  ...touchStyle,
                 }}
               >
                 아직 만든 청첩장이 없습니다!
               </Typography>
-            </Card>
+            </Box>
           ) : (
             <>
               {renderedList.map((wedding: WeddingItem) => (
