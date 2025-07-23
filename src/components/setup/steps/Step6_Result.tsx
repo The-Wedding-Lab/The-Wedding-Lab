@@ -15,12 +15,17 @@ import { useSnackbarStore } from "@/store/useSnackbarStore";
 import AppButton from "@/components/ui/AppButton";
 import { Icon } from "@/page/map/mapPage";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
+import { formatDate } from "./Step3_EditTemplate";
+import { useKakaoSdk } from "@/hooks/useKakaoSdk";
 
 interface Step6_ResultProps {
   domain: string;
   groomName: string;
   brideName: string;
   weddingDate: string;
+  venueName: string;
+  hall: string;
+  thumbnail: string;
 }
 
 const Step6_Result = ({
@@ -28,14 +33,19 @@ const Step6_Result = ({
   groomName,
   brideName,
   weddingDate,
+  venueName,
+  hall,
+  thumbnail,
 }: Step6_ResultProps) => {
   const router = useRouter();
   const { actions } = useWeddingDataStore();
   const { showStackSnackbar } = useSnackbarStore();
   const cardRef = useRef<HTMLDivElement>(null);
   const successIconRef = useRef<HTMLDivElement>(null);
-
   const weddingUrl = `${window.location.origin}/card/${domain}`;
+  const { kakao, isLoaded, isInitialized } = useKakaoSdk();
+
+  console.log(groomName, brideName, weddingDate, venueName, hall);
 
   useEffect(() => {
     // 성공 아이콘 애니메이션
@@ -128,24 +138,23 @@ const Step6_Result = ({
   };
 
   // 카카오톡 공유
+  // 카카오톡 공유
   const handleKakaoShare = () => {
-    // 카카오 SDK 로드 확인
-    if (typeof window !== "undefined" && (window as any).Kakao) {
-      const kakao = (window as any).Kakao;
+    if (!isLoaded || !isInitialized || !kakao) {
+      console.log("카카오 SDK가 아직 로드되지 않았습니다.");
+      showStackSnackbar("잠시 후 다시 시도해주세요.", { variant: "warning" });
+      return;
+    }
 
-      if (!kakao.isInitialized()) {
-        // 카카오톡 앱키 설정 (실제 앱키로 교체 필요)
-        kakao.init(
-          process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY || "YOUR_KAKAO_APP_KEY"
-        );
-      }
-
+    try {
       kakao.Share.sendDefault({
         objectType: "feed",
         content: {
           title: `${groomName} ♥ ${brideName}`,
-          description: `${groomName}와 ${brideName}의 특별한 날에 초대합니다.`,
-          imageUrl: `http://1.234.44.179:3004/og.png`,
+          description: `${formatDate(weddingDate)}\n${venueName} ${hall}`,
+          imageUrl: thumbnail
+            ? `${process.env.NEXT_PUBLIC_BASE_URL}${thumbnail}`
+            : `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`,
           link: {
             mobileWebUrl: weddingUrl,
             webUrl: weddingUrl,
@@ -153,7 +162,7 @@ const Step6_Result = ({
         },
         buttons: [
           {
-            title: "청첩장 보기",
+            title: "모청 보러가기",
             link: {
               mobileWebUrl: weddingUrl,
               webUrl: weddingUrl,
@@ -161,8 +170,10 @@ const Step6_Result = ({
           },
         ],
       });
-    } else {
-      // 카카오 SDK가 없으면 링크 복사로 대체
+      console.log("카카오톡 공유 성공");
+    } catch (error) {
+      console.error("카카오톡 공유 실패:", error);
+      // 카카오 SDK 에러시 링크 복사로 대체
       handleCopyUrl();
     }
   };

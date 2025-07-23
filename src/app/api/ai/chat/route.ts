@@ -31,7 +31,7 @@ const WEDDING_SYSTEM_PROMPT = `
       "enabled": true,
       "order": 0,
       "image": "",
-      "text": "감동적인 커버 문구",
+      "text": "감동적인 커버 문구  (저희의 결혼식에 초대합니다.)",
       "backgroundColor": "#ffffff",
       "backgroundColor2": "#f0f8ff"
     },
@@ -39,7 +39,7 @@ const WEDDING_SYSTEM_PROMPT = `
       "enabled": true,
       "order": 1,
       "title": "모시는 글",
-      "text": "선택된 조건에 맞는 감동적인 모시는 글을 작성",
+      "text": "선택된 조건에 맞는 감동적인 모시는 글을 작성 (서로에게 가장 편안한 사람이 되어\n함께 살아가기로 했습니다.\n새롭게 시작하는\n저희 두 사람의 앞날을\n함께 축복해주시면\n더없이 감사하겠습니다.) ",
       "backgroundColor": "#ffffff",
       "backgroundColor2": "#f0f8ff",
       "image": {
@@ -184,12 +184,11 @@ ${additionalRequirements || "특별한 요구사항 없음"}
 
 위 조건들을 모두 고려하여 완전한 웨딩 청첩장 데이터 구조를 JSON 형태로 생성해주세요.
 특히 다음 항목들에 집중해주세요:
-1. coverDesign.text - 감동적인 커버 문구
+1. coverDesign.text - 감동적인 커버 문구 ()
 2. introMessage.text - 조건에 맞는 모시는 글
 3. accountInfo.description - 계좌 안내 문구
 4. endingMessage.text - 마무리 인사말
-5. og.title, og.description - 카카오톡 공유용 텍스트
-6. 색상 테마에 맞는 backgroundColor, backgroundColor2
+5. 색상 테마에 맞는 backgroundColor, backgroundColor2
 `;
 
     // OpenAI API 호출

@@ -29,6 +29,9 @@ import { useSnackbarStore } from "@/store/useSnackbarStore";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import AppButton from "@/components/ui/AppButton";
+import Image from "next/image";
+import { Icon } from "../map/mapPage";
+import { useKakaoSdk } from "@/hooks/useKakaoSdk";
 
 interface WeddingItem {
   wedding_id: string;
@@ -36,6 +39,7 @@ interface WeddingItem {
   wedding_data: string;
   created_at: string;
   updated_at: string;
+  wedding_cover_image_url: string;
 }
 
 interface UserWeddingData {
@@ -70,6 +74,7 @@ const MypagePage = () => {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [viewWedding, setViewWedding] = useState<WeddingItem | null>(null);
+  const { kakao, isLoaded, isInitialized } = useKakaoSdk();
 
   // 모바일 터치 최적화 스타일
   const touchStyle = {
@@ -198,18 +203,6 @@ const MypagePage = () => {
       month: "long",
       day: "numeric",
     });
-  };
-
-  // 웨딩 데이터에서 신랑/신부 이름 추출
-  const getWeddingNames = (weddingData: string) => {
-    try {
-      const data = JSON.parse(weddingData);
-      const groomName = data.groom?.name || "신랑";
-      const brideName = data.bride?.name || "신부";
-      return `${groomName} ♥ ${brideName}`;
-    } catch {
-      return "웨딩 청첩장";
-    }
   };
 
   // 로그인 상태 확인
@@ -342,7 +335,8 @@ const MypagePage = () => {
                   key={wedding.wedding_id}
                   sx={{
                     borderRadius: 2,
-                    mb: 1,
+                    mb: 2,
+                    minHeight: "360px",
                     position: "relative",
                     ...touchStyle,
                     transition: "all 0.2s cubic-bezier(0.4,0,0.2,1)",
@@ -351,11 +345,6 @@ const MypagePage = () => {
                       "linear-gradient(145deg, #fff 0%, #f8fbff 100%)",
                     border: "1px solid rgba(0,111,253,0.08)",
                     cursor: "pointer",
-                    height: "120px",
-                    display: "flex",
-                    alignItems: "stretch",
-                    minHeight: "120px",
-                    maxHeight: "140px",
                     "&:hover": {
                       boxShadow: "0 8px 24px rgba(0,111,253,0.15)",
                       transform: "translateY(-2px) scale(1.01)",
@@ -380,70 +369,92 @@ const MypagePage = () => {
                     setViewDialogOpen(true);
                   }}
                 >
+                  {/* 삭제 버튼 - 우상단 고정 */}
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedWedding(wedding);
+                      setDeleteDialogOpen(true);
+                    }}
+                    sx={{
+                      position: "absolute",
+                      top: 24,
+                      right: 24,
+                      color: "#f44336",
+                      bgcolor: "rgba(255,255,255,0.9)",
+                      zIndex: 1,
+                      ...touchStyle,
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+
                   <CardContent
                     sx={{
-                      p: 3,
+                      p: 2,
                       ...touchStyle,
                       width: "100%",
                       display: "flex",
                       flexDirection: "column",
-                      justifyContent: "center",
-                      height: "100%",
+                      "&:last-child": { pb: 2 },
                     }}
                   >
+                    {/* 썸네일 이미지 */}
+                    <Box sx={{ position: "relative", mb: 2 }}>
+                      <Image
+                        src={wedding.wedding_cover_image_url || "/og.png"}
+                        alt="청첩장 썸네일"
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        style={{
+                          width: "100%",
+                          height: "250px",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                          border: "1px solid #ddd",
+                        }}
+                      />
+                    </Box>
+
+                    {/* 도메인 정보 */}
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 1,
                         mb: 1,
                       }}
                     >
-                      <Box sx={{ flex: 1 }}>
-                        <Typography
-                          variant="h6"
-                          fontWeight={600}
-                          color="#333"
-                          mb={0.5}
-                          noWrap
-                        >
-                          {getWeddingNames(wedding.wedding_data)}
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                            mb: 0.5,
-                          }}
-                        >
-                          <Language sx={{ fontSize: 16, color: "#666" }} />
-                          <Typography variant="body2" color="#666" noWrap>
-                            {wedding.wedding_domain}
-                          </Typography>
-                        </Box>
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <CalendarToday sx={{ fontSize: 16, color: "#666" }} />
-                          <Typography variant="body2" color="#666">
-                            {formatDate(wedding.created_at)}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box sx={{ display: "flex", gap: 1 }}>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedWedding(wedding);
-                            setDeleteDialogOpen(true);
-                          }}
-                          sx={{ color: "#f44336", ...touchStyle }}
-                        >
-                          <Delete />
-                        </IconButton>
-                      </Box>
+                      <Language sx={{ fontSize: 16, color: "#666" }} />
+                      <Typography
+                        variant="body2"
+                        color="#666"
+                        sx={{ textAlign: "center" }}
+                      >
+                        {wedding.wedding_domain}
+                      </Typography>
+                    </Box>
+
+                    {/* 생성 날짜 */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <CalendarToday sx={{ fontSize: 16, color: "#666" }} />
+                      <Typography
+                        variant="body2"
+                        color="#666"
+                        sx={{ textAlign: "center" }}
+                      >
+                        {formatDate(wedding.created_at)}
+                      </Typography>
                     </Box>
                   </CardContent>
                 </Card>

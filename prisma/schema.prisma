@@ -38,14 +38,15 @@ model community {
 }
 
 model wedding_data {
-  wedding_id     String      @id @db.VarChar(20)
-  user_id        String
-  wedding_domain String      @unique(map: "wedding_data_unique") @db.VarChar(10)
-  wedding_data   String      @db.LongText
-  created_at     DateTime?
-  updated_at     DateTime?
-  communities    community[] @relation("CommunityWeddingData")
-  user           users       @relation("UserWeddingData", fields: [user_id], references: [user_id], onDelete: Cascade)
+  wedding_id              String      @id @db.VarChar(20)
+  user_id                 String
+  wedding_domain          String      @unique(map: "wedding_data_unique") @db.VarChar(10)
+  wedding_cover_image_url String?     @db.VarChar(100)
+  wedding_data            String      @db.LongText
+  created_at              DateTime?
+  updated_at              DateTime?
+  communities             community[] @relation("CommunityWeddingData")
+  user                    users       @relation("UserWeddingData", fields: [user_id], references: [user_id], onDelete: Cascade)
 
   @@index([user_id], map: "wedding_data_users_FK")
 }

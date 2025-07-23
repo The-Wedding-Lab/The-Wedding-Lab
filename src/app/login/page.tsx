@@ -15,7 +15,7 @@ import { useSnackbarStore } from "@/store/useSnackbarStore";
 import { useLogin } from "@/hooks/useAuth";
 
 const RepresentativeImage = styled.div`
-  height: 40vh;
+  height: 250px;
   text-align: center;
   img {
     width: 100%;
@@ -130,7 +130,13 @@ export default function Login() {
       }}
     >
       <RepresentativeImage>
-        <Image src={loginBg} alt="이미지 예시" width={500} height={1000} />
+        <Image
+          src={loginBg}
+          alt="이미지 예시"
+          width={300}
+          height={250}
+          style={{ objectFit: "cover" }}
+        />
       </RepresentativeImage>
       <Section>
         <Title>로그인</Title>

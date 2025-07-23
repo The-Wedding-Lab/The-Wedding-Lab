@@ -15,8 +15,9 @@ import {
   DialogContent,
   DialogTitle,
   SwipeableDrawer,
+  IconButton,
 } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
+import { Close, ExpandMore } from "@mui/icons-material";
 import { DragIndicator } from "@mui/icons-material";
 import React, { useState, useEffect } from "react";
 import AppButton from "@/components/ui/AppButton";
@@ -49,6 +50,11 @@ import ImageGallery from "@/components/uploadForm/ImageGallery";
 import StackedGallery from "@/components/gallery/StackedGallery";
 import GridGallery from "@/components/gallery/GridGallery";
 import SwipeGallery from "@/components/gallery/SwipeGallery";
+import { nanoid } from "nanoid";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useKakaoSdk } from "@/hooks/useKakaoSdk";
+import { useUserStore } from "@/store/useUserStore";
 
 // 공통 FileData 인터페이스
 interface FileData {
@@ -67,7 +73,19 @@ interface SelectableAccordionProps {
   id: string;
   isDragOverlay?: boolean;
   isNoDrage?: boolean;
+  isNoSwitch?: boolean;
 }
+
+export const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 const SelectableAccordion = ({
   title,
@@ -77,6 +95,7 @@ const SelectableAccordion = ({
   id,
   isDragOverlay = false,
   isNoDrage = false,
+  isNoSwitch = false,
 }: SelectableAccordionProps) => {
   const {
     attributes,
@@ -145,9 +164,11 @@ const SelectableAccordion = ({
               )}
               <Typography fontWeight={500}>{title}</Typography>
             </Box>
+
             <Switch
               checked={selected}
               onChange={onSelect}
+              disabled={isNoSwitch}
               onClick={(e) => {
                 e.stopPropagation();
               }}
@@ -1449,6 +1470,219 @@ const EndingMessageAccordion = ({
     </SelectableAccordion>
   );
 };
+
+/**
+ * 썸네일 업로드
+ */
+const ThumbnailUploadAccordion = ({
+  id,
+  isDragOverlay = false,
+}: {
+  id: string;
+  isDragOverlay?: boolean;
+}) => {
+  const { setupData, actions } = useWeddingDataStore();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const { kakao, isLoaded, isInitialized } = useKakaoSdk();
+  const { user } = useUserStore();
+
+  // 썸네일은 항상 활성화되어 있으므로 enabled 상태는 관리하지 않음
+  const thumbnailEnabled = true;
+
+  // React Query mutation 정의
+  const uploadMutation = useMutation({
+    mutationFn: async (file: File): Promise<string> => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // 사용자 ID (임시로 'user_123' 사용, 실제로는 인증된 사용자 ID 사용)
+      const userId = user?.id; // 실제 구현시 auth 상태에서 가져와야 함
+
+      const response = await axios.post("/api/upload/thumbnail", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-User-Id": userId,
+        },
+      });
+
+      return response.data.path; // 서버에서 반환하는 상대 경로
+    },
+    onSuccess: (thumbnailPath) => {
+      // 스토어에 썸네일 경로 저장
+      actions.setSetupData({
+        weddingInfo: {
+          ...setupData.weddingInfo,
+          thumbnail: thumbnailPath,
+        },
+      });
+      console.log("썸네일 업로드 성공:", thumbnailPath);
+    },
+    onError: (error) => {
+      console.error("썸네일 업로드 실패:", error);
+      // 에러 처리 (토스트 메시지 등)
+    },
+  });
+
+  // 파일 선택 처리
+  const handleFileSelect = (filesData: FileData[]) => {
+    if (filesData.length === 0) return;
+
+    const file = filesData[0].file;
+    setSelectedFile(file);
+
+    // 미리보기 생성
+    const previewUrl = URL.createObjectURL(file);
+    setPreviewImage(previewUrl);
+  };
+
+  // 업로드 버튼 클릭 처리
+  const handleUpload = () => {
+    if (selectedFile) {
+      uploadMutation.mutate(selectedFile);
+    }
+  };
+
+  // 선택된 파일 제거
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    if (previewImage) {
+      URL.revokeObjectURL(previewImage);
+      setPreviewImage(null);
+    }
+  };
+
+  return (
+    <SelectableAccordion
+      id={id}
+      title="썸네일 업로드"
+      selected={thumbnailEnabled}
+      onSelect={() => {}} // 썸네일은 항상 활성화되므로 빈 함수
+      isDragOverlay={isDragOverlay}
+      isNoDrage={true} // 썸네일은 드래그 불가
+      isNoSwitch={true}
+    >
+      <Box className="info-box">
+        <Typography
+          sx={{ fontSize: 18, color: "#666", mb: 1, fontWeight: 600 }}
+        >
+          안내사항
+        </Typography>
+        <Typography
+          sx={{ fontSize: 14, color: "#aaa", mb: 2, fontWeight: 500 }}
+        >
+          카카오톡 공유시 표시될 썸네일 이미지를 업로드하세요.
+          <br />
+          권장 크기: 800x400px 이상, 5MB 이내
+        </Typography>
+      </Box>
+
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <UploadForm
+          title="썸네일 이미지 업로드"
+          description="썸네일로 사용할 이미지를 선택하세요"
+          onFilesChange={handleFileSelect}
+          accept="image/*"
+          multiple={false}
+          maxFiles={1}
+        />
+
+        {previewImage && (
+          <Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              미리보기
+            </Typography>
+            <Box sx={{ mt: 2, p: 2, bgcolor: "#f5f5f5", borderRadius: 2 }}>
+              <Box sx={{ position: "relative" }}>
+                <img
+                  src={previewImage}
+                  alt="Thumbnail Preview"
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto",
+                    borderRadius: "8px",
+                    border: "1px solid #ddd",
+                  }}
+                />
+                <IconButton
+                  onClick={handleRemoveFile}
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    minWidth: "auto",
+                    bgcolor: "rgba(255,255,255,0.9)",
+                  }}
+                >
+                  <Close />
+                </IconButton>
+              </Box>
+              <Box>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 1 }}
+                >
+                  {setupData.weddingInfo?.groom?.name} ♥{" "}
+                  {setupData.weddingInfo?.bride?.name}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 1 }}
+                >
+                  {formatDate(setupData.weddingInfo?.weddingDateTime)}
+                  <br />
+                  {setupData.weddingInfo?.location?.venueName}{" "}
+                  {setupData.weddingInfo?.location?.hall}
+                </Typography>
+              </Box>
+            </Box>
+            <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
+              <AppButton
+                variant="contained"
+                onClick={handleUpload}
+                disabled={uploadMutation.isPending || !selectedFile}
+                sx={{ flex: 1 }}
+              >
+                {uploadMutation.isPending ? "업로드 중..." : "업로드"}
+              </AppButton>
+            </Box>
+
+            {uploadMutation.isError && (
+              <Typography
+                variant="body2"
+                color="error"
+                sx={{ mt: 1, textAlign: "center" }}
+              >
+                업로드 실패: {uploadMutation.error?.message}
+              </Typography>
+            )}
+
+            {uploadMutation.isSuccess && (
+              <Typography
+                variant="body2"
+                color="success.main"
+                sx={{ mt: 1, textAlign: "center" }}
+              >
+                업로드 성공!
+              </Typography>
+            )}
+          </Box>
+        )}
+      </Box>
+
+      {/* {setupData.weddingInfo?.thumbnail && (
+        <Box sx={{ mt: 2, p: 2, bgcolor: "#f5f5f5", borderRadius: 2 }}>
+          <Typography variant="body2" color="text.secondary">
+            현재 썸네일: {setupData.weddingInfo.thumbnail}
+          </Typography>
+        </Box>
+      )} */}
+    </SelectableAccordion>
+  );
+};
+
 /////////////////////////////
 
 const FormControlLabelProps = {
@@ -1695,6 +1929,7 @@ const Step3_EditTemplate = ({ data, setData }: StepProps) => {
         <Typography fontSize={24} fontWeight={700} gutterBottom>
           템플릿 추가/수정
         </Typography>
+        <ThumbnailUploadAccordion id="thumbnail" isDragOverlay={false} />
 
         <DndContext
           sensors={sensors}

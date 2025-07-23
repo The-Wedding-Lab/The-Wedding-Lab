@@ -13,6 +13,10 @@ export default async function Result({
   let groomName = "";
   let brideName = "";
   let weddingDate = "";
+  let venueName = "";
+  let hall = "";
+  let thumbnail = "";
+  let setupData: any;
   try {
     const weddingData = await prisma.wedding_data.findUnique({
       where: {
@@ -31,6 +35,9 @@ export default async function Result({
     groomName = setupData?.groom?.name || "신랑";
     brideName = setupData?.bride?.name || "신부";
     weddingDate = setupData?.weddingDateTime || "";
+    venueName = setupData?.location?.venueName || "";
+    hall = setupData?.location?.hall || "";
+    thumbnail = setupData?.thumbnail || "";
   } catch (error) {
     console.error("웨딩 카드 로딩 오류:", error);
   }
@@ -42,6 +49,9 @@ export default async function Result({
         groomName={groomName}
         brideName={brideName}
         weddingDate={weddingDate}
+        venueName={venueName}
+        hall={hall}
+        thumbnail={thumbnail}
       />
     </ClientLayout>
   );

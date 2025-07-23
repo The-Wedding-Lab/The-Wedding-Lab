@@ -19,10 +19,14 @@ export const get_wedding_post = async ({ offset = 0, limit = 10 }) => {
       id: true,
       user_id: true,
       title: true,
-      wedding_data: true,
       likes: true,
       liked: true,
       created_at: true,
+      wedding_data: {
+        select: {
+          wedding_cover_image_url: true,
+        },
+      },
     },
   });
 

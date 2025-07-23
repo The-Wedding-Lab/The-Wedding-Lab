@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { domain, weddingInfo, userId } = body;
+    const { domain, weddingInfo, userId, thumbnail } = body;
 
     if (!domain || !weddingInfo) {
       return NextResponse.json(
@@ -125,6 +125,7 @@ export async function POST(request: NextRequest) {
         wedding_data: JSON.stringify(weddingInfo),
         created_at: new Date(),
         updated_at: new Date(),
+        wedding_cover_image_url: thumbnail,
       },
     });
 
