@@ -619,6 +619,7 @@ const CommunityPage = () => {
                 weddinginfo={selectedWeddingData.wedding_data}
                 domain={selectedWeddingData.wedding_domain || "preview"}
                 weddingId={selectedWeddingData.wedding_id}
+                noloading={true}
               />
             ) : null}
           </Box>

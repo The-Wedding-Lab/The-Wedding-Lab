@@ -212,7 +212,7 @@ export const OnboardingPage = () => {
         </Swiper>
       </Box>
       <Box sx={{ px: 3, py: 1 }}>
-        <Box className="TextContainer" height={"20vh"}>
+        <Box className="TextContainer">
           <Typography fontSize={24} fontWeight={700} gutterBottom>
             모청 튜토리얼
           </Typography>
@@ -220,7 +220,24 @@ export const OnboardingPage = () => {
             <b>모두의 청첩장</b>을 사용 방법을 알려드릴게요!
           </Typography>
         </Box>
-        <Box className="ButtonContainer" my={2}>
+        <Box
+          className="ButtonContainer"
+          sx={{
+            position: "fixed",
+            left: 0,
+            bottom: 0,
+            width: "100vw",
+            maxWidth: "100vw",
+            zIndex: 100,
+            background: "#fff",
+            px: 3,
+            py: 2,
+
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <AppButton
             variant="contained"
             color="highlight"
