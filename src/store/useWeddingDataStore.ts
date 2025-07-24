@@ -11,13 +11,37 @@ interface SetupData {
 interface WeddingDataState {
   setupData: SetupData;
   step: number;
+  domainCheck: boolean;
+  isLoading: boolean;
   actions: {
     setStep: (step: number) => void;
     setSetupData: (data: Partial<SetupData>) => void;
+    setWeddingInfo: (data: Partial<SetupData["weddingInfo"]>) => void;
     setTypeAndStart: (type: "ai" | "template") => void;
     nextStep: () => void;
     prevStep: () => void;
     reset: () => void;
+    // 기본 설정 액션들
+    setWeddingType: (type: "ai" | "template") => void;
+    setWeddingDomain: (domain: string) => void;
+    // 웨딩 정보 관련 세분화된 액션들
+    setWeddingDateTime: (dateTime: string) => void;
+    setWeddingLocation: (
+      location: Partial<SetupData["weddingInfo"]["location"]>
+    ) => void;
+    // 신랑/신부 정보 관련 액션들
+    setGroomInfo: (groom: Partial<SetupData["weddingInfo"]["groom"]>) => void;
+    setBrideInfo: (bride: Partial<SetupData["weddingInfo"]["bride"]>) => void;
+    // 페이지 설정 관련 액션들
+    setPageConfig: (pageKey: string, config: any) => void;
+    // 오픈그래프 설정 액션
+    setOpenGraphInfo: (og: Partial<SetupData["weddingInfo"]["og"]>) => void;
+    // 폰트 설정 액션
+    setWeddingFont: (font: string) => void;
+
+    //기타 버튼 관련
+    setDomainCheck: (check: boolean) => void;
+    setIsLoading: (isLoading: boolean) => void;
   };
 }
 
@@ -25,18 +49,22 @@ interface WeddingDataState {
 const initialState: Omit<WeddingDataState, "actions"> = {
   // Setup Step
   step: -1,
+  domainCheck: false,
+  isLoading: false,
   setupData: {
     // 모청 정보
     weddingInfo: {
       domain: "", // 도메인
+      thumbnail: "", // 썸네일 이미지 url
       type: "", // AI 혹은 템플릿
-      date: "", // 예식일
-      time: "", // 예식 시간
+      weddingDateTime: "", // 예식일시
       location: {
         // 예식 장소
         searchAddress: "", // 주소
         venueName: "", // 장소명
-        hall: "", // 홀
+        hall: "", // 홀,층
+        lat: 0, // 위도
+        lng: 0, // 경도
       },
 
       // 신랑 데이터 (신랑 + 혼주)
@@ -48,16 +76,18 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         father: {
           name: "", // 아버지 이름
           tel: "", // 전화번호
+          bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "", // 고인 아이콘 타입
+          deceasedIcon: "🌼", // 고인 아이콘 타입
         },
         mother: {
           name: "", // 어머니 이름
           tel: "", // 전화번호
+          bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "", // 고인 아이콘 타입
+          deceasedIcon: "🌼", // 고인 아이콘 타입
         },
       },
 
@@ -65,21 +95,24 @@ const initialState: Omit<WeddingDataState, "actions"> = {
       bride: {
         name: "", // 이름 (성+이름 혹은 이름만 가능)
         tel: "", // 전화번호
+        bank: "", // 은행
         account: "", // 계좌번호
         // 혼주
         father: {
           name: "", // 아버지 이름
           tel: "", // 전화번호
+          bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "", // 고인 아이콘 타입
+          deceasedIcon: "🌼", // 고인 아이콘 타입
         },
         mother: {
           name: "", // 어머니 이름
           tel: "", // 전화번호
+          bank: "", // 은행
           account: "", // 계좌번호
           deceased: false, // 고인 여부
-          deceasedIcon: "", // 고인 아이콘 타입
+          deceasedIcon: "🌼", // 고인 아이콘 타입
         },
       },
       //폰트
@@ -93,12 +126,17 @@ const initialState: Omit<WeddingDataState, "actions"> = {
           order: 0, // 순서
           image: "", // 이미지
           text: "", // 이미지 아래 텍스트
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
         },
         // 모시는 글
         introMessage: {
           enabled: true,
-          order: 0, // 순서
+          order: 1, // 순서
+          title: "", // 제목
           text: "", // 글
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
           image: {
             // 이미지
             position: "top", // "top" or "bottom"
@@ -108,36 +146,44 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         // 양가 가족 안내
         familyInfo: {
           enabled: true, // 기본값 true
-          order: 0, // 순서
+          order: 2, // 순서
           telEnabled: true, // 전화번호 표시 여부
-          accountEnabled: true, // 계좌번호 표시 여부
+          accountEnabled: true, // 계좌번호 표시 여부 (미사용)
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
+          fontColor: "#000000", // 텍스트 색상
         },
         // 캘린더
         calendar: {
           enabled: true, // 기본값 true
-          order: 0, // 순서
+          order: 3, // 순서
           view: {
             calendar: true, // 캘린더 표시 여부
             countdown: true, // 카운트다운 표시 여부
             dDay: true, // D-Day 표시 여부
           },
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
         },
         // 갤러리
         gallery: {
           enabled: true, // 기본값 true
-          order: 0, // 순서
+          order: 4, // 순서
           images: [], // 이미지 배열
-          displayType: "swipe", // 표시 타입 (swipe, paging, grid)
-          zoomOnClick: true, // 클릭 시 확대 여부
+          displayType: "stacked", // 표시 타입 (stacked, scroll, grid)
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
         },
         // 오시는 길
         mapDirections: {
           enabled: true, // 기본값 true
-          order: 0, // 순서
+          order: 5, // 순서
           kakaoMap: true, // 카카오맵 표시 여부
           naverMap: true, // 네이버맵 표시 여부
           tmap: true, // T맵 표시 여부
           googleMap: true, // 구글맵 표시 여부
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
           naviInfo: {
             enabled: false, // 기본값 false
             text: "", // 글
@@ -162,13 +208,18 @@ const initialState: Omit<WeddingDataState, "actions"> = {
         // 계좌 정보
         accountInfo: {
           enabled: false, // 기본값 false
-          order: 0, // 순서
+          order: 6, // 순서
+          title: "", // 제목
+          description:
+            "축하해주시는 따뜻한 마음만으로도 충분히 감사합니다. 멀리서 마음을 전하고 싶으신 분들을 위해 조심스럽게 안내해 드립니다.", // 설명
           kakaopayLink: "", // 카카오페이 링크
+          backgroundColor: "#ffffff", // 배경색
+          backgroundColor2: "#f0f8ff", // 배경색
         },
         // 마지막 글
         endingMessage: {
           enabled: false, // 기본값 false
-          order: 0, // 순서
+          order: 7, // 순서
           text: "", // 글
           image: {
             // 이미지
@@ -182,7 +233,7 @@ const initialState: Omit<WeddingDataState, "actions"> = {
       og: {
         title: "",
         description: "",
-        image: "", // 800x400 이상, 5MB 이내
+        image: `${process.env.NEXT_PUBLIC_BASE_URL}/og.png`, // 800x400 이상, 5MB 이내
         imageWidth: 800,
         imageHeight: 400,
         url: "",
@@ -203,6 +254,14 @@ export const useWeddingDataStore = create<WeddingDataState>((set, get) => ({
     setSetupData: (data) =>
       set((state) => ({
         setupData: { ...state.setupData, ...data },
+      })),
+
+    setWeddingInfo: (data) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: { ...data },
+        },
       })),
 
     // 청첩장 타입 선택 및 설정 시작
@@ -238,5 +297,119 @@ export const useWeddingDataStore = create<WeddingDataState>((set, get) => ({
 
     // 전체 상태 초기화
     reset: () => set({ ...initialState }),
+
+    // 기본 설정 액션들
+    setWeddingType: (type) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            type,
+          },
+        },
+      })),
+    setWeddingDomain: (domain) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            domain,
+          },
+        },
+      })),
+    // 웨딩 정보 관련 세분화된 액션들
+    setWeddingDateTime: (dateTime) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            weddingDateTime: dateTime,
+          },
+        },
+      })),
+    setWeddingLocation: (location) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            location: {
+              ...state.setupData.weddingInfo.location,
+              ...location,
+            },
+          },
+        },
+      })),
+    // 신랑/신부 정보 관련 액션들
+    setGroomInfo: (groom) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            groom: {
+              ...state.setupData.weddingInfo.groom,
+              ...groom,
+            },
+          },
+        },
+      })),
+    setBrideInfo: (bride) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            bride: {
+              ...state.setupData.weddingInfo.bride,
+              ...bride,
+            },
+          },
+        },
+      })),
+    // 페이지 설정 관련 액션들
+    setPageConfig: (pageKey, config) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          pages: {
+            ...state.setupData.pages,
+            [pageKey]: {
+              ...state.setupData.pages[pageKey],
+              ...config,
+            },
+          },
+        },
+      })),
+    // 오픈그래프 설정 액션
+    setOpenGraphInfo: (og) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            og: {
+              ...state.setupData.weddingInfo.og,
+              ...og,
+            },
+          },
+        },
+      })),
+    // 폰트 설정 액션
+    setWeddingFont: (font) =>
+      set((state) => ({
+        setupData: {
+          ...state.setupData,
+          weddingInfo: {
+            ...state.setupData.weddingInfo,
+            font,
+          },
+        },
+      })),
+    setDomainCheck: (check) => set({ domainCheck: check }),
+    setIsLoading: (isLoading) => set({ isLoading }),
   },
 }));

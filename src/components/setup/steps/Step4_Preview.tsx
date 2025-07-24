@@ -1,4 +1,14 @@
-import AppButton from "@/components/ui/AppButton";
+import { InvitationEnding } from "@/components/ending/InvitationEnding";
+import { ParentsInfo } from "@/components/family/ParentsInfo";
+import GridGallery from "@/components/gallery/GridGallery";
+import StackedGallery from "@/components/gallery/StackedGallery";
+import SwipeGallery from "@/components/gallery/SwipeGallery";
+import { InvitationCover } from "@/components/main/InvitationCover";
+import AccountPage from "@/page/account/AccountPage";
+import EndingPage from "@/page/ending/EndingPage";
+import InvitationPage from "@/page/invitation/InvitationPage";
+import MapPage from "@/page/map/mapPage";
+import NotificationPage from "@/page/notification/NotificationPage";
 import { useWeddingDataStore } from "@/store/useWeddingDataStore";
 
 import { Box, Button, Typography } from "@mui/material";
@@ -26,6 +36,7 @@ const PreviewBox = ({ children }: { children: React.ReactNode }) => {
 const Step4_Preview = ({ data, setData }: StepProps) => {
   const { setupData } = useWeddingDataStore();
   const [enabledPages, setEnabledPages] = useState<any>({});
+  const { gallery } = setupData.weddingInfo.pages;
 
   useEffect(() => {
     const pages = setupData.weddingInfo?.pages;
@@ -64,10 +75,10 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
   };
   return (
     <Box>
-      <Typography fontSize={24} fontWeight={700} gutterBottom>
+      <Typography fontSize={24} fontWeight={700} gutterBottom px={3}>
         미리보기
       </Typography>
-      <Box
+      {/* <Box
         sx={{
           backgroundColor: "#1e1e1e",
           border: "1px solid #333",
@@ -111,18 +122,41 @@ const Step4_Preview = ({ data, setData }: StepProps) => {
         >
           console.log(setupData)
         </AppButton>
-      </Box>
+      </Box> */}
 
       <Box
         sx={{
+          width: "100%",
           display: "flex",
-          flexDirection: "row",
-          gap: 2,
+          flexDirection: "column",
           flexWrap: "wrap",
+          justifyContent: "center",
+          my: 4,
         }}
       >
         {Object.keys(enabledPages).map((page) => (
-          <PreviewBox key={page}>{page}</PreviewBox>
+          <>
+            {page === "coverDesign" && <InvitationCover />}
+            {page === "calendar" && <NotificationPage />}
+            {page === "introMessage" && <InvitationPage />}
+            {page === "familyInfo" && <ParentsInfo />}
+            {page === "gallery" && (
+              <>
+                {gallery?.displayType === "stacked" && (
+                  <StackedGallery images={gallery.images} />
+                )}
+                {gallery?.displayType === "scroll" && (
+                  <SwipeGallery images={gallery.images} />
+                )}
+                {gallery?.displayType === "grid" && (
+                  <GridGallery images={gallery.images} />
+                )}
+              </>
+            )}
+            {page === "mapDirections" && <MapPage />}
+            {page === "accountInfo" && <AccountPage />}
+            {page === "endingMessage" && <InvitationEnding />}
+          </>
         ))}
       </Box>
     </Box>
