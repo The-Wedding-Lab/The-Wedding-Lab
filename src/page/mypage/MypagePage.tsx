@@ -385,12 +385,11 @@ const MypagePage = () => {
                   >
                     {/* 썸네일 이미지 */}
                     <Box sx={{ position: "relative", mb: 2 }}>
-                      <Image
+                      <img
                         src={wedding.wedding_cover_image_url || "/og.png"}
                         alt="청첩장 썸네일"
                         width={0}
                         height={0}
-                        sizes="100vw"
                         style={{
                           width: "100%",
                           height: "250px",
