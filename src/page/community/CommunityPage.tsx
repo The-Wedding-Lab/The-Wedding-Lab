@@ -523,7 +523,7 @@ const CommunityPage = () => {
             >
               <CardMedia
                 component="img"
-                height="400"
+                height="200"
                 image={coverImageUrl}
                 alt={item.title}
               />
