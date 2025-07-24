@@ -491,7 +491,6 @@ const MypagePage = () => {
           variant="contained"
           color="secondary"
           fullWidth
-          startIcon={<Logout />}
           onClick={handleLogout}
           sx={{ py: 1.5, ...touchStyle }}
         >
