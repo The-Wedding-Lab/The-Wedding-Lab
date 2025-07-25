@@ -511,7 +511,7 @@ const Step1_WeddingInfo = () => {
                 }
               />
               <AppTextField
-                labelText="어머님 전화번호"
+                labelText="어머님 연락처"
                 fullWidth
                 value={formatPhoneNumber(
                   setupData.weddingInfo?.groom?.mother?.tel || ""
@@ -786,7 +786,7 @@ const Step1_WeddingInfo = () => {
                 }
               />
               <AppTextField
-                labelText="어머님 전화번호"
+                labelText="어머님 연락처"
                 fullWidth
                 value={formatPhoneNumber(
                   setupData.weddingInfo?.bride?.mother?.tel || ""
